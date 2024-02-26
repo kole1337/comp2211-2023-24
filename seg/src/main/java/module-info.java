@@ -9,6 +9,6 @@ module com.example.seg {
     requires org.kordamp.ikonli.javafx;
     requires eu.hansolo.tilesfx;
 
-    opens com.example.seg to javafx.fxml;
-    exports com.example.seg;
+    opens com.application.login to javafx.fxml;
+    exports com.application.login;
 }
