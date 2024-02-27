@@ -5,7 +5,10 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.login.LoginController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx/18.0.2"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.login.LoginController">
    <children>
       <TextField fx:id="usernameField" layoutX="226.0" layoutY="142.0" promptText="username" />
       <TextField fx:id="passwordField" layoutX="226.0" layoutY="200.0" promptText="password" />

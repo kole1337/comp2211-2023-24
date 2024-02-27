@@ -12,4 +12,5 @@ module com.example.seg {
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
+    exports com.application.dashboard;
 }

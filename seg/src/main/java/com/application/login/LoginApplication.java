@@ -15,6 +15,9 @@ public class LoginApplication extends Application {
 
         stage.setTitle("Ad dashboard");
 
+//        LoginController loginController = fxmlLoader.getController();
+//        loginController.setPrimaryStage(stage);
+
         stage.setScene(scene);
         stage.show();
     }
