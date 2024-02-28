@@ -36,6 +36,8 @@ public class LoginController {
 
     @FXML
     public void loginFunc(ActionEvent event){
+        logger = Logger.getLogger(getClass().getName());
+        logger.log(Level.INFO, "You pressed loginButton.");
         //if login details are right, switch to dashboard
         if(usernameField.getText().equals("admin") && passwordField.getText().equals("0000")){
             try {
@@ -45,7 +47,7 @@ public class LoginController {
                 stage.setScene(scene);
                 stage.show();
                 logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in. Opening dashboard.");
+                logger.log(Level.INFO, "Logging in. Opening dashboard." + System.currentTimeMillis());
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
