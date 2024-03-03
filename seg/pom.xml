@@ -95,7 +95,11 @@
             <artifactId>opencsv</artifactId>
             <version>5.5.1</version> <!-- Or the latest version -->
         </dependency>
-
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.3</version>
+        </dependency>
     </dependencies>
 
     <build>
