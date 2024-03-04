@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.*;
 
 public class MergeCSV {
-    public static String main(String file1,String file2) {
+    public static String main(InputStream file1,InputStream file2) {
         //String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
         //String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
-        String outputFile = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merged.csv"; // Output file path for merged CSV
+        String outputFile = "merged.csv"; // Output file path for merged CSV
 
 
 
@@ -32,9 +32,9 @@ public class MergeCSV {
             }
 
             // Read data from a CSV file and store it in a map with the ID column as key
-            private static Map<String, String[]> readCSV(String filename) {
+            private static Map<String, String[]> readCSV(InputStream filename) {
                 Map<String, String[]> data = new HashMap<>();
-                try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(filename))) {
                     String line;
                     while ((line = br.readLine()) != null) {
                         String[] parts = line.split(","); // Assuming CSV format is comma-separated
@@ -70,7 +70,10 @@ public class MergeCSV {
 
     // Write data to a CSV file with headings
             private static void writeCSV(String filename, List<String[]> data) {
-                try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+                try (PrintWriter writer = new PrintWriter(
+                        new BufferedWriter(
+                                new OutputStreamWriter(
+                                        new FileOutputStream(filename))))) {
                     // Write headings
                    // writer.println(String.join(",", headings));
                     // Write data rows
