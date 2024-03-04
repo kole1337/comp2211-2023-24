@@ -74,6 +74,7 @@ public class Timeframe {
 
             System.out.println("From: " + fromDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
                     ", To: " + toDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            filterData(fromDate, fromHour, fromMinute, fromSecond, toDate, toHour, toMinute, toSecond);
 
         });
         r.getChildren().add(showRangeButton); // Add the button to your TilePane
@@ -124,7 +125,7 @@ public class Timeframe {
             }
         }
     }
-    public void createChart(DatePicker f, DatePicker t) {
+    public void filterData(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
 
     }
 
