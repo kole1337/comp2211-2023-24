@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Timeframe {
+
     public void createTimeFrame(){
         DatePicker from = new DatePicker();
         Label fromLabel = new Label("Start Date:");
@@ -90,7 +91,7 @@ public class Timeframe {
 
         // Skip the header
         reader.readLine();
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         final LocalDateTime startTime = LocalDateTime.parse(startDate, formatter);
 
         final LocalDateTime endTime = LocalDateTime.parse(endDate, formatter);
