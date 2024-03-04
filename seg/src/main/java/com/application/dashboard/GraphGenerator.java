@@ -58,7 +58,7 @@ public class GraphGenerator {
         // Customize the plot
         XYPlot plot = chart.getXYPlot();
         DateAxis xAxis = (DateAxis) plot.getDomainAxis();
-        xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+        xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
         // Display the chart in a frame
         ChartFrame frame = new ChartFrame(title, chart);
