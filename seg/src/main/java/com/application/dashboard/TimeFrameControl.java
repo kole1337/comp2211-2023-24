@@ -75,5 +75,66 @@ public class Timeframe {
         });
 
     }
+    public void createChart() throws IOException {
+
+        scatterChart.setTitle("Impression Log");
+        Set<Long> dateSet = new HashSet<>();
+        Hashtable<Long,Integer> pair = new Hashtable<Long,Integer>();
+        List<Map.Entry<Long, Integer>> list = new ArrayList<>(pair.entrySet());
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName("Data Series");
+
+        String line;
+        BufferedReader reader = new BufferedReader(new FileReader("comp2211/impression_log2.csv"));
+
+        // Skip the header
+        reader.readLine();
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final LocalDateTime startTime = LocalDateTime.parse(startDate, formatter);
+
+        final LocalDateTime endTime = LocalDateTime.parse(endDate, formatter);
+
+
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split(",");
+            LocalDateTime dateTime = LocalDateTime.parse(fields[0].substring(0,10), formatter);
+            if(dateTime.isAfter(startTime) && dateTime.isBefore(endTime)){
+                long timeValue = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                System.out.println(timeValue);
+                System.out.println(timeValue);
+                int id = Integer.parseInt(fields[1]);
+                Pair<Long,Integer> pairTemp = new Pair<>(timeValue,id);
+                if(!dateSet.contains(timeValue)){
+                    dateSet.add(timeValue);
+                    pair.put(timeValue, 1);
+                }
+                else{
+
+                    int i = pair.get(timeValue);
+                    pair.replace(timeValue, i+1);
+
+                }
+
+
+            }else{
+                System.out.println("here");
+            }
+
+        }
+
+        reader.close();
+        //getUniqueID(dateList);
+        list.sort(Map.Entry.comparingByKey());
+        //Collections.sort(dateList);
+        for(int i=0; i<list.size();i++){
+            Map.Entry<Long, Integer> p = list.get(i);
+            series.getData().add(new XYChart.Data<>(p.getKey(), p.getValue()));
+        }
+
+
+
+        scatterChart.getData().add(series);
+    }
 
 }
