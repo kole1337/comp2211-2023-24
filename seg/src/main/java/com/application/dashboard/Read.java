@@ -1,22 +1,22 @@
 package com.application.dashboard;
 
 
-        import com.opencsv.CSVReader;
-        import com.opencsv.CSVReaderBuilder;
-        import com.opencsv.CSVWriter;
-        import com.opencsv.CSVWriterBuilder;
-        import com.opencsv.exceptions.CsvException;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
+import com.opencsv.exceptions.CsvException;
 
-        import java.io.*;
-        import java.util.*;
+import java.io.*;
+import java.util.*;
 
-        import com.opencsv.CSVReader;
-        import com.opencsv.CSVReaderBuilder;
-        import com.opencsv.exceptions.CsvException;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 
-        import java.io.FileReader;
-        import java.io.IOException;
-        import java.util.List;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 //public class Read {
 //    public static void main(String[] args) {
@@ -35,12 +35,12 @@ package com.application.dashboard;
 //        }
 //    }
 //}
-        import com.opencsv.CSVReader;
-        import com.opencsv.exceptions.CsvException;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
-        import java.io.FileReader;
-        import java.io.IOException;
-        import java.util.List;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 //public class Read {
 //    public static void main(String[] args) {
@@ -115,19 +115,26 @@ public class Read {
 
     public static void main(String[] args) throws IOException, CsvException {
 
-        String fileName = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv";
+
+        // Open the file as an InputStream
+
+
+        String fileName = "/2_week_campaign_2/click_log.csv";
+        InputStream inputStream = testFile.class.getResourceAsStream(fileName);
+
         String file = Merge.main(new String[0]);
         try (CSVReader reader = new CSVReader(new FileReader(file))) {
             List<String[]> r = reader.readAll();
             r.forEach(x -> System.out.println(Arrays.toString(x)));
         }
-        int numberOfUniqueValues = countUniqueValuesSecondColumn(fileName);
+        int numberOfUniqueValues = countUniqueValuesSecondColumn(inputStream);
         System.out.println(numberOfUniqueValues);
 
     }
-    public static int countUniqueValuesSecondColumn(String filename) {
+
+    public static int countUniqueValuesSecondColumn(InputStream streamPath) {
         Set<String> uniqueValues = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(streamPath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(",");
@@ -144,7 +151,7 @@ public class Read {
 }
 
 
-        // Writing CSV file
+// Writing CSV file
 
 
 

@@ -9,8 +9,5 @@
         <module name="seg" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="seg" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
