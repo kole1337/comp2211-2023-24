@@ -30,10 +30,9 @@ public class DatasetCreator {
             return createCountByTimeDataset(clicksCsv, time);
         } else if (graphName.equals("TotalImpressions")) {
             return createCountByTimeDataset(impressionsCsv, time);
-        } else if (graphName.equals("TotalUniques")){
+        } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
-        }
-        else{
+        } else {
             return null;
         }
     }
@@ -68,6 +67,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
+
     private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time) {
         List<String> seen = new ArrayList<>();
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
@@ -78,7 +78,7 @@ public class DatasetCreator {
             for (String[] record : records) {
                 String dateString = record[0];
                 String id = record[1];
-                if(!seen.contains(id)){
+                if (!seen.contains(id)) {
                     seen.add(id);
                     LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
