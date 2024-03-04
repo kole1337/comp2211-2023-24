@@ -1,7 +1,7 @@
 package com.application.dashboard;
 
 
-    import java.io.BufferedReader;
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,9 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Merge {
-    public static String main(String[] args) {
-        String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merged.csv"; // Path to the first CSV file
+public class ReadFile {
+    public static void main(String[] args) {
+        String file3 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
+        String file4 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
+         String file1 = MergeCSV.main(file3,file4); // Path to the first CSV file
         ColumnSwitch.switchColumns(); // Path to the second CSV file
         String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\output.csv";
         String outputFile = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merge.csv"; // Output file path for merged CSV
@@ -37,7 +39,7 @@ public class Merge {
 
         // Write the merged data into a new CSV file with headings
         writeCSV(outputFile, mergedData);
-        return outputFile;
+        //return outputFile;
     }
 
     // Read data from a CSV file and store it in a map with the ID column as key
