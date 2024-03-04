@@ -33,6 +33,12 @@ public class DatasetCreator {
         } else if (graphName.equals("TotalUniques")){
             return createUniqueClicksDataset(time);
         }
+        else if (graphName.equals("Conversions")){
+            return createConversionsDataset(time);
+        }
+        else if (graphName.equals("TotalCost")){
+            return createTotalCostDataset(clicksCsv,time);
+        }
         else{
             return null;
         }
@@ -96,6 +102,68 @@ public class DatasetCreator {
                         }
                         countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
                     }
+                }
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+        return countByTime;
+    }
+    private Map<LocalDateTime, Integer> createConversionsDataset(String time) {
+        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+        try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
+            reader.readNext();
+            List<String[]> records = reader.readAll();
+            for (String[] record : records) {
+                String dateString = record[0];
+                String conversion = record[4];
+                if(conversion.equals("Yes")){
+                    LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+                    if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                        LocalDateTime roundedDate;
+                        if (time.equals("hour")) {
+                            roundedDate = date.withMinute(0).withSecond(0);
+                        } else if (time.equals("day")) {
+                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        } else if (time.equals("week")) {
+                            int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        } else {
+                            System.out.println("Enter a valid time period");
+                            return countByTime;
+                        }
+                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                    }
+                }
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+        return countByTime;
+    }
+    private Map<LocalDateTime, Integer> createTotalCostDataset(String csvFile, String time) {
+        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+        try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+            reader.readNext();
+            List<String[]> records = reader.readAll();
+            for (String[] record : records) {
+                String dateString = record[0];
+                String cost = record[2];
+                LocalDateTime date = LocalDateTime .parse(dateString, dateFormatter);
+                if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                    LocalDateTime roundedDate;
+                    if (time.equals("hour")) {
+                        roundedDate = date.withMinute(0).withSecond(0);
+                    } else if (time.equals("day")) {
+                        roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                    } else if (time.equals("week")) {
+                        int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                        roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                    } else {
+                        System.out.println("Enter a valid time period");
+                        return countByTime;
+                    }
+                    countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + Integer.valueOf(cost));
                 }
             }
         } catch (IOException | CsvException e) {
