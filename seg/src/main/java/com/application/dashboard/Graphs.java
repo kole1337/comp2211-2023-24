@@ -33,13 +33,13 @@ public class Graphs {
     }
 
     private void createTotalClicksGraph(String time) {
-        String csvFilePath = "C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\java\\com\\application\\dashboard\\2_week_campaign_2\\click_log.csv";
+        String csvFilePath = "C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
         // Define the date format used in the CSV file
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
         LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
         // Define the desired time frame
-        Map<String, Integer> clickCountByTime = new TreeMap<>();
+        Map<LocalDateTime, Integer> clickCountByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
             reader.readNext();
             // Read all records from the CSV file
@@ -52,17 +52,14 @@ public class Graphs {
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
                     if (time.equals("hour")) {
                         LocalDateTime roundedDate = date.withMinute(0).withSecond(0); // Round to the nearest hour
-                        String key = roundedDate.toString();
-                        clickCountByTime.put(key, clickCountByTime.getOrDefault(key, 0) + 1);
+                        clickCountByTime.put(roundedDate, clickCountByTime.getOrDefault(roundedDate, 0) + 1);
                     } else if (time.equals("day")) {
                         LocalDateTime roundedDate = date.withHour(0).withMinute(0).withSecond(0); // Round to the nearest day
-                        String key = roundedDate.toString();
-                        clickCountByTime.put(key, clickCountByTime.getOrDefault(key, 0) + 1);
+                        clickCountByTime.put(roundedDate, clickCountByTime.getOrDefault(roundedDate, 0) + 1);
                     } else if (time.equals("week")) {
                         int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
                         LocalDateTime roundedDate = date.withHour(0).withMinute(0).withSecond(0); // Round to the nearest day
-                        String key = roundedDate.toString() + "-W" + String.format("%02d", week);
-                        clickCountByTime.put(key, clickCountByTime.getOrDefault(key, 0) + 1);
+                        clickCountByTime.put(roundedDate, clickCountByTime.getOrDefault(roundedDate, 0) + 1);
                     } else {
                         System.out.println("Enter a valid time period");
                     }
@@ -77,7 +74,6 @@ public class Graphs {
     }
     public static void main(String[] args){
         Graphs g = new Graphs();
-        g.createGraph("TotalClicks","day");
+        g.createGraph("TotalClicks","hour");
     }
-
 }

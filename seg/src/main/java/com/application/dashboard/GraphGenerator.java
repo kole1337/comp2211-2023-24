@@ -24,9 +24,9 @@ public class GraphGenerator {
     private String title;
     private String xAxisLabel;
     private String yAxisLabel;
-    private Map<String, Integer> data;
+    private Map<LocalDateTime, Integer> data;
 
-    public GraphGenerator(String title, String xAxisLabel, String yAxisLabel, Map<String, Integer> data) {
+    public GraphGenerator(String title, String xAxisLabel, String yAxisLabel, Map<LocalDateTime, Integer> data) {
         this.title = title;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
@@ -37,8 +37,8 @@ public class GraphGenerator {
         // Create a time series collection and add data points to it
         TimeSeries series = new TimeSeries(yAxisLabel);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for (Map.Entry<String, Integer> entry : data.entrySet()) {
-            LocalDateTime dateTime = LocalDateTime.parse(entry.getKey(), formatter);
+        for (Map.Entry<LocalDateTime, Integer> entry : data.entrySet()) {
+            LocalDateTime dateTime = entry.getKey();
             Hour hour = new Hour(dateTime.getHour(), dateTime.getDayOfMonth(), dateTime.getMonthValue(), dateTime.getYear());
             series.add(hour, entry.getValue());
         }
@@ -58,7 +58,7 @@ public class GraphGenerator {
         // Customize the plot
         XYPlot plot = chart.getXYPlot();
         DateAxis xAxis = (DateAxis) plot.getDomainAxis();
-        xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
 
         // Display the chart in a frame
         ChartFrame frame = new ChartFrame(title, chart);
