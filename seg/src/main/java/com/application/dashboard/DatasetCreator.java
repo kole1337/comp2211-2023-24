@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class DatasetCreator {
     String clicksCsv;
@@ -33,7 +30,10 @@ public class DatasetCreator {
             return createCountByTimeDataset(clicksCsv, time);
         } else if (graphName.equals("TotalImpressions")) {
             return createCountByTimeDataset(impressionsCsv, time);
-        } else {
+        } else if (graphName.equals("TotalUniques")){
+            return createUniqueClicksDataset(time);
+        }
+        else{
             return null;
         }
     }
@@ -61,6 +61,41 @@ public class DatasetCreator {
                         return countByTime;
                     }
                     countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                }
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
+        return countByTime;
+    }
+    private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time) {
+        List<String> seen = new ArrayList<>();
+        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+        try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
+            reader.readNext();
+            List<String[]> records = reader.readAll();
+
+            for (String[] record : records) {
+                String dateString = record[0];
+                String id = record[1];
+                if(!seen.contains(id)){
+                    seen.add(id);
+                    LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+                    if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                        LocalDateTime roundedDate;
+                        if (time.equals("hour")) {
+                            roundedDate = date.withMinute(0).withSecond(0);
+                        } else if (time.equals("day")) {
+                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        } else if (time.equals("week")) {
+                            int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        } else {
+                            System.out.println("Enter a valid time period");
+                            return countByTime;
+                        }
+                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                    }
                 }
             }
         } catch (IOException | CsvException e) {
