@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
@@ -29,6 +30,10 @@ public class DashboardController {
 
     public void logoutAction(ActionEvent event) {
         //this should be the logout function from the menu item Logout
+        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.setHeaderText("Problem");
+        errorAlert.setContentText("Wrong credentials");
+        errorAlert.showAndWait();
     }
 
     //Logout function for button

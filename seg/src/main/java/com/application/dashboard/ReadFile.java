@@ -1,33 +1,37 @@
 package com.application.dashboard;
 
 
-    import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Merge {
-    public static String main(String[] args) {
-        String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merged.csv"; // Path to the first CSV file
+public class ReadFile {
+    public static void main(String[] args) {
+        String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
+        String file2 = "/2_week_campaign_2/impression_log.csv";
+
+        InputStream inputStream = testFile.class.getResourceAsStream(file1);
+        InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
+
+        String file3 = MergeCSV.main(inputStream, inputStream2); // Path to the first CSV file
+        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
+
         ColumnSwitch.switchColumns(); // Path to the second CSV file
-        String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\output.csv";
-        String outputFile = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merge.csv"; // Output file path for merged CSV
 
 
+        String file4 = "/2_week_campaign_2/output.csv"; // Output file path for merged CSV
+        InputStream inputStream4 = testFile.class.getResourceAsStream(file3);
 
-
+        String outputFile = "seg/src/main/resources/2_week_campaign_2/merge.csv";
 
         // Read data from the first CSV file
-        Map<String, String[]> data1 = readCSV(file1);
+        Map<String, String[]> data1 = readCSV(inputStream3);
         //System.out.println(data1);
 
         // Read data from the second CSV file
-        Map<String, String[]> data2 = readCSV2(file2);
+        Map<String, String[]> data2 = readCSV2(inputStream4);
 
         // Merge the data based on the common ID column
         List<String[]> mergedData = mergeData(data1, data2);
@@ -37,13 +41,14 @@ public class Merge {
 
         // Write the merged data into a new CSV file with headings
         writeCSV(outputFile, mergedData);
-        return outputFile;
+        //return outputFile;
     }
 
     // Read data from a CSV file and store it in a map with the ID column as key
-    private static Map<String, String[]> readCSV(String filename) {
+    private static Map<String, String[]> readCSV(InputStream streamPath) {
         Map<String, String[]> data = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        //        try (BufferedReader reader = new BufferedReader(new InputStreamReader(streamPath))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(streamPath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
@@ -55,9 +60,10 @@ public class Merge {
         }
         return data;
     }
-    private static Map<String, String[]> readCSV2(String filename) {
+
+    private static Map<String, String[]> readCSV2(InputStream streamPath) {
         Map<String, String[]> data = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(streamPath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
@@ -83,12 +89,13 @@ public class Merge {
                 // Copy elements from row1 to mergedRow
                 System.arraycopy(row1, 0, mergedRow, 0, row1.length);
                 // Copy elements from row2 to mergedRow, skipping the ID column
-                System.arraycopy(row2, 1, mergedRow, row1.length , row2.length - 1); // Skip the ID column
+                System.arraycopy(row2, 1, mergedRow, row1.length, row2.length - 1); // Skip the ID column
                 mergedData.add(mergedRow);
             }
         }
         return mergedData;
     }
+
     private static List<List<String>> transposeData(List<String[]> data) {
         List<List<String>> columns = new ArrayList<>();
         int numRows = data.size();
@@ -102,7 +109,6 @@ public class Merge {
         }
         return columns;
     }
-
 
 
     // Write data to a CSV file with headings

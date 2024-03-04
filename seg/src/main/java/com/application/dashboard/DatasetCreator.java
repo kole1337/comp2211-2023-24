@@ -19,9 +19,9 @@ public class DatasetCreator {
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
     public DatasetCreator() {
-        this.clicksCsv = "C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
-        this.impressionsCsv = "C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
-        this.serverCsv = "C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv";
+        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
 
     }
 
@@ -30,8 +30,9 @@ public class DatasetCreator {
             return createCountByTimeDataset(clicksCsv, time);
         } else if (graphName.equals("TotalImpressions")) {
             return createCountByTimeDataset(impressionsCsv, time);
-        } else if (graphName.equals("TotalUniques")){
+        } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
+<<<<<<< HEAD
         }
         else if (graphName.equals("Conversions")){
             return createConversionsDataset(time);
@@ -40,6 +41,9 @@ public class DatasetCreator {
             return createTotalCostDataset(clicksCsv,time);
         }
         else{
+=======
+        } else {
+>>>>>>> 3a2fd235ab0b9bd9d69be0e167a88295dc48d288
             return null;
         }
     }
@@ -74,6 +78,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
+
     private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time) {
         List<String> seen = new ArrayList<>();
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
@@ -84,7 +89,7 @@ public class DatasetCreator {
             for (String[] record : records) {
                 String dateString = record[0];
                 String id = record[1];
-                if(!seen.contains(id)){
+                if (!seen.contains(id)) {
                     seen.add(id);
                     LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
