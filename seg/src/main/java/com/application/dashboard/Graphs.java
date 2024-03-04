@@ -33,6 +33,6 @@ public class Graphs {
     }
     public static void main(String[] args){
         Graphs g = new Graphs();
-        g.createGraph("TotalClicks","hour");
+        g.createGraph("Conversions","hour");
     }
 }
