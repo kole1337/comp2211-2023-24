@@ -4,9 +4,9 @@ import java.io.*;
 import java.util.*;
 
 public class MergeCSV {
-    public static void main(String[] args) {
-        String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
-        String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
+    public static String main(String file1,String file2) {
+        //String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
+        //String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
         String outputFile = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\merged.csv"; // Output file path for merged CSV
 
 
@@ -28,6 +28,7 @@ public class MergeCSV {
 
                 // Write the merged data into a new CSV file with headings
                 writeCSV(outputFile, mergedData);
+                return outputFile;
             }
 
             // Read data from a CSV file and store it in a map with the ID column as key
