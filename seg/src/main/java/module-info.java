@@ -10,6 +10,8 @@ module com.example.seg {
     requires eu.hansolo.tilesfx;
     requires java.logging;
     requires com.opencsv;
+    requires java.desktop;
+    requires org.jfree.jfreechart;
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
