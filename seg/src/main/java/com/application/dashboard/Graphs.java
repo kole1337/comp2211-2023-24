@@ -27,6 +27,9 @@ public class Graphs {
         if(graphName == "CPC"){
             createCPCGraph(time,dc.createDataset("CPC",time));
         }
+        if(graphName.equals("CTR")){
+            createCTRGraph(time,dc.createDataset("CTR",time));
+        }
         createTotalClicksGraph(time, dc.createDataset(graphName, time));
     }
 
@@ -42,6 +45,9 @@ public class Graphs {
     private void createCPCGraph(String time, Map<LocalDateTime, Double> dataset){
         GraphGenerator gg = new GraphGenerator("CPC by" + time, "Time","Average CPC",dataset);
     }
+    private void createCTRGraph(String time, Map<LocalDateTime, Double> dataset){
+        GraphGenerator gg = new GraphGenerator("CTR by" + time, "Time","Average CTR",dataset);
+    }
 
     public void start() {
         Graphs g = new Graphs();
@@ -52,7 +58,7 @@ public class Graphs {
 
    public static void main(String[] args) {
        Graphs g = new Graphs();
-       g.createGraph("CPC","hour");
+       g.createGraph("CTR","hour");
 
    }
 }

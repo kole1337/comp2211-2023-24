@@ -39,6 +39,8 @@ public class DatasetCreator {
             return createTotalCostDataset(time);
         } else if (graphName.equals("CPC")){
             return createCPCDataset(time);
+        } else if (graphName.equals("CTR")){
+            return createCTRDataset(time);
         }
         else {
             return null;
@@ -187,6 +189,18 @@ public class DatasetCreator {
         }
         return averageCPC;
     }
+    private Map<LocalDateTime, Double> createCTRDataset(String time) {
+        Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv, time);
+        Map<LocalDateTime, Double> totalImpressions = createCountByTimeDataset(impressionsCsv, time);
+        Map<LocalDateTime, Double> averageCTR = new TreeMap<>();
+        for (Map.Entry<LocalDateTime, Double> entry : totalClicks.entrySet()) {
+            LocalDateTime dateTime = entry.getKey();
+            Double CPCvalue = totalClicks.get(dateTime)/ totalImpressions.get(dateTime);
+            averageCTR.put(dateTime,averageCTR.getOrDefault(dateTime,0.0) + CPCvalue);
+        }
+        return averageCTR;
+    }
+
 
 
 }
