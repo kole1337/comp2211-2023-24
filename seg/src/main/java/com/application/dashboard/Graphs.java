@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
 
+import static javafx.application.Application.launch;
+
 public class Graphs {
     DatasetCreator dc = new DatasetCreator();
     // Define the date format used in the CSV file
@@ -35,12 +37,14 @@ public class Graphs {
         gg.generateGraph();
     }
 
-    public static void main(String[] args) {
+    public void start() {
         Graphs g = new Graphs();
-<<<<<<< HEAD
-        g.createGraph("Conversions","hour");
-=======
+
         g.createGraph("TotalClicks", "hour");
->>>>>>> 3a2fd235ab0b9bd9d69be0e167a88295dc48d288
+
     }
+
+//    public static void main(String[] args) {
+//        launch();
+//    }
 }

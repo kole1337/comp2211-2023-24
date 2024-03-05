@@ -25,13 +25,43 @@ public class GraphGenerator {
     private String xAxisLabel;
     private String yAxisLabel;
     private Map<LocalDateTime, Integer> data;
-
+    private ChartFrame frame;
     public GraphGenerator(String title, String xAxisLabel, String yAxisLabel, Map<LocalDateTime, Integer> data) {
         this.title = title;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.data = data;
     }
+
+    public GraphGenerator() {
+        generateGraph();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getxAxisLabel() {
+        return xAxisLabel;
+    }
+
+    public String getyAxisLabel() {
+        return yAxisLabel;
+    }
+
+    public Map<LocalDateTime, Integer> getData() {
+        return data;
+    }
+
+    public ChartFrame getFrame() {
+        return frame;
+    }
+
+//    public void chartFrame(){
+//        frame = new ChartFrame(title, chart);
+//        frame.pack();
+//        frame.setVisible(true);
+//    }
 
     public void generateGraph() {
         // Create a time series collection and add data points to it
@@ -61,7 +91,7 @@ public class GraphGenerator {
         xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
         // Display the chart in a frame
-        ChartFrame frame = new ChartFrame(title, chart);
+        frame = new ChartFrame(title, chart);
         frame.pack();
         frame.setVisible(true);
     }

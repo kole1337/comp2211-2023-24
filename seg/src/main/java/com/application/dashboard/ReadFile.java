@@ -24,7 +24,7 @@ public class ReadFile {
         String file4 = "/2_week_campaign_2/output.csv"; // Output file path for merged CSV
         InputStream inputStream4 = testFile.class.getResourceAsStream(file3);
 
-        String outputFile = "seg/src/main/resources/2_week_campaign_2/merge.csv";
+        String outputFile = "src/main/resources/2_week_campaign_2/merge.csv";
 
         // Read data from the first CSV file
         Map<String, String[]> data1 = readCSV(inputStream3);

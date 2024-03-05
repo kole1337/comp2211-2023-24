@@ -19,9 +19,9 @@ public class DatasetCreator {
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
     public DatasetCreator() {
-        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
-        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
-        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+        this.clicksCsv = "src/main/resources/2_week_campaign_2/click_log.csv";
+        this.impressionsCsv = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        this.serverCsv = "src/main/resources/2_week_campaign_2/server_log.csv";
 
     }
 
@@ -32,18 +32,8 @@ public class DatasetCreator {
             return createCountByTimeDataset(impressionsCsv, time);
         } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
-<<<<<<< HEAD
-        }
-        else if (graphName.equals("Conversions")){
-            return createConversionsDataset(time);
-        }
-        else if (graphName.equals("TotalCost")){
-            return createTotalCostDataset(clicksCsv,time);
-        }
-        else{
-=======
         } else {
->>>>>>> 3a2fd235ab0b9bd9d69be0e167a88295dc48d288
+
             return null;
         }
     }
