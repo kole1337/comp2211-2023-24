@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -14,19 +15,37 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
 
 
-public class TimeFrameControl extends DatasetCreator{
+
+public class TimeFrameControl {
 
     // these are startTime and endTIme of the files
+    String clicksCsv;
+    String impressionsCsv;
+    String serverCsv;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
+    VBox timeControlVBox = new VBox ();
 
+
+    public TimeFrameControl() {
+        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+
+    }
 
     public void createTimeFrame(){
-        Label prompt = new Label("Select the date and time from - to -"); // Updated label to include time
-        r.getChildren().add(prompt);
+        //VBox r = new VBox();
+        Label prompt = new Label("Select the date and time from - to -");
+        timeControlVBox.getChildren().add(prompt);
 
         // DatePicker for "from" date
         DatePicker fromDate = new DatePicker();
@@ -34,10 +53,11 @@ public class TimeFrameControl extends DatasetCreator{
         ComboBox<String> fromMinute = new ComboBox<>();
         ComboBox<String> fromSecond = new ComboBox<>();
         setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
-        HBox fromTime = new HBox(fromHour,fromMinute, fromSecond);
+        HBox fromTimeHBox = new HBox(fromHour,fromMinute, fromSecond);
+
 
         // Adding components fo HBox h = new HBox(fromHour,fromMinute, fromSecond);r "from" date and time selection
-        r.getChildren().addAll(new Label("Start Date and Time:"), fromDate, fromTime);
+        timeControlVBox.getChildren().addAll(new Label("Start Date and Time:"), fromDate, fromTimeHBox);
 
         // DatePicker for "to" date
         DatePicker toDate = new DatePicker();
@@ -48,7 +68,7 @@ public class TimeFrameControl extends DatasetCreator{
         HBox toTime= new HBox(toHour, toMinute, toSecond);
 
         // Adding components for "to" date and time selection
-        r.getChildren().addAll(new Label("End Date and Time:"), toDate, toTime);
+        timeControlVBox.getChildren().addAll(new Label("End Date and Time:"), toDate, toTime);
 
         // Logic to ensure "to" datetime is not before "from" datetime
         // Note: You need to combine both date and time for validation
@@ -68,12 +88,12 @@ public class TimeFrameControl extends DatasetCreator{
             LocalDateTime fromDateTime = LocalDateTime.of(fromDate.getValue(), LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()), Integer.parseInt(fromSecond.getValue())));
             LocalDateTime toDateTime = LocalDateTime.of(toDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
 
-            System.out.println("From: " + LocalDatetime.parse(fromDateTime,dateFormatter)  +
-                    ", To: " + LocalDateTime.parse(toDateTime, dateFormatter));
-            filterData(fromDate, fromHour, fromMinute, fromSecond, toDate, toHour, toMinute, toSecond);
-
+            // System.out.println("From: " + LocalDatetime.parse(fromDateTime, dateFormatter)  +
+            //        ", To: " + LocalDateTime.parse(toDateTime, dateFormatter));
+            //filterData(fromDate, fromHour, fromMinute, fromSecond, toDate, toHour, toMinute, toSecond);
+            // chart display here
         });
-        r.getChildren().add(showRangeButton); // Add the button to your TilePane
+        timeControlVBox.getChildren().add(showRangeButton); // Add the button to your TilePane
     }
 
     private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
@@ -125,22 +145,21 @@ public class TimeFrameControl extends DatasetCreator{
             }
         }
     }
-    public void filterData(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
 
-    }
 
-    public Map<LocalDateTime, Integer> createDataset(String graphName, DatePicker fromTime, DatePicker toTime) {
+    public Map<LocalDateTime, Integer> createDataset(String graphName, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         if (graphName.equals("TotalClicks")) {
-            return createCountByTimeDataset(clicksCsv, fromTime, toTime);
+            return createCountByTimeDataset(clicksCsv, time, fromTime, toTime);
         } else if (graphName.equals("TotalImpressions")) {
-            return createCountByTimeDataset(impressionsCsv, fromTime, toTime);
+            return createCountByTimeDataset(impressionsCsv, time, fromTime, toTime);
         } else if (graphName.equals("TotalUniques")) {
-            return createUniqueClicksDataset(time);
+            return createUniqueClicksDataset(time, fromTime, toTime);
         } else {
             return null;
         }
     }
     private List<String []> getDateWithinTimeFrame(String csvFile, LocalDateTime fromTime, LocalDateTime toTime){
+
         try(CSVReader reader = new CSVReader(new FileReader(csvFile))){
             reader.readNext();
             List<String []> records = reader.readAll();
@@ -152,20 +171,69 @@ public class TimeFrameControl extends DatasetCreator{
                     withinTimeFrameRecords.add(record);
                 }
             }
+            return withinTimeFrameRecords;
         }catch(Exception e){
             e.printStackTrace();
+            return null;
         }
-
     }
 
-    private Map<LocalDateTime, Integer> createCountByTimeDataset(String csvFile, LocalDateTime fromTime, LocalDateTime toTime) {
+    private Map<LocalDateTime, Integer> createCountByTimeDataset(String csvFile, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
-        List<String []> records = getDateWithinTimeFrame(csvFile, fromTime, totimer);
+        List<String []> records = getDateWithinTimeFrame(csvFile, fromTime, toTime);
 
-            for (String[] record : records) {
-                String dateString = record[0];
+        for (String[] record : records) {
+            String dateString = record[0];
+            LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+
+            if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                LocalDateTime roundedDate;
+                if (time.equals("hour")) {
+                    roundedDate = date.withMinute(0).withSecond(0);
+                } else if (time.equals("day")) {
+                    roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                } else if (time.equals("week")) {
+                    int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                    roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                } else {
+                    System.out.println("Enter a valid time period");
+                    return countByTime;
+                }
+                countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+            }
+        }
+
+        return countByTime;
+    }
+   /* private Map<LocalDateTime, Integer> test(){
+        if (date.isAfter(startTime) && date.isBefore(endTime)) {
+            LocalDateTime roundedDate;
+            if (time.equals("hour")) {
+                roundedDate = date.withMinute(0).withSecond(0);
+            } else if (time.equals("day")) {
+                roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+            } else if (time.equals("week")) {
+                int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
+                roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+            } else {
+                System.out.println("Enter a valid time period");
+                return countByTime;
+            }
+            countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+        }
+    }*/
+
+    private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time, LocalDateTime fromTime, LocalDateTime toTime) {
+        List<String> seen = new ArrayList<>();
+        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+        List<String []> records = getDateWithinTimeFrame(clicksCsv, fromTime, toTime);
+
+        for (String[] record : records) {
+            String dateString = record[0];
+            String id = record[1];
+            if (!seen.contains(id)) {
+                seen.add(id);
                 LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
-
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
                     LocalDateTime roundedDate;
                     if (time.equals("hour")) {
@@ -182,38 +250,7 @@ public class TimeFrameControl extends DatasetCreator{
                     countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
                 }
             }
-
-        return countByTime;
-    }
-
-    private Map<LocalDateTime, Integer> createUniqueClicksDataset(DatePicker fromTime, DatePicker toTime) {
-        List<String> seen = new ArrayList<>();
-        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
-        List<String []> records = getDateWithinTimeFrame(clickscsv, fromTime, toTime);
-
-            for (String[] record : records) {
-                String dateString = record[0];
-                String id = record[1];
-                if (!seen.contains(id)) {
-                    seen.add(id);
-                    LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
-                    if (date.isAfter(startTime) && date.isBefore(endTime)) {
-                        LocalDateTime roundedDate;
-                        if (time.equals("hour")) {
-                            roundedDate = date.withMinute(0).withSecond(0);
-                        } else if (time.equals("day")) {
-                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
-                        } else if (time.equals("week")) {
-                            int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
-                        } else {
-                            System.out.println("Enter a valid time period");
-                            return countByTime;
-                        }
-                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
-                    }
-                }
-            }
+        }
         return countByTime;
     }
 
