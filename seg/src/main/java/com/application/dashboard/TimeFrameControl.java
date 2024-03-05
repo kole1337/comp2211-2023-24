@@ -23,27 +23,26 @@ import javafx.scene.control.Alert;
 
 
 
-public class TimeFrameControl {
+public class TimeFrameControl extends DatasetCreator{
 
     // these are startTime and endTIme of the files
-    String clicksCsv;
-    String impressionsCsv;
-    String serverCsv;
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
-    LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
-    VBox timeControlVBox = new VBox ();
+    //String clicksCsv;
+    //String impressionsCsv;
+    //String serverCsv;
+   // DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+   // LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
+   // LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
+    private VBox timeControlVBox = new VBox ();
 
 
     public TimeFrameControl() {
-        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
-        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
-        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
-
+       // this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+       // this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+       // this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+        super();
     }
 
     public void createTimeFrame(){
-        //VBox r = new VBox();
         Label prompt = new Label("Select the date and time from - to -");
         timeControlVBox.getChildren().add(prompt);
 
@@ -88,9 +87,7 @@ public class TimeFrameControl {
             LocalDateTime fromDateTime = LocalDateTime.of(fromDate.getValue(), LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()), Integer.parseInt(fromSecond.getValue())));
             LocalDateTime toDateTime = LocalDateTime.of(toDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
 
-            // System.out.println("From: " + LocalDatetime.parse(fromDateTime, dateFormatter)  +
-            //        ", To: " + LocalDateTime.parse(toDateTime, dateFormatter));
-            //filterData(fromDate, fromHour, fromMinute, fromSecond, toDate, toHour, toMinute, toSecond);
+
             // chart display here
         });
         timeControlVBox.getChildren().add(showRangeButton); // Add the button to your TilePane
@@ -147,6 +144,7 @@ public class TimeFrameControl {
     }
 
 
+    // this is an override method
     public Map<LocalDateTime, Integer> createDataset(String graphName, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         if (graphName.equals("TotalClicks")) {
             return createCountByTimeDataset(clicksCsv, time, fromTime, toTime);
@@ -158,8 +156,8 @@ public class TimeFrameControl {
             return null;
         }
     }
-    private List<String []> getDateWithinTimeFrame(String csvFile, LocalDateTime fromTime, LocalDateTime toTime){
-
+    // this is the method that get data within time frame selected by user
+    private List<String []> getDataWithinTimeFrame(String csvFile, LocalDateTime fromTime, LocalDateTime toTime){
         try(CSVReader reader = new CSVReader(new FileReader(csvFile))){
             reader.readNext();
             List<String []> records = reader.readAll();
@@ -178,9 +176,10 @@ public class TimeFrameControl {
         }
     }
 
+    // this is an override method
     private Map<LocalDateTime, Integer> createCountByTimeDataset(String csvFile, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
-        List<String []> records = getDateWithinTimeFrame(csvFile, fromTime, toTime);
+        List<String []> records = getDataWithinTimeFrame(csvFile, fromTime, toTime);
 
         for (String[] record : records) {
             String dateString = record[0];
@@ -205,28 +204,12 @@ public class TimeFrameControl {
 
         return countByTime;
     }
-   /* private Map<LocalDateTime, Integer> test(){
-        if (date.isAfter(startTime) && date.isBefore(endTime)) {
-            LocalDateTime roundedDate;
-            if (time.equals("hour")) {
-                roundedDate = date.withMinute(0).withSecond(0);
-            } else if (time.equals("day")) {
-                roundedDate = date.withHour(0).withMinute(0).withSecond(0);
-            } else if (time.equals("week")) {
-                int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                roundedDate = date.withHour(0).withMinute(0).withSecond(0);
-            } else {
-                System.out.println("Enter a valid time period");
-                return countByTime;
-            }
-            countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
-        }
-    }*/
 
+    // this is an override method
     private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time, LocalDateTime fromTime, LocalDateTime toTime) {
         List<String> seen = new ArrayList<>();
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
-        List<String []> records = getDateWithinTimeFrame(clicksCsv, fromTime, toTime);
+        List<String []> records = getDataWithinTimeFrame(clicksCsv, fromTime, toTime);
 
         for (String[] record : records) {
             String dateString = record[0];
