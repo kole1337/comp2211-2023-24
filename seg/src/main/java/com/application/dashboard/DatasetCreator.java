@@ -2,6 +2,7 @@ package com.application.dashboard;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.jfree.data.time.Hour;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,13 +33,14 @@ public class DatasetCreator {
             return createCountByTimeDataset(impressionsCsv, time);
         } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
-        }
-        else if (graphName.equals("Conversions")){
+        } else if (graphName.equals("Conversions")) {
             return createConversionsDataset(time);
+        } else if (graphName.equals("TotalCost")) {
+            return createTotalCostDataset(time);
+        } else if (graphName.equals("CPC")){
+            return createCPCDataset(time);
         }
-        else if (graphName.equals("TotalCost")){
-            return createTotalCostDataset(clicksCsv,time);
-        } else {
+        else {
             return null;
         }
     }
@@ -109,6 +111,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
+
     private Map<LocalDateTime, Double> createConversionsDataset(String time) {
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
@@ -117,7 +120,7 @@ public class DatasetCreator {
             for (String[] record : records) {
                 String dateString = record[0];
                 String conversion = record[4];
-                if(conversion.equals("Yes")){
+                if (conversion.equals("Yes")) {
                     LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
                         LocalDateTime roundedDate;
@@ -141,15 +144,16 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-    private Map<LocalDateTime, Double> createTotalCostDataset(String csvFile, String time) {
+
+    private Map<LocalDateTime, Double> createTotalCostDataset(String time) {
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
-        try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+        try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
             for (String[] record : records) {
                 String dateString = record[0];
                 String cost = record[2];
-                LocalDateTime date = LocalDateTime .parse(dateString, dateFormatter);
+                LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
                     LocalDateTime roundedDate;
                     if (time.equals("hour")) {
@@ -171,5 +175,18 @@ public class DatasetCreator {
         }
         return countByTime;
     }
+
+    private Map<LocalDateTime, Double> createCPCDataset(String time) {
+        Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv, time);
+        Map<LocalDateTime, Double> totalCost = createTotalCostDataset(time);
+        Map<LocalDateTime, Double> averageCPC = new TreeMap<>();
+        for (Map.Entry<LocalDateTime, Double> entry : totalClicks.entrySet()) {
+            LocalDateTime dateTime = entry.getKey();
+            Double CPCvalue = totalCost.get(dateTime)/ totalClicks.get(dateTime);
+            averageCPC.put(dateTime,averageCPC.getOrDefault(dateTime,0.0) + CPCvalue);
+        }
+        return averageCPC;
+    }
+
 
 }
