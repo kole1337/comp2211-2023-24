@@ -7,7 +7,7 @@ import java.util.*;
 public class ColumnSwitch {
     public static void switchColumns() {
         String inputFile = "/2_week_campaign_2/server_log.csv"; // Input file path
-        String outputFile = "output.csv"; // Output file path
+        String outputFile = "seg/src/main/resources/2_week_campaign_2/output.csv"; // Output file path
 
         InputStream inputStream = ColumnSwitch.class.getResourceAsStream(inputFile);
 

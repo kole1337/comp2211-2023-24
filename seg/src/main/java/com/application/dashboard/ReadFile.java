@@ -8,23 +8,25 @@ import java.util.List;
 import java.util.Map;
 
 public class ReadFile {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
         String file2 = "/2_week_campaign_2/impression_log.csv";
 
         InputStream inputStream = testFile.class.getResourceAsStream(file1);
         InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
 
-        String file3 = MergeCSV.main(inputStream, inputStream2); // Path to the first CSV file
-        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
+//        String file3 = "/2_week_campaign_2/merged.csv"; // Path to the first CSV file
+//        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
+        String file3 = MergeCSV.main(inputStream,inputStream2); // Path to the first CSV file
+        FileInputStream inputStream3 = new FileInputStream(file3);
 
         ColumnSwitch.switchColumns(); // Path to the second CSV file
 
 
         String file4 = "/2_week_campaign_2/output.csv"; // Output file path for merged CSV
-        InputStream inputStream4 = testFile.class.getResourceAsStream(file3);
+        InputStream inputStream4 = testFile.class.getResourceAsStream(file4);
 
-        String outputFile = "src/main/resources/2_week_campaign_2/merge.csv";
+        String outputFile = "seg/src/main/resources/2_week_campaign_2/merge.csv";
 
         // Read data from the first CSV file
         Map<String, String[]> data1 = readCSV(inputStream3);
@@ -36,8 +38,6 @@ public class ReadFile {
         // Merge the data based on the common ID column
         List<String[]> mergedData = mergeData(data1, data2);
 
-        // Get the headings from the first row of the merged data
-        //String[] headings = mergedData.isEmpty() ? new String[0] : mergedData.get(0);
 
         // Write the merged data into a new CSV file with headings
         writeCSV(outputFile, mergedData);
@@ -123,9 +123,6 @@ public class ReadFile {
         }
         System.out.println(columnLists);
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            // Write headings
-            // writer.println(String.join(",", headings));
-            // Write data rows
             for (String[] row : data) {
                 writer.println(String.join(",", row));
             }
