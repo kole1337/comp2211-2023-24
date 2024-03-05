@@ -11,7 +11,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 
 public class Graphs {
-    DatasetCreator dc = new DatasetCreator();
+    com.application.dashboard.DatasetCreator dc = new com.application.dashboard.DatasetCreator();
     // Define the date format used in the CSV file
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
@@ -26,21 +26,18 @@ public class Graphs {
     }
 
     private void createTotalClicksGraph(String time, Map<LocalDateTime, Integer> dataset) {
-        GraphGenerator gg = new GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
+        com.application.dashboard.GraphGenerator gg = new com.application.dashboard.GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
         gg.generateGraph();
     }
 
     private void createTotalImpressionsGraph(String time, Map<LocalDateTime, Integer> dataset) {
-        GraphGenerator gg = new GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
+        com.application.dashboard.GraphGenerator gg = new com.application.dashboard.GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
         gg.generateGraph();
     }
 
     public static void main(String[] args) {
         Graphs g = new Graphs();
-<<<<<<< HEAD
         g.createGraph("Conversions","hour");
-=======
         g.createGraph("TotalClicks", "hour");
->>>>>>> 3a2fd235ab0b9bd9d69be0e167a88295dc48d288
     }
 }

@@ -32,18 +32,13 @@ public class DatasetCreator {
             return createCountByTimeDataset(impressionsCsv, time);
         } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
-<<<<<<< HEAD
         }
         else if (graphName.equals("Conversions")){
             return createConversionsDataset(time);
         }
         else if (graphName.equals("TotalCost")){
             return createTotalCostDataset(clicksCsv,time);
-        }
-        else{
-=======
         } else {
->>>>>>> 3a2fd235ab0b9bd9d69be0e167a88295dc48d288
             return null;
         }
     }

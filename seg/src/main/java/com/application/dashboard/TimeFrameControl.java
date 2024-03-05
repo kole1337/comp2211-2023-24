@@ -3,6 +3,8 @@ package com.application.dashboard;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.List;
+
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import javafx.scene.control.ComboBox;
