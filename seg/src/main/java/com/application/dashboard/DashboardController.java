@@ -62,10 +62,13 @@ public class DashboardController {
     }
 
     public void loadCSV(ActionEvent actionEvent) {
-        Graphs gg = new Graphs();
-        gg.start();
+//        Graphs gg = new Graphs();
+//        gg.start();
 
-        GraphGenerator ggg = new GraphGenerator();
-        chartCSV = ggg.getFrame();
+//        GraphGenerator ggg = new GraphGenerator();
+//        chartCSV = ggg.getFrame();
+
+        TimeFrameControl tfc = new TimeFrameControl();
+        tfc.createTimeFrame();
     }
 }
