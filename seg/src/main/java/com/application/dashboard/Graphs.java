@@ -27,12 +27,12 @@ public class Graphs {
         createTotalClicksGraph(time, dc.createDataset(graphName, time));
     }
 
-    private void createTotalClicksGraph(String time, Map<LocalDateTime, Integer> dataset) {
+    private void createTotalClicksGraph(String time, Map<LocalDateTime, Double> dataset) {
         com.application.dashboard.GraphGenerator gg = new com.application.dashboard.GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
         gg.generateGraph();
     }
 
-    private void createTotalImpressionsGraph(String time, Map<LocalDateTime, Integer> dataset) {
+    private void createTotalImpressionsGraph(String time, Map<LocalDateTime, Double> dataset) {
         com.application.dashboard.GraphGenerator gg = new com.application.dashboard.GraphGenerator("Click By " + time, "Time", "Total Clicks", dataset);
         gg.generateGraph();
     }
@@ -44,7 +44,10 @@ public class Graphs {
         g.createGraph("TotalClicks", "hour");
     }
 
-//    public static void main(String[] args) {
-//        launch();
-//    }
+   public static void main(String[] args) {
+       Graphs g = new Graphs();
+       g.createGraph("Conversions","hour");
+       g.createGraph("TotalCost", "hour");
+       g.createGraph("TotalClicks", "hour");
+   }
 }

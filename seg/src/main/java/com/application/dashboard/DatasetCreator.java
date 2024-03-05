@@ -19,13 +19,13 @@ public class DatasetCreator {
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
     public DatasetCreator() {
-        this.clicksCsv = "src/main/resources/2_week_campaign_2/click_log.csv";
-        this.impressionsCsv = "src/main/resources/2_week_campaign_2/impression_log.csv";
-        this.serverCsv = "src/main/resources/2_week_campaign_2/server_log.csv";
+        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
 
     }
 
-    public Map<LocalDateTime, Integer> createDataset(String graphName, String time) {
+    public Map<LocalDateTime, Double> createDataset(String graphName, String time) {
         if (graphName.equals("TotalClicks")) {
             return createCountByTimeDataset(clicksCsv, time);
         } else if (graphName.equals("TotalImpressions")) {
@@ -43,8 +43,8 @@ public class DatasetCreator {
         }
     }
 
-    private Map<LocalDateTime, Integer> createCountByTimeDataset(String csvFile, String time) {
-        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+    private Map<LocalDateTime, Double> createCountByTimeDataset(String csvFile, String time) {
+        Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
@@ -65,7 +65,7 @@ public class DatasetCreator {
                         System.out.println("Enter a valid time period");
                         return countByTime;
                     }
-                    countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                    countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0.0) + 1);
                 }
             }
         } catch (IOException | CsvException e) {
@@ -74,9 +74,9 @@ public class DatasetCreator {
         return countByTime;
     }
 
-    private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time) {
+    private Map<LocalDateTime, Double> createUniqueClicksDataset(String time) {
         List<String> seen = new ArrayList<>();
-        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+        Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
@@ -100,7 +100,7 @@ public class DatasetCreator {
                             System.out.println("Enter a valid time period");
                             return countByTime;
                         }
-                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0.0) + 1);
                     }
                 }
             }
@@ -109,8 +109,8 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-    private Map<LocalDateTime, Integer> createConversionsDataset(String time) {
-        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+    private Map<LocalDateTime, Double> createConversionsDataset(String time) {
+        Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
@@ -132,7 +132,7 @@ public class DatasetCreator {
                             System.out.println("Enter a valid time period");
                             return countByTime;
                         }
-                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + 1);
+                        countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0.0) + 1);
                     }
                 }
             }
@@ -141,8 +141,8 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-    private Map<LocalDateTime, Integer> createTotalCostDataset(String csvFile, String time) {
-        Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
+    private Map<LocalDateTime, Double> createTotalCostDataset(String csvFile, String time) {
+        Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
@@ -163,7 +163,7 @@ public class DatasetCreator {
                         System.out.println("Enter a valid time period");
                         return countByTime;
                     }
-                    countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0) + Integer.valueOf(cost));
+                    countByTime.put(roundedDate, countByTime.getOrDefault(roundedDate, 0.0) + Double.valueOf(cost));
                 }
             }
         } catch (IOException | CsvException e) {
@@ -171,4 +171,5 @@ public class DatasetCreator {
         }
         return countByTime;
     }
+
 }
