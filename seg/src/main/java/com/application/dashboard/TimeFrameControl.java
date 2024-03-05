@@ -23,7 +23,7 @@ import javafx.scene.control.Alert;
 
 
 
-public class TimeFrameControl extends DatasetCreator{
+public class TimeFrameControl extends DatasetCreator {
     /**
      * This is a VBox that
      */

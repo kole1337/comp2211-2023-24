@@ -1,5 +1,8 @@
 package com.application.dashboard;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,15 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
 import org.jfree.chart.ChartFrame;
 
 import javax.swing.*;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +34,7 @@ public class DashboardController {
     public MenuItem logoutMenuItem;
     public ChartFrame chartCSV;
     public Label test;
+    public Label uniqueImpressionLabel;
 
     private Stage stage;
     private Scene scene;
@@ -62,13 +66,99 @@ public class DashboardController {
     }
 
     public void loadCSV(ActionEvent actionEvent) {
-//        Graphs gg = new Graphs();
-//        gg.start();
+        loadingBar();
+        Graphs gg = new Graphs();
+        gg.start();
 
 //        GraphGenerator ggg = new GraphGenerator();
 //        chartCSV = ggg.getFrame();
-
         TimeFrameControl tfc = new TimeFrameControl();
         tfc.createTimeFrame();
+        uniqueImpressionLabel.setText("UniqueImpressions: " + countUniques());
+    }
+
+    public int countUniques(){
+//        Alert errorAlert = new Alert(Alert.AlertType.INFORMATION);
+//        errorAlert.setHeaderText("Loading");
+//        errorAlert.setContentText("Loading");
+//        errorAlert.show();
+
+        String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
+        int totalEntries = 0;
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+
+
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                // Check if the line has enough columns
+                if (columnIndex < nextLine.length) {
+                    // Get the value of the specified column
+                    String columnValue = nextLine[columnIndex];
+                    System.out.println("Column Value: " + columnValue);
+
+                    // Increment the total entries
+                    totalEntries++;
+                } else {
+                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
+                }
+            }
+
+            System.out.println("Total Entries in Column: " + totalEntries);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        //errorAlert.hide();
+        return totalEntries;
+    }
+
+    public void loadingBar(){
+        ButtonType cancelButtonType = new ButtonType("Cancel");
+
+        Dialog<ButtonType> progressDialog = new Dialog<>();
+        progressDialog.setTitle("Progress Dialog");
+        progressDialog.setHeaderText("Please wait...");
+
+        ProgressBar progressBar = new ProgressBar();
+        StackPane stackPane = new StackPane(progressBar);
+        progressDialog.getDialogPane().setContent(stackPane);
+
+        progressDialog.getDialogPane().getButtonTypes().addAll(cancelButtonType);
+
+        // Handle cancel button action
+        progressDialog.setOnCloseRequest(dialogEvent -> {
+            // Handle cancellation logic if needed
+            System.out.println("Progress canceled");
+        });
+
+        // Create a task for simulating a time-consuming operation
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                for (int i = 0; i <= 100; i++) {
+                    updateProgress(i, 100);
+                    Thread.sleep(50); // Simulate some work being done
+                }
+                return null;
+            }
+        };
+
+        // Bind the ProgressBar's progress property to the Task's progress property
+        progressBar.progressProperty().bind(task.progressProperty());
+
+        // Set up a timeline to close the dialog after the task is completed
+        task.setOnSucceeded(event -> progressDialog.setResult(ButtonType.OK));
+
+        // Show the dialog
+        progressDialog.show();
+
+        // Start the task in a new thread
+        new Thread(task).start();
+    }
+
+
+    public void clearData(ActionEvent actionEvent) {
+
     }
 }
