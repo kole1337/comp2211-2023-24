@@ -24,17 +24,18 @@ import javafx.scene.control.Alert;
 
 
 public class TimeFrameControl extends DatasetCreator{
-
-
+    /**
+     * This is a VBox that
+     */
     private VBox timeControlVBox = new VBox ();
-    DatePicker fromDate = new DatePicker();
-    ComboBox<String> fromHour = new ComboBox<>();
-    ComboBox<String> fromMinute = new ComboBox<>();
-    ComboBox<String> fromSecond = new ComboBox<>();
-    DatePicker toDate = new DatePicker();
-    ComboBox<String> toHour = new ComboBox<>();
-    ComboBox<String> toMinute = new ComboBox<>();
-    ComboBox<String> toSecond = new ComboBox<>();
+    private DatePicker fromDate = new DatePicker();
+    private ComboBox<String> fromHour = new ComboBox<>();
+    private ComboBox<String> fromMinute = new ComboBox<>();
+    private ComboBox<String> fromSecond = new ComboBox<>();
+    private DatePicker toDate = new DatePicker();
+    private ComboBox<String> toHour = new ComboBox<>();
+    private ComboBox<String> toMinute = new ComboBox<>();
+    private ComboBox<String> toSecond = new ComboBox<>();
 
 
     public TimeFrameControl() {
@@ -53,13 +54,12 @@ public class TimeFrameControl extends DatasetCreator{
     }
 
     public void createTimeFrame(){
-        Label prompt = new Label("Select the date and time from - to -");
-        timeControlVBox.getChildren().add(prompt);
+
 
         // DatePicker for "from" date
 
         setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
-        HBox fromTimeHBox = new HBox(fromHour,fromMinute, fromSecond);
+        HBox fromTimeHBox = new HBox(fromHour,new Label (":"), fromMinute, new Label (":"), fromSecond);
 
 
         // Adding components fo HBox h = new HBox(fromHour,fromMinute, fromSecond);r "from" date and time selection
@@ -67,22 +67,23 @@ public class TimeFrameControl extends DatasetCreator{
 
         // DatePicker for "to" date
         setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
-        HBox toTime= new HBox(toHour, toMinute, toSecond);
+        HBox toTime= new HBox(toHour,new Label (":"), toMinute,new Label (":"), toSecond);
 
         // Adding components for "to" date and time selection
         timeControlVBox.getChildren().addAll(new Label("End Date and Time:"), toDate, toTime);
 
 
 
-        // Add a button that shows the selected datetime range when clicked
+        // Add a button that shows chart based on the selected datetime range when clicked
         Button showRangeButton = new Button("Show");
         showRangeButton.setOnAction(e -> {
             LocalDateTime fromDateTime = LocalDateTime.of(fromDate.getValue(), LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()), Integer.parseInt(fromSecond.getValue())));
             LocalDateTime toDateTime = LocalDateTime.of(toDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
 
             // chart display here
+            // add method here
         });
-        timeControlVBox.getChildren().add(showRangeButton); // Add the button to your TilePane
+        timeControlVBox.getChildren().add(showRangeButton);
     }
 
     private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
