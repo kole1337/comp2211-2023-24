@@ -5,7 +5,7 @@ public class FilePathHandler {
     private String impressionPath;
     private String serverPath;
 
-    public void setCsvPath(String csvPath) {
+    public void setClickPath(String csvPath) {
         this.clickPath = csvPath;
     }
 
