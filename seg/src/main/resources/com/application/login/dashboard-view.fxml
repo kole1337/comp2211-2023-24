@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
@@ -11,6 +10,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -56,17 +56,22 @@
       </Label>
       <AreaChart fx:id="dataChart" layoutX="200.0" layoutY="117.0" prefHeight="588.0" prefWidth="845.0">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
           <NumberAxis side="LEFT" />
         </yAxis>
       </AreaChart>
+      <ScrollPane fx:id="scrollDataPane" layoutX="230.0" layoutY="127.0" prefHeight="565.0" prefWidth="815.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+        </content>
+      </ScrollPane>
       <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="300.0" prefWidth="178.0">
          <children>
             <Label text="Filters" visible="true" />
          </children>
-
+          
       </VBox>
       <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
          <children>

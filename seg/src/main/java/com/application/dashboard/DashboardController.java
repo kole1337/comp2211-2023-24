@@ -31,8 +31,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +46,6 @@ import java.util.logging.Logger;
  * */
 
 public class DashboardController {
-    public MenuItem logoutMenuItem;
     public ChartFrame chartCSV;
     public Label test;
     public Label uniqueImpressionLabel;
@@ -56,6 +57,7 @@ public class DashboardController {
     public VBox filterSelection;
     public VBox dataSelection;
     public Button loadCSVbutton;
+    public ScrollPane scrollDataPane;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -108,7 +110,7 @@ public class DashboardController {
     }
 
     public void loadGraph(){
-        //dataChart.set
+
     }
 
 
@@ -141,27 +143,15 @@ public class DashboardController {
     }
 
     public int countTotalImpressions(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading Total Impressions");
         String filePath = fph.getImpressionPath(); // Nikola - PC
-        int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
         int totalEntries = 0;
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
 
             // Read each line from the CSV file
             while ((nextLine = reader.readNext()) != null) {
-                // Check if the line has enough columns
-//                if (columnIndex < nextLine.length) {
-//                    // Get the value of the specified column
-//                    String columnValue = nextLine[columnIndex];
-//                    //System.out.println("Column Value: " + columnValue);
-//
-//                    // Increment the total entries
-//
-//                } else {
-//                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
-//                }
                 totalEntries++;
             }
 
