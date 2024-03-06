@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +44,7 @@ public class DashboardController {
     public Label test;
     public Label uniqueImpressionLabel;
     public PieChart genderGraph;
-    public FilePathHandler filePathHandler = new FilePathHandler();
+    private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
     private Stage stage;
@@ -99,7 +100,7 @@ public class DashboardController {
 //        errorAlert.show();
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading Uniques");
-        String filePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv"; // Nikola - PC
+        String filePath = fph.getImpressionPath(); // Nikola - PC
         //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
         int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
         int totalEntries = 0;
@@ -178,7 +179,7 @@ public class DashboardController {
         int males = 0;
         int females = 0;
         int unspec = 0;
-        String filePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv"; // Nikola - PC
+        String filePath = fph.getImpressionPath(); // Nikola - PC
         //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
         int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
 
@@ -240,9 +241,12 @@ public class DashboardController {
 //        File selectedFile = fileChooser.showOpenDialog(stage);
 //        System.out.println(selectedFile);
         FileChooser fc = new FileChooser();
+        String [] paths = new String[3];
         for (int i = 0; i < 3; i++) {
-            fc.main();
+            paths[i] = fc.main();
         }
-
+        fph.setCsvPath(paths[0]);
+        fph.setImpressionPath(paths[1]);
+        fph.setServerPath(paths[2]);
     }
 }

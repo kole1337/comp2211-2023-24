@@ -4,14 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-
+//import javafx.stage.FileChooser;
 public class FileChooser {
 
     private FilePathHandler pathHandler = new FilePathHandler();
     public static String main() {
         // Open file chooser dialog
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("sex");
+        fileChooser.setDialogTitle("Select file");
         int returnValue = fileChooser.showOpenDialog(null);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
