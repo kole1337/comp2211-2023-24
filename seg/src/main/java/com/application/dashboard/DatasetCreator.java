@@ -1,5 +1,6 @@
 package com.application.dashboard;
 
+import com.application.files.FilePathHandler;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.jfree.data.time.Hour;
@@ -13,6 +14,8 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 
 public class DatasetCreator {
+    private FilePathHandler fph = new FilePathHandler();
+
     String clicksCsv;
     String impressionsCsv;
     String serverCsv;
@@ -21,9 +24,12 @@ public class DatasetCreator {
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
     public DatasetCreator() {
-        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
-        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
-        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+//        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+//        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+//        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+        this.clicksCsv = fph.getClickPath();
+        this.impressionsCsv = fph.getImpressionPath();
+        this.serverCsv = fph.getServerPath();
 
     }
 

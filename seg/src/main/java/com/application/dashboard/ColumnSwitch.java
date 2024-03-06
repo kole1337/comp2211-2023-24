@@ -1,10 +1,13 @@
 package com.application.dashboard;
 
 
+import com.application.files.FilePathHandler;
+
 import java.io.*;
 import java.util.*;
 
 public class ColumnSwitch {
+    FilePathHandler fph = new FilePathHandler();
     public static String switchColumns(String inputFile) {
         //String inputFile = "/2_week_campaign_2/server_log.csv"; // Input file path
         String outputFile = "seg/src/main/resources/2_week_campaign_2/output.csv"; // Output file path

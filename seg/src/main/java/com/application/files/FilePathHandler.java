@@ -1,12 +1,12 @@
 package com.application.files;
 
 public class FilePathHandler {
-    private String csvPath;
+    private String clickPath;
     private String impressionPath;
     private String serverPath;
 
-    public void setCsvPath(String csvPath) {
-        this.csvPath = csvPath;
+    public void setClickPath(String csvPath) {
+        this.clickPath = csvPath;
     }
 
     public void setImpressionPath(String impressionPath) {
@@ -17,8 +17,8 @@ public class FilePathHandler {
         this.serverPath = serverPath;
     }
 
-    public String getCsvPath() {
-        return csvPath;
+    public String getClickPath() {
+        return clickPath;
     }
 
     public String getImpressionPath() {

@@ -5,12 +5,14 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -41,37 +43,26 @@
 
         </menus>
       </MenuBar>
-      <Button fx:id="loadCSVbutton" layoutX="14.0" layoutY="693.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="52.0" prefWidth="178.0" text="Load CSV">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font></Button>
       <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-      <Slider layoutX="27.0" layoutY="140.0" />
-      <Label layoutX="67.0" layoutY="117.0" text="Time frame" />
-      <Label fx:id="uniqueImpressionLabel" layoutX="250.0" layoutY="37.0" text="Unique impressions:">
+      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
+      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
+      <Label fx:id="uniqueImpressionLabel" layoutX="205.0" layoutY="38.0" text="Unique impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="uniqueImpressionLabel1" layoutX="250.0" layoutY="76.0" text="Total impressions:">
+      <Label fx:id="sumImpressionsLabel" layoutX="205.0" layoutY="77.0" text="Total impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <AreaChart layoutX="200.0" layoutY="117.0" prefHeight="588.0" prefWidth="845.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </AreaChart>
-      <VBox layoutX="16.0" layoutY="403.0" prefHeight="300.0" prefWidth="178.0">
+      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
          <children>
-            <Label text="Filters" />
+            <Label text="Filters" visible="true" />
          </children>
+          
       </VBox>
-      <VBox layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
          <children>
             <Label text="Data to view">
                <opaqueInsets>
@@ -93,7 +84,7 @@
             <Insets />
          </opaqueInsets>
       </VBox>
-      <PieChart fx:id="genderGraph" layoutX="995.0" layoutY="9.0" prefHeight="300.0" prefWidth="357.0" />
+      <PieChart fx:id="genderGraph" layoutX="940.0" layoutY="9.0" prefHeight="333.0" prefWidth="412.0" title="Gender Graph" />
       <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1366.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@D:\year2\seg\comp2211\tutorial.png" />
@@ -103,5 +94,41 @@
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Button>
+      <Button fx:id="loadCSVbutton" layoutX="16.0" layoutY="706.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Clicks">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <Label fx:id="totalClicks" layoutX="488.0" layoutY="44.0" text="Total Clicks" />
+      <Label fx:id="avgClickPrice" layoutX="488.0" layoutY="83.0" text="Average price per click" />
+      <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Impressions">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="loadCSVbutton2" layoutX="16.0" layoutY="781.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Server Log">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <StackedBarChart fx:id="genderBarChart" layoutX="1078.0" layoutY="403.0" prefHeight="400.0" prefWidth="277.0" title="Gender Graph" visible="false">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </StackedBarChart>
+      <ScrollPane layoutX="205.0" layoutY="137.0" prefHeight="670.0" prefWidth="697.0">
+         <content>
+            <AreaChart fx:id="dataChart" prefHeight="668.0" prefWidth="1186.0">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </AreaChart>
+         </content></ScrollPane>
    </children>
 </AnchorPane>
