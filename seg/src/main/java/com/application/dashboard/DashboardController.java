@@ -76,15 +76,19 @@ public class DashboardController {
     }
 
     public void loadCSV(ActionEvent actionEvent) {
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "loadCSV button");
         loadingBar();
         Graphs gg = new Graphs();
         gg.createGraph("TotalClicks","hour");
 
 //        GraphGenerator ggg = new GraphGenerator();
-//        chartCSV = ggg.getFrame();
-        TimeFrameControl tfc = new TimeFrameControl();
-        tfc.createTimeFrame();
-        uniqueImpressionLabel.setText("UniqueImpressions: " + countUniques());
+//        ggg.generateGraph();
+
+
+//        TimeFrameControl tfc = new TimeFrameControl();
+//        tfc.createTimeFrame();
+        uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
         loadGenders();
     }
 
@@ -93,7 +97,8 @@ public class DashboardController {
 //        errorAlert.setHeaderText("Loading");
 //        errorAlert.setContentText("Loading");
 //        errorAlert.show();
-
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading Uniques");
         String filePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv"; // Nikola - PC
         //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
         int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
@@ -188,7 +193,7 @@ public class DashboardController {
                     // Get the value of the specified column
                     String columnValue = nextLine[columnIndex];
                     //System.out.println("Column Value: " + columnValue);
-                    System.out.println(columnValue);
+                    //System.out.println(columnValue);
                     // Increment the total entries
                     if(columnValue.equals("Female")) {
                         females ++;

@@ -34,7 +34,7 @@ public class GraphGenerator {
     }
 
     public GraphGenerator() {
-        generateGraph();
+        //generateGraph();
     }
 
     public String getTitle() {

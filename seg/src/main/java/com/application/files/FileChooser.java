@@ -1,4 +1,4 @@
-package com.application.dashboard;
+package com.application.files;
 
 import javax.swing.*;
 import java.awt.*;
