@@ -103,4 +103,8 @@ public class Graphs {
         GraphGenerator gg = new GraphGenerator("Bounce Rate By " + time, "Time", "Bounce Rate", dataset);
         gg.generateGraph();
     }
+    public static void main(String[] args){
+        Graphs g = new Graphs();
+        g.createGraph("TotalClicks","hour");
+    }
 }

@@ -21,9 +21,9 @@ public class DatasetCreator {
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
     public DatasetCreator() {
-        this.clicksCsv = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
-        this.impressionsCsv = "/seg/src/main/resources/2_week_campaign_2/impression_log.csv";
-        this.serverCsv = "/seg/src/main/resources/2_week_campaign_2/server_log.csv";
+        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
+        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
+        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
 
     }
 
