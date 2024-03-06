@@ -24,7 +24,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem  mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
+              <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
             </items>
           </Menu>
 <!--          <Menu mnemonicParsing="false" text="Edit">-->
@@ -45,7 +45,7 @@
          <font>
             <Font name="System Bold" size="20.0" />
          </font></Button>
-      <Button fx:id="logoutButton" layoutX="132.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
+      <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
       <Slider layoutX="27.0" layoutY="140.0" />
       <Label layoutX="67.0" layoutY="117.0" text="Time frame" />
       <Label fx:id="uniqueImpressionLabel" layoutX="250.0" layoutY="37.0" text="Unique impressions:">

@@ -1,5 +1,6 @@
 package com.application.dashboard;
 
+import com.application.files.FileChooser;
 import com.application.files.FilePathHandler;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -19,7 +20,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Arc;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import org.jfree.chart.ChartFrame;
@@ -76,7 +76,7 @@ public class DashboardController {
     }
 
     public void loadCSV(ActionEvent actionEvent) {
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
         Graphs gg = new Graphs();
@@ -236,8 +236,13 @@ public class DashboardController {
     }
 
     public void openCampaign(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        System.out.println(selectedFile);
+//        FileChooser fileChooser = new FileChooser();
+//        File selectedFile = fileChooser.showOpenDialog(stage);
+//        System.out.println(selectedFile);
+        FileChooser fc = new FileChooser();
+        for (int i = 0; i < 3; i++) {
+            fc.main();
+        }
+
     }
 }

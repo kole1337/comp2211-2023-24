@@ -6,9 +6,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileChooser {
-    public static String main(String[] args) {
+
+    private FilePathHandler pathHandler = new FilePathHandler();
+    public static String main() {
         // Open file chooser dialog
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("sex");
         int returnValue = fileChooser.showOpenDialog(null);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {

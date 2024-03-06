@@ -12,10 +12,10 @@ import java.util.Map;
 public class ReadFile {
     public static void main(String[] args) throws FileNotFoundException {
         //String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
-        String file1 = FileChooser.main(new String [0]);
+        String file1 = FileChooser.main();
 
         //String file2 = "/2_week_campaign_2/impression_log.csv";
-        String file2 = FileChooser.main(new String [0]);
+        String file2 = FileChooser.main();
         //InputStream inputStream = testFile.class.getResourceAsStream(file1);
        // InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
 
@@ -23,7 +23,7 @@ public class ReadFile {
 //        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
         String file3 = MergeCSV.main(file1,file2); // Path to the first CSV file
         //FileInputStream inputStream3 = new FileInputStream(file3);
-        String file5 = FileChooser.main(new String [0]);
+        String file5 = FileChooser.main();
         ColumnSwitch.switchColumns(file5); // Path to the second CSV file
 
 

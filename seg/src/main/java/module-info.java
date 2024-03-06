@@ -18,4 +18,5 @@ module com.example.seg {
     exports com.application.login;
     exports com.application.dashboard;
     exports com.application.files;
+    exports com.application.admin;
 }
