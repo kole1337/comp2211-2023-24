@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
@@ -11,47 +12,53 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<AnchorPane prefHeight="820.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="logoutMenuItem" mnemonicParsing="false" onAction="#logoutAction" text="Logout" />
+              <MenuItem  mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
+<!--          <Menu mnemonicParsing="false" text="Edit">-->
+<!--            <items>-->
+<!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
+<!--            </items>-->
+<!--          </Menu>-->
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Tutorial" />
+              <MenuItem mnemonicParsing="false" text="Documentation" />
             </items>
           </Menu>
+
         </menus>
       </MenuBar>
-      <Button fx:id="loadCSVbutton" layoutX="716.0" layoutY="644.0" mnemonicParsing="false" onAction="#loadCSV" text="Load CSV" />
+      <Button fx:id="loadCSVbutton" layoutX="14.0" layoutY="693.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="52.0" prefWidth="178.0" text="Load CSV">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font></Button>
       <Button fx:id="logoutButton" layoutX="132.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
       <Slider layoutX="27.0" layoutY="140.0" />
       <Label layoutX="67.0" layoutY="117.0" text="Time frame" />
-      <Label fx:id="uniqueImpressionLabel" layoutX="259.0" layoutY="96.0" text="Unique impressions:">
+      <Label fx:id="uniqueImpressionLabel" layoutX="250.0" layoutY="37.0" text="Unique impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="clearDataButton" layoutX="843.0" layoutY="644.0" mnemonicParsing="false" onAction="#clearData" text="Clear data" />
-      <Label fx:id="uniqueImpressionLabel1" layoutX="259.0" layoutY="132.0" text="Total impressions:">
+      <Label fx:id="uniqueImpressionLabel1" layoutX="250.0" layoutY="76.0" text="Total impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <AreaChart layoutX="192.0" layoutY="191.0" prefHeight="442.0" prefWidth="882.0">
+      <AreaChart layoutX="200.0" layoutY="117.0" prefHeight="588.0" prefWidth="845.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -86,5 +93,15 @@
             <Insets />
          </opaqueInsets>
       </VBox>
+      <PieChart fx:id="genderGraph" layoutX="995.0" layoutY="9.0" prefHeight="300.0" prefWidth="357.0" />
+      <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1366.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@D:\year2\seg\comp2211\tutorial.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Button>
    </children>
 </AnchorPane>

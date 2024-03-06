@@ -1,7 +1,10 @@
 package com.application.dashboard;
 
+import com.application.files.FilePathHandler;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,15 +13,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Arc;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import org.jfree.chart.ChartFrame;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -35,7 +42,10 @@ public class DashboardController {
     public ChartFrame chartCSV;
     public Label test;
     public Label uniqueImpressionLabel;
-
+    public PieChart genderGraph;
+    public FilePathHandler filePathHandler = new FilePathHandler();
+    public ImageView tutPNG;
+    public Button tutorialOFF;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -68,13 +78,14 @@ public class DashboardController {
     public void loadCSV(ActionEvent actionEvent) {
         loadingBar();
         Graphs gg = new Graphs();
-        gg.start();
+        gg.createGraph("TotalClicks","hour");
 
 //        GraphGenerator ggg = new GraphGenerator();
 //        chartCSV = ggg.getFrame();
         TimeFrameControl tfc = new TimeFrameControl();
         tfc.createTimeFrame();
         uniqueImpressionLabel.setText("UniqueImpressions: " + countUniques());
+        loadGenders();
     }
 
     public int countUniques(){
@@ -83,7 +94,8 @@ public class DashboardController {
 //        errorAlert.setContentText("Loading");
 //        errorAlert.show();
 
-        String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        String filePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv"; // Nikola - PC
+        //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
         int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
         int totalEntries = 0;
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
@@ -96,7 +108,7 @@ public class DashboardController {
                 if (columnIndex < nextLine.length) {
                     // Get the value of the specified column
                     String columnValue = nextLine[columnIndex];
-                    System.out.println("Column Value: " + columnValue);
+                    //System.out.println("Column Value: " + columnValue);
 
                     // Increment the total entries
                     totalEntries++;
@@ -157,8 +169,70 @@ public class DashboardController {
         new Thread(task).start();
     }
 
+    public void loadGenders(){
+        int males = 0;
+        int females = 0;
+        int unspec = 0;
+        String filePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv"; // Nikola - PC
+        //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
 
-    public void clearData(ActionEvent actionEvent) {
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
 
+
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                // Check if the line has enough columns
+                if (columnIndex < nextLine.length) {
+                    // Get the value of the specified column
+                    String columnValue = nextLine[columnIndex];
+                    //System.out.println("Column Value: " + columnValue);
+                    System.out.println(columnValue);
+                    // Increment the total entries
+                    if(columnValue.equals("Female")) {
+                        females ++;
+                    } else if(columnValue.equals("Male")) {
+                        males ++;
+                    }else unspec++;
+                } else {
+                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
+                }
+            }
+
+            System.out.println("Females: " + females + "; Males: " + males);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        //errorAlert.hide();
+
+        String maleLabel = "Males: " + males;
+        String femaleLabel = "Females: " + females;
+        String unsepcLabel = "Unspecified: " + unspec;
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data(femaleLabel, females),
+                new PieChart.Data(maleLabel, males),
+                new PieChart.Data(unsepcLabel, unspec));
+        genderGraph.setTitle("Gender Graph");
+        genderGraph.setLabelLineLength(20);
+        genderGraph.setLabelsVisible(true);
+        genderGraph.setData(pieChartData);
+    }
+
+    public void loadTutorial(ActionEvent actionEvent) {
+        tutPNG.setVisible(true);
+        tutorialOFF.setVisible(true);
+
+    }
+
+    public void disableTutPNG(ActionEvent actionEvent) {
+        tutorialOFF.setVisible(false);
+        tutPNG.setVisible(false);
+    }
+
+    public void openCampaign(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        System.out.println(selectedFile);
     }
 }
