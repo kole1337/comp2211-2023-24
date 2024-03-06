@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.*;
 
 public class MergeCSV {
-    public static String main(InputStream file1, InputStream file2) {
+    public static String main(String file1, String file2) {
         //String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
         //String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
-        String outputFile = "merged.csv"; // Output file path for merged CSV
+        String outputFile = "seg/src/main/resources/2_week_campaign_2/merged.csv"; // Output file path for merged CSV
         //add
 
 
@@ -21,8 +21,6 @@ public class MergeCSV {
         // Merge the data based on the common ID column
         List<String[]> mergedData = mergeData(data1, data2);
 
-        // Get the headings from the first row of the merged data
-        //String[] headings = mergedData.isEmpty() ? new String[0] : mergedData.get(0);
 
         // Write the merged data into a new CSV file with headings
         writeCSV(outputFile, mergedData);
@@ -30,9 +28,9 @@ public class MergeCSV {
     }
 
     // Read data from a CSV file and store it in a map with the ID column as key
-    private static Map<String, String[]> readCSV(InputStream filename) {
+    private static Map<String, String[]> readCSV(String filename) {
         Map<String, String[]> data = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(filename))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
@@ -72,9 +70,7 @@ public class MergeCSV {
                 new BufferedWriter(
                         new OutputStreamWriter(
                                 new FileOutputStream(filename))))) {
-            // Write headings
-            // writer.println(String.join(",", headings));
-            // Write data rows
+
             for (String[] row : data) {
                 writer.println(String.join(",", row));
             }
