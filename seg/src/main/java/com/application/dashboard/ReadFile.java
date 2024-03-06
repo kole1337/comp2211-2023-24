@@ -9,31 +9,33 @@ import java.util.Map;
 
 public class ReadFile {
     public static void main(String[] args) throws FileNotFoundException {
-        String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
-        String file2 = "/2_week_campaign_2/impression_log.csv";
+        //String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
+        String file1 = FileChooser.main(new String [0]);
 
-        InputStream inputStream = testFile.class.getResourceAsStream(file1);
-        InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
+        //String file2 = "/2_week_campaign_2/impression_log.csv";
+        String file2 = FileChooser.main(new String [0]);
+        //InputStream inputStream = testFile.class.getResourceAsStream(file1);
+       // InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
 
 //        String file3 = "/2_week_campaign_2/merged.csv"; // Path to the first CSV file
 //        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
-        String file3 = MergeCSV.main(inputStream,inputStream2); // Path to the first CSV file
-        FileInputStream inputStream3 = new FileInputStream(file3);
+        String file3 = MergeCSV.main(file1,file2); // Path to the first CSV file
+        //FileInputStream inputStream3 = new FileInputStream(file3);
+        String file5 = FileChooser.main(new String [0]);
+        ColumnSwitch.switchColumns(file5); // Path to the second CSV file
 
-        ColumnSwitch.switchColumns(); // Path to the second CSV file
 
-
-        String file4 = "/2_week_campaign_2/output.csv"; // Output file path for merged CSV
+        String file4 = ColumnSwitch.switchColumns(file5);; // Output file path for merged CSV
         InputStream inputStream4 = testFile.class.getResourceAsStream(file4);
 
         String outputFile = "seg/src/main/resources/2_week_campaign_2/merge.csv";
 
         // Read data from the first CSV file
-        Map<String, String[]> data1 = readCSV(inputStream3);
+        Map<String, String[]> data1 = readCSV(file3);
         //System.out.println(data1);
 
         // Read data from the second CSV file
-        Map<String, String[]> data2 = readCSV2(inputStream4);
+        Map<String, String[]> data2 = readCSV2(file4);
 
         // Merge the data based on the common ID column
         List<String[]> mergedData = mergeData(data1, data2);
@@ -45,10 +47,10 @@ public class ReadFile {
     }
 
     // Read data from a CSV file and store it in a map with the ID column as key
-    private static Map<String, String[]> readCSV(InputStream streamPath) {
+    private static Map<String, String[]> readCSV(String streamPath) {
         Map<String, String[]> data = new HashMap<>();
         //        try (BufferedReader reader = new BufferedReader(new InputStreamReader(streamPath))) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(streamPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(streamPath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
@@ -61,9 +63,9 @@ public class ReadFile {
         return data;
     }
 
-    private static Map<String, String[]> readCSV2(InputStream streamPath) {
+    private static Map<String, String[]> readCSV2(String streamPath) {
         Map<String, String[]> data = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(streamPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(streamPath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated

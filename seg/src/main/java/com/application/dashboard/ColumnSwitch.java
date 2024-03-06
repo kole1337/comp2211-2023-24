@@ -5,13 +5,13 @@ import java.io.*;
 import java.util.*;
 
 public class ColumnSwitch {
-    public static void switchColumns() {
-        String inputFile = "/2_week_campaign_2/server_log.csv"; // Input file path
+    public static String switchColumns(String inputFile) {
+        //String inputFile = "/2_week_campaign_2/server_log.csv"; // Input file path
         String outputFile = "seg/src/main/resources/2_week_campaign_2/output.csv"; // Output file path
 
         InputStream inputStream = ColumnSwitch.class.getResourceAsStream(inputFile);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile));
              BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)))) {
 
             String line;
@@ -30,7 +30,7 @@ public class ColumnSwitch {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+         return outputFile;
         // Return the path to the output file
     }
 }
