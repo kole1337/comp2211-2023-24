@@ -68,11 +68,8 @@ public class DashboardController {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
-        Graphs gg = new Graphs();
-        
+        Graphs gg = new Graphs(fph);
         gg.main();
-
-
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());

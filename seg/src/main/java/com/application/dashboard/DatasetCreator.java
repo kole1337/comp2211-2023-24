@@ -23,10 +23,11 @@ public class DatasetCreator {
     LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
     LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
-    public DatasetCreator() {
+    public DatasetCreator(FilePathHandler fph) {
 //        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
 //        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
 //        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
+        this.fph = fph;
         this.clicksCsv = fph.getClickPath();
         this.impressionsCsv = fph.getImpressionPath();
         this.serverCsv = fph.getServerPath();
@@ -74,7 +75,7 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = date;
                 }
-                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = date;
                 }
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
@@ -84,7 +85,7 @@ public class DatasetCreator {
                     } else if (time.equals("day")) {
                         roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                     } else if (time.equals("week")) {
-                        roundedDate = startDayForWeek;
+                        roundedDate = startDayForWeek.withHour(0).withMinute(0).withSecond(0);
                     } else {
                         System.out.println("Enter a valid time period");
                         return countByTime;
@@ -112,7 +113,7 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = date;
                 }
-                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = date;
                 }
                 if (!seen.contains(id)) {
@@ -152,7 +153,7 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = date;
                 }
-                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = date;
                 }
                 if (conversion.equals("Yes")) {
@@ -163,7 +164,7 @@ public class DatasetCreator {
                         } else if (time.equals("day")) {
                             roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                         } else if (time.equals("week")) {
-                            roundedDate = startDayForWeek;
+                            roundedDate = startDayForWeek.withHour(0).withMinute(0).withSecond(0);
                         } else {
                             System.out.println("Enter a valid time period");
                             return countByTime;
@@ -191,7 +192,7 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = date;
                 }
-                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = date;
                 }
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
@@ -201,7 +202,7 @@ public class DatasetCreator {
                     } else if (time.equals("day")) {
                         roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                     } else if (time.equals("week")) {
-                        roundedDate = startDayForWeek;
+                        roundedDate = startDayForWeek.withHour(0).withMinute(0).withSecond(0);
                     } else {
                         System.out.println("Enter a valid time period");
                         return countByTime;
@@ -243,21 +244,25 @@ public class DatasetCreator {
         Map<LocalDateTime, Double> averageCPA = new TreeMap<>();
         for (Map.Entry<LocalDateTime, Double> entry : totalCost.entrySet()) {
             LocalDateTime dateTime = entry.getKey();
-            Double CPCvalue = totalCost.get(dateTime)/ totalAcquisitions.get(dateTime);
-            averageCPA.put(dateTime,averageCPA.getOrDefault(dateTime,0.0) + CPCvalue);
+            if(totalCost.get(dateTime) != null && totalAcquisitions.get(dateTime) != null){
+                Double CPAvalue = totalCost.get(dateTime)/ totalAcquisitions.get(dateTime);
+                averageCPA.put(dateTime,averageCPA.getOrDefault(dateTime,0.0) + CPAvalue);
+            }
         }
         return averageCPA;
     }
     private Map<LocalDateTime, Double> createCPMDataset(String time) {
         Map<LocalDateTime, Double> totalCost = createTotalCostDataset(time);
         Map<LocalDateTime, Double> totalAcquisitions = createConversionsDataset(time);
-        Map<LocalDateTime, Double> averageCPM = new TreeMap<>();
+        Map<LocalDateTime, Double> averageCPA = new TreeMap<>();
         for (Map.Entry<LocalDateTime, Double> entry : totalCost.entrySet()) {
             LocalDateTime dateTime = entry.getKey();
-            Double CPCvalue = totalCost.get(dateTime)/ totalAcquisitions.get(dateTime);
-            averageCPM.put(dateTime,averageCPM.getOrDefault(dateTime,0.0) + CPCvalue);
+            if(totalCost.get(dateTime) != null && totalAcquisitions.get(dateTime) != null){
+                Double CPAvalue = totalCost.get(dateTime)/ totalAcquisitions.get(dateTime);
+                averageCPA.put(dateTime,averageCPA.getOrDefault(dateTime,0.0) + CPAvalue);
+            }
         }
-        return averageCPM;
+        return averageCPA;
     }
     private Map<LocalDateTime, Double> createBounceDataset(String time) {
         Map<LocalDateTime, Double> bounceCount = new TreeMap<>();
@@ -271,7 +276,7 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = enterTime;
                 }
-                if(Duration.between(startDayForWeek,enterTime).toDays() > 7){
+                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),enterTime.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = enterTime;
                 }
                 if (enterTime.isAfter(startTime) && enterTime.isBefore(endTime)) {
@@ -286,7 +291,7 @@ public class DatasetCreator {
                             } else if (time.equals("day")) {
                                 roundedDate = enterTime.withHour(0).withMinute(0).withSecond(0);
                             } else if (time.equals("week")) {
-                                roundedDate = startDayForWeek;
+                                roundedDate = startDayForWeek.withHour(0).withMinute(0).withSecond(0);
                             } else {
                                 System.out.println("Enter a valid time period");
                                 return bounceCount;
@@ -309,8 +314,10 @@ public class DatasetCreator {
         Map<LocalDateTime, Double> bounceRate = new TreeMap<>();
         for (Map.Entry<LocalDateTime, Double> entry : totalClicks.entrySet()) {
             LocalDateTime dateTime = entry.getKey();
-            Double CPCvalue = totalBounces.get(dateTime)/ totalClicks.get(dateTime);
-            bounceRate.put(dateTime,bounceRate.getOrDefault(dateTime,0.0) + CPCvalue);
+            if(totalBounces.get(dateTime)!=null && totalClicks.get(dateTime)!=null){
+                Double CPCvalue = totalBounces.get(dateTime)/ totalClicks.get(dateTime);
+                bounceRate.put(dateTime,bounceRate.getOrDefault(dateTime,0.0) + CPCvalue);
+            }
         }
         return bounceRate;
     }

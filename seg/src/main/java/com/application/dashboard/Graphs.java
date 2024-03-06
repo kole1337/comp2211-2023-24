@@ -1,8 +1,10 @@
 package com.application.dashboard;
 
+import com.application.files.FilePathHandler;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,41 +12,55 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Graphs {
-    private DatasetCreator dc = new DatasetCreator();
+    private DatasetCreator dc;
+    private FilePathHandler fph = new FilePathHandler();
     // Define the date format used in the CSV file
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
     private LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
 
-    public Graphs() {
-
+    public Graphs(FilePathHandler fph) {
+        this.fph = fph;
+        this.dc = new DatasetCreator(fph);
     }
 
     public void createGraph(String graphName, String time) {
         switch (graphName){
             case "TotalClicks":
                 createTotalClicksGraph(time, dc.createDataset("TotalClicks", time));
+                break;
             case "TotalImpressions":
                 createTotalImpressionsGraph(time, dc.createDataset("TotalImpressions", time));
+                break;
             case "TotalUniques":
                 createTotalUniquesGraph(time);
+                break;
             case "Conversions":
                 createTotalConversionsGraph(time);
+                break;
             case "TotalCost":
                 createTotalCostGraph(time);
+                break;
             case "CPC" :
                 createCPCGraph(time, dc.createDataset("CPC", time));
+                break;
             case "CTR":
                 createCTRGraph(time, dc.createDataset("CTR", time));
+                break;
             case "CPA" :
                 createCPAGraph(time, dc.createDataset("CPA", time));
+                break;
             case "CPM" :
                 createCPMGraph(time, dc.createDataset("CPM", time));
+                break;
             case "Bounce" :
                 createBouncesGraph(time, dc.createDataset("Bounce", time));
+                break;
             case "BounceRate" :
                 createBounceRateGraph(time, dc.createDataset("BounceRate", time));
-
+                break;
+            default:
+                break;
         }
     }
 
@@ -106,9 +122,9 @@ public class Graphs {
         gg.generateGraph();
     }
     public void main(){
-        Graphs g = new Graphs();
-        g.createGraph("TotalUniques","day");
-        g.createGraph("TotalUniques","hour");
-        g.createGraph("Bounce","week");
+        Graphs g = new Graphs(fph);
+        g.createGraph("TotalUniques","week");
+        g.createGraph("TotalUniques","week");
+        g.createGraph("CPA","week");
     }
 }

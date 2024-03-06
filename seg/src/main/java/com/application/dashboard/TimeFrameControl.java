@@ -1,5 +1,6 @@
 package com.application.dashboard;
 
+import com.application.files.FilePathHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,8 +43,8 @@ public class TimeFrameControl extends DatasetCreator {
     private ComboBox<String> toSecond = new ComboBox<>();
 
 
-    public TimeFrameControl() {
-        super();
+    public TimeFrameControl(FilePathHandler fph) {
+        super(fph);
         // Logic to ensure "to" datetime is not before "from" datetime
         // Note: You need to combine both date and time for validation
         fromDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
