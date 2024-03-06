@@ -5,6 +5,8 @@ import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Hour;
 import org.jfree.data.time.TimeSeries;
@@ -15,8 +17,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -26,42 +26,13 @@ public class GraphGenerator {
     private String yAxisLabel;
     private Map<LocalDateTime, Double> data;
     private ChartFrame frame;
+
     public GraphGenerator(String title, String xAxisLabel, String yAxisLabel, Map<LocalDateTime, Double> data) {
         this.title = title;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.data = data;
     }
-
-    public GraphGenerator() {
-        //generateGraph();
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getxAxisLabel() {
-        return xAxisLabel;
-    }
-
-    public String getyAxisLabel() {
-        return yAxisLabel;
-    }
-
-    public Map<LocalDateTime, Double> getData() {
-        return data;
-    }
-
-    public ChartFrame getFrame() {
-        return frame;
-    }
-
-//    public void chartFrame(){
-//        frame = new ChartFrame(title, chart);
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
 
     public void generateGraph() {
         // Create a time series collection and add data points to it
@@ -90,9 +61,23 @@ public class GraphGenerator {
         DateAxis xAxis = (DateAxis) plot.getDomainAxis();
         xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
-        // Display the chart in a frame
-        frame = new ChartFrame(title, chart);
+        // Adjust the tick marks and intervals
+
+        xAxis.setAutoTickUnitSelection(true);
+        xAxis.setVerticalTickLabels(true); // Rotate tick labels vertically if needed
+
+        // Create a panel to hold the chart
+        ChartPanel chartPanel = new ChartPanel(chart);
+
+        // Create a scroll pane and add the chart panel to it
+        JScrollPane scrollPane = new JScrollPane(chartPanel);
+        scrollPane.setPreferredSize(new Dimension(800, 600)); // Adjust the preferred size as needed
+        // Display the scroll pane in a frame
+        JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(scrollPane);
         frame.pack();
         frame.setVisible(true);
     }
+
 }
