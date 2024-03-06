@@ -123,8 +123,16 @@ public class Graphs {
     }
     public void main(){
         Graphs g = new Graphs(fph);
+        g.createGraph("TotalClicks","week");
+        g.createGraph("TotalImpressions","week");
         g.createGraph("TotalUniques","week");
-        g.createGraph("TotalUniques","week");
+        g.createGraph("Conversions","week");
+        g.createGraph("TotalCost","week");
+        g.createGraph("CPC","week");
+        g.createGraph("CTR","week");
         g.createGraph("CPA","week");
+        g.createGraph("CPM","week");
+        g.createGraph("Bounce","week");
+        g.createGraph("BounceRate","week");
     }
 }

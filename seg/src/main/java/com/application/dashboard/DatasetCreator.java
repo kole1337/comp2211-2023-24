@@ -150,14 +150,14 @@ public class DatasetCreator {
                 String dateString = record[0];
                 String conversion = record[4];
                 LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
-                if(startDayForWeek == null){
-                    startDayForWeek = date;
-                }
-                if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
-                    startDayForWeek = date;
-                }
                 if (conversion.equals("Yes")) {
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                        if(startDayForWeek == null){
+                            startDayForWeek = date;
+                        }
+                        if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
+                            startDayForWeek = date;
+                        }
                         LocalDateTime roundedDate;
                         if (time.equals("hour")) {
                             roundedDate = date.withMinute(0).withSecond(0);
