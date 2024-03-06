@@ -69,17 +69,15 @@ public class DashboardController {
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
         Graphs gg = new Graphs();
-        //gg.createGraph("TotalClicks","hour");
-
-//        GraphGenerator ggg = new GraphGenerator();
-//        ggg.generateGraph();
+        
+        gg.main();
 
 
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        //uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
-        //sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
-        //loadGenders();
+        uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
+        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
+        loadGenders();
         loadGraph();
         //load: graph, data to view, time slider, filters, number data
 //        sumImpressionsLabel.setVisible(true);
@@ -119,8 +117,8 @@ public class DashboardController {
         yAxis.setLabel("Fruit units");
 
         //Creating the Area chart
-        dataChart = new AreaChart(xAxis, yAxis);
-        dataChart.setTitle("Average fruit consumption during one week");
+        AreaChart<String, Number> areaChart = new AreaChart(xAxis, yAxis);
+        areaChart.setTitle("Average fruit consumption during one week");
 
         //Prepare XYChart.Series objects by setting data
         XYChart.Series series1 = new XYChart.Series();
@@ -144,8 +142,9 @@ public class DashboardController {
         series2.getData().add(new XYChart.Data("Sunday", 4));
 
         //Setting the XYChart.Series objects to area chart
-        dataChart.getData().addAll(series1,series2);
-        dataChart.setVisible(true);
+        areaChart.getData().addAll(series1,series2);
+        dataChart = areaChart;
+        logger.log(Level.INFO, "Finish creating");
     }
 
     public int countUniques(){
