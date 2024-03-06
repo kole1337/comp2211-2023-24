@@ -61,10 +61,16 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
-
+            LocalDateTime  startDayForWeek = null;
             for (String[] record : records) {
                 String dateString = record[0];
                 LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+                if(startDayForWeek == null){
+                    startDayForWeek = date;
+                }
+                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                    startDayForWeek = date;
+                }
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
                     LocalDateTime roundedDate;
                     if (time.equals("hour")) {
@@ -72,8 +78,7 @@ public class DatasetCreator {
                     } else if (time.equals("day")) {
                         roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                     } else if (time.equals("week")) {
-                        int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                        roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        roundedDate = startDayForWeek;
                     } else {
                         System.out.println("Enter a valid time period");
                         return countByTime;
@@ -93,13 +98,19 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
-
+            LocalDateTime startDayForWeek = null;
             for (String[] record : records) {
                 String dateString = record[0];
+                LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                 String id = record[1];
+                if(startDayForWeek == null){
+                    startDayForWeek = date;
+                }
+                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                    startDayForWeek = date;
+                }
                 if (!seen.contains(id)) {
                     seen.add(id);
-                    LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
                         LocalDateTime roundedDate;
                         if (time.equals("hour")) {
@@ -107,8 +118,7 @@ public class DatasetCreator {
                         } else if (time.equals("day")) {
                             roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                         } else if (time.equals("week")) {
-                            int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                            roundedDate = startDayForWeek.withHour(0).withMinute(0).withSecond(0);
                         } else {
                             System.out.println("Enter a valid time period");
                             return countByTime;
@@ -128,11 +138,18 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
+            LocalDateTime startDayForWeek = null;
             for (String[] record : records) {
                 String dateString = record[0];
                 String conversion = record[4];
+                LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+                if(startDayForWeek == null){
+                    startDayForWeek = date;
+                }
+                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                    startDayForWeek = date;
+                }
                 if (conversion.equals("Yes")) {
-                    LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
                     if (date.isAfter(startTime) && date.isBefore(endTime)) {
                         LocalDateTime roundedDate;
                         if (time.equals("hour")) {
@@ -140,8 +157,7 @@ public class DatasetCreator {
                         } else if (time.equals("day")) {
                             roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                         } else if (time.equals("week")) {
-                            int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                            roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                            roundedDate = startDayForWeek;
                         } else {
                             System.out.println("Enter a valid time period");
                             return countByTime;
@@ -161,10 +177,17 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
+            LocalDateTime startDayForWeek = null;
             for (String[] record : records) {
                 String dateString = record[0];
                 String cost = record[2];
                 LocalDateTime date = LocalDateTime.parse(dateString, dateFormatter);
+                if(startDayForWeek == null){
+                    startDayForWeek = date;
+                }
+                if(Duration.between(startDayForWeek,date).toDays() > 7){
+                    startDayForWeek = date;
+                }
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
                     LocalDateTime roundedDate;
                     if (time.equals("hour")) {
@@ -172,8 +195,7 @@ public class DatasetCreator {
                     } else if (time.equals("day")) {
                         roundedDate = date.withHour(0).withMinute(0).withSecond(0);
                     } else if (time.equals("week")) {
-                        int week = date.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                        roundedDate = date.withHour(0).withMinute(0).withSecond(0);
+                        roundedDate = startDayForWeek;
                     } else {
                         System.out.println("Enter a valid time period");
                         return countByTime;
@@ -236,12 +258,19 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
+            LocalDateTime startDayForWeek = null;
             for (String[] record : records) {
                 String enter = record[0];
                 LocalDateTime enterTime = LocalDateTime.parse(enter, dateFormatter);
+                if(startDayForWeek == null){
+                    startDayForWeek = enterTime;
+                }
+                if(Duration.between(startDayForWeek,enterTime).toDays() > 7){
+                    startDayForWeek = enterTime;
+                }
                 if (enterTime.isAfter(startTime) && enterTime.isBefore(endTime)) {
                     String leave = record[2];
-                    String pages = record[4];
+                    String pages = record[3];
                     if(!leave.equals("n/a")){
                         LocalDateTime leaveTime = LocalDateTime.parse(leave, dateFormatter);
                         if(Duration.between(enterTime,leaveTime).getSeconds() > 10 && Integer.parseInt(pages) > 1){
@@ -251,8 +280,7 @@ public class DatasetCreator {
                             } else if (time.equals("day")) {
                                 roundedDate = enterTime.withHour(0).withMinute(0).withSecond(0);
                             } else if (time.equals("week")) {
-                                int week = enterTime.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
-                                roundedDate = enterTime.withHour(0).withMinute(0).withSecond(0);
+                                roundedDate = startDayForWeek;
                             } else {
                                 System.out.println("Enter a valid time period");
                                 return bounceCount;

@@ -105,6 +105,8 @@ public class Graphs {
     }
     public static void main(String[] args){
         Graphs g = new Graphs();
-        g.createGraph("TotalClicks","hour");
+        g.createGraph("TotalUniques","day");
+        g.createGraph("TotalUniques","hour");
+        g.createGraph("Bounce","week");
     }
 }
