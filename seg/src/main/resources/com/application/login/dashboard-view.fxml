@@ -41,24 +41,20 @@
 
         </menus>
       </MenuBar>
-      <Button fx:id="loadCSVbutton" layoutX="14.0" layoutY="693.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="52.0" prefWidth="178.0" text="Load CSV">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font></Button>
       <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-      <Slider layoutX="27.0" layoutY="140.0" />
-      <Label layoutX="67.0" layoutY="117.0" text="Time frame" />
+      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
+      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
       <Label fx:id="uniqueImpressionLabel" layoutX="250.0" layoutY="37.0" text="Unique impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="uniqueImpressionLabel1" layoutX="250.0" layoutY="76.0" text="Total impressions:">
+      <Label fx:id="sumImpressionsLabel" layoutX="250.0" layoutY="76.0" text="Total impressions:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <AreaChart layoutX="200.0" layoutY="117.0" prefHeight="588.0" prefWidth="845.0">
+      <AreaChart fx:id="dataChart" layoutX="200.0" layoutY="117.0" prefHeight="588.0" prefWidth="845.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -66,12 +62,13 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </AreaChart>
-      <VBox layoutX="16.0" layoutY="403.0" prefHeight="300.0" prefWidth="178.0">
+      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="300.0" prefWidth="178.0">
          <children>
-            <Label text="Filters" />
+            <Label text="Filters" visible="true" />
          </children>
+
       </VBox>
-      <VBox layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
          <children>
             <Label text="Data to view">
                <opaqueInsets>
@@ -103,5 +100,10 @@
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Button>
+      <Button fx:id="loadCSVbutton" layoutX="27.0" layoutY="724.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="52.0" prefWidth="178.0" text="Load CSV">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

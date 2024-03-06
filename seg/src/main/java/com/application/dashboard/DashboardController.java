@@ -19,6 +19,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
@@ -44,6 +45,13 @@ public class DashboardController {
     public Label test;
     public Label uniqueImpressionLabel;
     public PieChart genderGraph;
+    public Slider sliderTimeLabel;
+    public Label sumImpressionsLabel;
+    public Label timeFrameLabel;
+    public AreaChart dataChart;
+    public VBox filterSelection;
+    public VBox dataSelection;
+    public Button loadCSVbutton;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -80,8 +88,8 @@ public class DashboardController {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
-        Graphs gg = new Graphs();
-        gg.createGraph("TotalClicks","hour");
+//        Graphs gg = new Graphs();
+//        gg.createGraph("TotalClicks","hour");
 
 //        GraphGenerator ggg = new GraphGenerator();
 //        ggg.generateGraph();
@@ -89,8 +97,18 @@ public class DashboardController {
 
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
-        loadGenders();
+//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
+//        loadGenders();
+
+        //load: graph, data to view, time slider, filters, number data
+//        sumImpressionsLabel.setVisible(true);
+//        uniqueImpressionLabel.setVisible(true);
+//        dataSelection.setVisible(true);
+//        filterSelection.setVisible(true);
+//        sliderTimeLabel.setVisible(true);
+//        timeFrameLabel.setVisible(true);
+//        dataChart.setVisible(true);
+//        loadCSVbutton.setVisible(false);
     }
 
     public int countUniques(){
