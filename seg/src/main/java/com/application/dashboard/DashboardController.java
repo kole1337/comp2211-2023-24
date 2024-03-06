@@ -12,10 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -31,11 +28,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,11 +49,12 @@ public class DashboardController {
     public Slider sliderTimeLabel;
     public Label sumImpressionsLabel;
     public Label timeFrameLabel;
-    public AreaChart dataChart;
+    public AreaChart<String, Number> dataChart;
     public VBox filterSelection;
     public VBox dataSelection;
     public Button loadCSVbutton;
     public ScrollPane scrollDataPane;
+    public StackedBarChart genderBarChart;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -80,10 +77,10 @@ public class DashboardController {
 
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
-        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
-        loadGenders();
-
+        //uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
+        //sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
+        //loadGenders();
+        loadGraph();
         //load: graph, data to view, time slider, filters, number data
 //        sumImpressionsLabel.setVisible(true);
 //        uniqueImpressionLabel.setVisible(true);
@@ -105,14 +102,51 @@ public class DashboardController {
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.INFO, "Opening hello view.");
         } catch (IOException e) {
-            logger = Logger.getLogger(getClass().getName());logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
     }
 
     public void loadGraph(){
+        logger = Logger.getLogger(getClass().getName());
+        logger.log(Level.INFO, "Creating data graph");
 
+        //Defining the X axis
+        CategoryAxis xAxis = new CategoryAxis();
+
+        //defining the y Axis
+        NumberAxis yAxis = new NumberAxis(0, 15, 2.5);
+        yAxis.setLabel("Fruit units");
+
+        //Creating the Area chart
+        dataChart = new AreaChart(xAxis, yAxis);
+        dataChart.setTitle("Average fruit consumption during one week");
+
+        //Prepare XYChart.Series objects by setting data
+        XYChart.Series series1 = new XYChart.Series();
+        series1.setName("John");
+        series1.getData().add(new XYChart.Data("Monday", 3));
+        series1.getData().add(new XYChart.Data("Tuesday", 4));
+        series1.getData().add(new XYChart.Data("Wednesday", 3));
+        series1.getData().add(new XYChart.Data("Thursday", 5));
+        series1.getData().add(new XYChart.Data("Friday", 4));
+        series1.getData().add(new XYChart.Data("Saturday", 10));
+        series1.getData().add(new XYChart.Data("Sunday", 12));
+
+        XYChart.Series series2 = new XYChart.Series();
+        series2.setName("Jane");
+        series2.getData().add(new XYChart.Data("Monday", 1));
+        series2.getData().add(new XYChart.Data("Tuesday", 3));
+        series2.getData().add(new XYChart.Data("Wednesday", 4));
+        series2.getData().add(new XYChart.Data("Thursday", 3));
+        series2.getData().add(new XYChart.Data("Friday", 3));
+        series2.getData().add(new XYChart.Data("Saturday", 5));
+        series2.getData().add(new XYChart.Data("Sunday", 4));
+
+        //Setting the XYChart.Series objects to area chart
+        dataChart.getData().addAll(series1,series2);
+        dataChart.setVisible(true);
     }
-
 
     public int countUniques(){
         Logger logger = Logger.getLogger(DashboardController.class.getName());
@@ -254,6 +288,21 @@ public class DashboardController {
         genderGraph.setLabelLineLength(20);
         genderGraph.setLabelsVisible(true);
         genderGraph.setData(pieChartData);
+
+        //----//
+//        CategoryAxis xAxis = new CategoryAxis();
+//        xAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList
+//                ("Females, Males, Unspecified")));
+//        xAxis.setLabel("Genders");
+//        NumberAxis yAxis = new NumberAxis();
+//        yAxis.setLabel("Total numbers");
+//        genderBarChart = new StackedBarChart<>(xAxis, yAxis);
+//        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+//        series1.getData().add(new XYChart.Data<>("Females", females));
+//        series1.getData().add(new XYChart.Data<>("Males", males));
+//        series1.getData().add(new XYChart.Data<>("Undefined", unspec));
+//
+//        genderBarChart.getData().add(series1);
     }
 
     public void loadTutorial(ActionEvent actionEvent) {
