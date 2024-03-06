@@ -21,28 +21,30 @@ public class Graphs {
     }
 
     public void createGraph(String graphName, String time) {
-        if (graphName.equals("TotalClicks")) {
-            createTotalClicksGraph(time, dc.createDataset("TotalClicks", time));
-        } else if (graphName.equals("TotalImpressions")) {
-            createTotalImpressionsGraph(time, dc.createDataset("TotalImpressions", time));
-        } else if (graphName.equals("TotalUniques")) {
-            createTotalUniquesGraph(time);
-        } else if (graphName.equals("Conversions")) {
-            createTotalConversionsGraph(time);
-        } else if (graphName.equals("TotalCost")) {
-            createTotalCostGraph(time);
-        } else if (graphName.equals("CPC")) {
-            createCPCGraph(time, dc.createDataset("CPC", time));
-        } else if (graphName.equals("CTR")) {
-            createCTRGraph(time, dc.createDataset("CTR", time));
-        } else if (graphName.equals("CPA")) {
-            createCPAGraph(time, dc.createDataset("CPA", time));
-        } else if (graphName.equals("CPM")) {
-            createCPMGraph(time, dc.createDataset("CPM", time));
-        } else if (graphName.equals("Bounce")) {
-            createBouncesGraph(time, dc.createDataset("Bounce", time));
-        } else if (graphName.equals("BounceRate")) {
-            createBounceRateGraph(time, dc.createDataset("BounceRate", time));
+        switch (graphName){
+            case "TotalClicks":
+                createTotalClicksGraph(time, dc.createDataset("TotalClicks", time));
+            case "TotalImpressions":
+                createTotalImpressionsGraph(time, dc.createDataset("TotalImpressions", time));
+            case "TotalUniques":
+                createTotalUniquesGraph(time);
+            case "Conversions":
+                createTotalConversionsGraph(time);
+            case "TotalCost":
+                createTotalCostGraph(time);
+            case "CPC" :
+                createCPCGraph(time, dc.createDataset("CPC", time));
+            case "CTR":
+                createCTRGraph(time, dc.createDataset("CTR", time));
+            case "CPA" :
+                createCPAGraph(time, dc.createDataset("CPA", time));
+            case "CPM" :
+                createCPMGraph(time, dc.createDataset("CPM", time));
+            case "Bounce" :
+                createBouncesGraph(time, dc.createDataset("Bounce", time));
+            case "BounceRate" :
+                createBounceRateGraph(time, dc.createDataset("BounceRate", time));
+
         }
     }
 
