@@ -132,8 +132,13 @@ public class DashboardController {
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) ComboBox.getValue();
+        //to set hour as default time
         if(time == null){
             time = "hour";
+        }
+        //to set total clicks as default graph
+        if(buttonId.equals("loadCSVbutton3")){
+            buttonId = "TotalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
@@ -182,11 +187,13 @@ public class DashboardController {
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
     }
+    //get time variable from combo box
     public void loadComboBox(ActionEvent event){
         ComboBox comboBox = (javafx.scene.control.ComboBox) event.getSource();
         this.ComboBox = comboBox;
         System.out.println(ComboBox.getValue());
     }
+    //load the graph
     public void loadGraph(String selectedRadioButton,String time) {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
@@ -196,9 +203,11 @@ public class DashboardController {
         xAxis.setTickLabelRotation(-45);
         if (selectedRadioButton != null) {
             dataChart.getData().clear();
+            //to set start date way back in the past as default, so it reads every data
             if(startDate.getValue() == null){
                 startDate.setValue(LocalDate.of(1000,1,1));
             }
+            //to set end date way far in the future as dafault, so it reads every data
             if(endDate.getValue() == null){
                 endDate.setValue(LocalDate.of(3000,1,1));
             }

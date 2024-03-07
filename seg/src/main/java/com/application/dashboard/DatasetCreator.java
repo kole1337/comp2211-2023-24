@@ -15,14 +15,18 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 
 public class DatasetCreator {
-    private FilePathHandler fph = new FilePathHandler();
-
+    private FilePathHandler fph;
+    //filepath for click_log
     String clicksCsv;
+    //filepath for impression_log
     String impressionsCsv;
+    //filepath for server_log
     String serverCsv;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    LocalDateTime startTime = LocalDateTime.parse("2015-01-01 00:00:00", dateFormatter);
-    LocalDateTime endTime = LocalDateTime.parse("2015-01-30 00:00:00", dateFormatter);
+    //start of chosen time period
+    LocalDateTime startTime;
+    //end of chosen time period
+    LocalDateTime endTime;
 
     public DatasetCreator(FilePathHandler fph) {
 //        this.clicksCsv = "seg/src/main/resources/2_week_campaign_2/click_log.csv";
@@ -34,7 +38,7 @@ public class DatasetCreator {
         this.serverCsv = fph.getServerPath();
 
     }
-
+    //function that calls specific functions to create datasets
     public Map<LocalDateTime, Double> createDataset(String graphName, String time, LocalDate startDate, LocalDate endDate) {
         this.startTime = startDate.atStartOfDay();
         this.endTime = endDate.atStartOfDay();
@@ -65,7 +69,7 @@ public class DatasetCreator {
             return null;
         }
     }
-
+    //function responsible to create click and impression datasets
     private Map<LocalDateTime, Double> createCountByTimeDataset(String csvFile, String time) {
         System.out.println(startTime);
         System.out.println(endTime);
@@ -73,6 +77,7 @@ public class DatasetCreator {
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             reader.readNext();
             List<String[]> records = reader.readAll();
+            //marks the start of a week
             LocalDateTime  startDayForWeek = null;
             for (String[] record : records) {
                 String dateString = record[0];
@@ -80,10 +85,13 @@ public class DatasetCreator {
                 if(startDayForWeek == null){
                     startDayForWeek = date;
                 }
+                //changes the start date of week, if the date is not in current week
                 if(Duration.between(startDayForWeek.withHour(0).withMinute(0).withSecond(0),date.withHour(0).withMinute(0).withSecond(0)).toDays() > 7){
                     startDayForWeek = date;
                 }
+                //limits time period
                 if (date.isAfter(startTime) && date.isBefore(endTime)) {
+                    //round the date depending on what time unit is chosen
                     LocalDateTime roundedDate;
                     if (time.equals("hour")) {
                         roundedDate = date.withMinute(0).withSecond(0);
@@ -101,10 +109,10 @@ public class DatasetCreator {
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
-        System.out.println(countByTime);
+        //returns the dataset
         return countByTime;
     }
-
+    //function responsible to create unique click dataset, function signature is all most the same as the function above
     private Map<LocalDateTime, Double> createUniqueClicksDataset(String time) {
         List<String> seen = new ArrayList<>();
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
@@ -145,7 +153,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-
+    //function responsible to create conversion dataset
     private Map<LocalDateTime, Double> createConversionsDataset(String time) {
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
@@ -184,7 +192,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-
+    //function responsible to create total cost dataset
     private Map<LocalDateTime, Double> createTotalCostDataset(String time) {
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(clicksCsv))) {
@@ -221,7 +229,7 @@ public class DatasetCreator {
         }
         return countByTime;
     }
-
+    //function responsible to create CPC dataset
     private Map<LocalDateTime, Double> createCPCDataset(String time) {
         Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv, time);
         Map<LocalDateTime, Double> totalCost = createTotalCostDataset(time);
@@ -233,6 +241,7 @@ public class DatasetCreator {
         }
         return averageCPC;
     }
+    //function responsible to create CTR dataset
     private Map<LocalDateTime, Double> createCTRDataset(String time) {
         Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv, time);
         Map<LocalDateTime, Double> totalImpressions = createCountByTimeDataset(impressionsCsv, time);
@@ -244,6 +253,7 @@ public class DatasetCreator {
         }
         return averageCTR;
     }
+    //function responsible to create CPA dataset
     private Map<LocalDateTime, Double> createCPADataset(String time) {
         Map<LocalDateTime, Double> totalCost = createTotalCostDataset(time);
         Map<LocalDateTime, Double> totalAcquisitions = createConversionsDataset(time);
@@ -257,6 +267,7 @@ public class DatasetCreator {
         }
         return averageCPA;
     }
+    //function responsible to create CPM dataset
     private Map<LocalDateTime, Double> createCPMDataset(String time) {
         Map<LocalDateTime, Double> totalCost = createTotalCostDataset(time);
         Map<LocalDateTime, Double> totalAcquisitions = createConversionsDataset(time);
@@ -270,6 +281,7 @@ public class DatasetCreator {
         }
         return averageCPA;
     }
+    //function responsible to create bounce dataset
     private Map<LocalDateTime, Double> createBounceDataset(String time) {
         Map<LocalDateTime, Double> bounceCount = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
@@ -303,10 +315,8 @@ public class DatasetCreator {
                                 return bounceCount;
                             }
                             bounceCount.put(roundedDate, bounceCount.getOrDefault(roundedDate, 0.0) + 1);
-
                         }
                     }
-
                 }
             }
         } catch (IOException | CsvException e) {
@@ -314,6 +324,7 @@ public class DatasetCreator {
         }
         return bounceCount;
     }
+    //function responsible to create bounce rate dataset
     private Map<LocalDateTime, Double> createBounceRateDataset(String time) {
         Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv,time);
         Map<LocalDateTime, Double> totalBounces = createBounceDataset(time);
