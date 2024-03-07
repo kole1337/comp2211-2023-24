@@ -98,3 +98,4 @@ public class LoginController {
         return username.equals("admin") && password.equals("0000");
     }
 }
+
