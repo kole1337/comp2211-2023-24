@@ -35,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,8 +104,24 @@ public class DashboardController {
     @FXML
     public Button BounceRate;
     public ComboBox ComboBox;
-    public DatePicker startDate;
-    public DatePicker endDate;
+    @FXML
+    public VBox timeControlVBox = new VBox ();
+    @FXML
+    public DatePicker startDate = new DatePicker();
+    @FXML
+    public ComboBox<String> fromHour = new ComboBox<>();
+    @FXML
+    public ComboBox<String> fromMinute = new ComboBox<>();
+    @FXML
+    public ComboBox<String> fromSecond = new ComboBox<>();
+    @FXML
+    public DatePicker endDate = new DatePicker();
+    @FXML
+    public ComboBox<String> toHour = new ComboBox<>();
+    @FXML
+    public ComboBox<String> toMinute = new ComboBox<>();
+    @FXML
+    public ComboBox<String> toSecond = new ComboBox<>();
 
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -208,6 +225,97 @@ public class DashboardController {
         // Customize the graph based on the selected radio button
     //Function that would load the graph data inside the panel.
     //Not implemented.
+
+    public void createTimeFrame(){
+
+        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+
+        setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
+
+        setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
+
+
+
+
+        Button showRangeButton = new Button("Show");
+        showRangeButton.setOnAction(e -> {
+            LocalDateTime fromDateTime = LocalDateTime.of(startDate.getValue(), LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()), Integer.parseInt(fromSecond.getValue())));
+            LocalDateTime toDateTime = LocalDateTime.of(endDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
+
+
+        });
+
+    }
+    /**
+     * this is a method to create appropriate comboboxes for user to select hour/minute/second
+     * @param hour
+     * @param minute
+     * @param second
+     */
+
+    private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
+        hour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
+        minute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
+        second.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
+        hour.getSelectionModel().select("00"); // Default value
+        minute.getSelectionModel().select("00"); // Default value
+        second.getSelectionModel().select("00"); // Default value
+    }
+
+    /**
+     * this is a method to generate time options
+     * @param start
+     * @param end
+     * @return
+     */
+
+    private java.util.List<String> generateTimeOptions(int start, int end) {
+        java.util.List<String> options = new java.util.ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            options.add(String.format("%02d", i));
+        }
+        return options;
+    }
+
+
+
+
+    private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
+        if (fromDate.getValue() != null && toDate.getValue() != null &&
+                fromHour.getValue() != null && fromMinute.getValue() != null && fromSecond.getValue() != null &&
+                toHour.getValue() != null && toMinute.getValue() != null && toSecond.getValue() != null) {
+
+            LocalDateTime fromDateTime = LocalDateTime.of(fromDate.getValue(),
+                    LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()),
+                            Integer.parseInt(fromSecond.getValue())));
+            LocalDateTime toDateTime = LocalDateTime.of(toDate.getValue(),
+                    LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()),
+                            Integer.parseInt(toSecond.getValue())));
+
+            // Check if "to" datetime is before "from" datetime
+            if (toDateTime.isBefore(fromDateTime)) {
+                // Show error message
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Date-Time Selection");
+                errorAlert.setContentText("The end date-time must be after the start date-time.");
+                errorAlert.showAndWait();
+
+                // Optionally, reset the "to" date-time selection to match the "from" date-time or to a valid state
+                toDate.setValue(fromDate.getValue());
+                toHour.setValue(fromHour.getValue());
+                toMinute.setValue(fromMinute.getValue());
+                toSecond.setValue(fromSecond.getValue());
+            }
+        }
+    }
+
 
 
     //Function to count the unique impressions

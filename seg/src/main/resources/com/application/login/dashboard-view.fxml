@@ -27,6 +27,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.HBox?>
 <AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
@@ -102,10 +103,18 @@
                  </items>
              </ComboBox>
              <!-- DatePicker for selecting the start date -->
-             <DatePicker fx:id="startDate" promptText="Start Date"/>
+             <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" prefWidth="200" prefHeight="25" onAction="#createTimeFrame"/>
+             <HBox fx:id="fromTimeHBox">
+             <!--     <ComboBox fx:id="fromHour"/><Label text=":"/><ComboBox fx:id="fromMinute"/><Label text=":"/><ComboBox fx:id="fromSecond"/> -->
+             </HBox>
 
              <!-- DatePicker for selecting the end date -->
-             <DatePicker fx:id="endDate" promptText="End Date" />
+                 <DatePicker fx:id="toDate" layoutX="100" layoutY="100" prefWidth="200" prefHeight="25" onAction="#createTimeFrame"/>
+                 <HBox fx:id="toTimeHBox">
+                     <!--    <ComboBox fx:id="toHour"/><Label text=":"/><ComboBox fx:id="toMinute"/><Label text=":"/><ComboBox fx:id="toSecond"/> -->
+                 </HBox>
+                 <Button text="show"/>
+
          </children>
          <opaqueInsets>
             <Insets />
