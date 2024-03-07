@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -55,6 +56,15 @@ public class DashboardController {
     public Button loadCSVbutton;
     public ScrollPane scrollDataPane;
     public StackedBarChart genderBarChart;
+    public Label avgPagesViewedLabel;
+    public Label totalEntriesLabel;
+    public PieChart conversionGraph;
+    public PieChart contextOriginGraph;
+    public PieChart incomeGraph;
+    public PieChart ageGraph;
+    public Label zeroCostClickLabel;
+    public Label totalClicksLabel;
+    public Label avgClickPriceLabel;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -63,19 +73,41 @@ public class DashboardController {
     private Parent root;
     private Logger logger;
 
+    /*
+     * @TODO:
+     *   1. Total clicks
+     *   2. Average price per click
+     *   3. Zero cost click
+     *   4. Total Entries
+     *   5. Average pages viewed:
+     *   6. Age graph
+     *   7. Gender graph - fixes
+     *   8. Income graph
+     *   9. Context origin
+     *   10. Conversion graph
+     * */
+
 
     public void loadCSV(ActionEvent actionEvent) {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
         Graphs gg = new Graphs(fph);
-        gg.main();
+        //gg.main();
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
         loadGenders();
-        loadGraph();
+        loadAgeGraph();
+        loadIncomeGraph();
+        //loadGraph();
+        totalClicksLabel.setText("Total clicks: " + countTotalClicks());
+        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClick());
+        avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
+        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
+        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
+
         //load: graph, data to view, time slider, filters, number data
 //        sumImpressionsLabel.setVisible(true);
 //        uniqueImpressionLabel.setVisible(true);
@@ -172,10 +204,86 @@ public class DashboardController {
         return uniqueEntries.size();
     }
 
+    public int countZeroCostClick(){
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading Uniques");
+        String filePath = fph.getClickPath(); // Nikola - PC
+        String csvFilePath = filePath;
+        int columnIndexToCount = 2; // Change this to the index of the column you want to count (0-based index)
+        Set<String> uniqueEntries = new HashSet<>();
+        int totalZeros = 0;
+        try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
+
+
+            String[] line;
+            line = reader.readNext(); //skip header
+            while ((line = reader.readNext()) != null) {
+                if (Double.parseDouble(line[2]) == 0) {
+                    totalZeros++;
+                }
+            }
+
+            int uniqueCount = uniqueEntries.size();
+            System.out.println("Number of unique entries in column " + columnIndexToCount + ": " + uniqueCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+        return totalZeros;
+    }
+
+    public double countAveragePricePerClick(){
+        double average = 0;
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading Uniques");
+        String filePath = fph.getClickPath(); // Nikola - PC
+        String csvFilePath = filePath;
+        int columnIndexToCount = 2; // Change this to the index of the column you want to count (0-based index)
+        int totalPrice= 0;
+        try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
+
+
+            String[] line;
+            line = reader.readNext(); //skip header
+            while ((line = reader.readNext()) != null) {
+                totalPrice += Double.parseDouble(line[2]);
+            }
+
+            System.out.println("Number of unique entries in column " + columnIndexToCount + ": ");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+
+        return totalPrice/countTotalClicks();
+    }
+
     public int countTotalImpressions(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading Total Impressions");
         String filePath = fph.getImpressionPath(); // Nikola - PC
+        int totalEntries = 0;
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+            nextLine = reader.readNext(); // skip header
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                totalEntries++;
+            }
+
+            System.out.println("Total Entries in Column: " + totalEntries);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        return totalEntries;
+    }
+
+    public int countTotalClicks(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading Total clicks");
+        String filePath = fph.getClickPath();
         int totalEntries = 0;
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
@@ -190,6 +298,55 @@ public class DashboardController {
             e.printStackTrace();
         }
         return totalEntries;
+    }
+    public int countTotalEntries(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading total entries from ads.");
+        String filePath = fph.getServerPath();
+        int totalEntries = 0;
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+            nextLine = reader.readNext();
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                totalEntries++;
+            }
+
+            System.out.println("Total Entries in Column: " + totalEntries);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        return totalEntries;
+    }
+
+    public double countAvgPageViewed(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading total entries from ads.");
+        String filePath = fph.getServerPath();
+        double avgPages = 0;
+        Set<String> uniqueEntries = new HashSet<>();
+        double countPages = 0;
+        int totalEntries = 0;
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+
+
+            String[] line;
+            line = reader.readNext(); //skip header
+            while ((line = reader.readNext()) != null) {
+                countPages+=Double.parseDouble(line[3]);
+                totalEntries++;
+            }
+
+            int uniqueCount = uniqueEntries.size();
+            System.out.println("Number of unique entries in column " + ": " + uniqueCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+        DecimalFormat f= new DecimalFormat("##.00");
+        avgPages = countPages/totalEntries;
+        return Math.round(avgPages * 100) / 100;
     }
 
     public void loadingBar(){
@@ -284,21 +441,123 @@ public class DashboardController {
         genderGraph.setLabelLineLength(20);
         genderGraph.setLabelsVisible(true);
         genderGraph.setData(pieChartData);
+    }
 
-        //----//
-//        CategoryAxis xAxis = new CategoryAxis();
-//        xAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList
-//                ("Females, Males, Unspecified")));
-//        xAxis.setLabel("Genders");
-//        NumberAxis yAxis = new NumberAxis();
-//        yAxis.setLabel("Total numbers");
-//        genderBarChart = new StackedBarChart<>(xAxis, yAxis);
-//        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-//        series1.getData().add(new XYChart.Data<>("Females", females));
-//        series1.getData().add(new XYChart.Data<>("Males", males));
-//        series1.getData().add(new XYChart.Data<>("Undefined", unspec));
-//
-//        genderBarChart.getData().add(series1);
+    public void loadAgeGraph(){
+        int below25 = 0;
+        int between25to34 = 0;
+        int between35to44 = 0;
+        int between45to54 = 0;
+        int over54 = 0;
+        int unspec = 0;
+        String filePath = fph.getImpressionPath();
+        //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        int columnIndex = 3; // Change this to the index of the column you want to read (0-based)
+
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+
+
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                // Check if the line has enough columns
+                if (columnIndex < nextLine.length) {
+                    // Get the value of the specified column
+                    String columnValue = nextLine[columnIndex];
+                    //System.out.println("Column Value: " + columnValue);
+                    //System.out.println(columnValue);
+                    // Increment the total entries
+                    if(columnValue.equals("<25")) {
+                        below25 ++;
+                    } else if(columnValue.equals("25-34")) {
+                        between25to34 ++;
+                    }else if(columnValue.equals("35-44")){
+                        between35to44++;
+                    } else if(columnValue.equals("45-54")) {
+                        between45to54++;
+                    }else if(columnValue.equals(">54")){
+                        over54++;
+                    } else unspec++;
+                } else {
+                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
+                }
+            }
+
+            //System.out.println("Females: " + females + "; Males: " + males);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        //errorAlert.hide();
+        String under25 = "< 25: " + below25;
+        String bet25to34 = "25 - 34: " +between25to34;
+        String bet35to44 = "35 - 44: " + between35to44;
+        String bet45to54 = "45 - 54: "+ between45to54;
+        String ov54 = "> 54: "+over54;
+        String unspc = "unspecified: "+unspec;
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data(under25, below25),
+                new PieChart.Data(bet25to34, between25to34),
+                new PieChart.Data(bet35to44, between35to44),
+                new PieChart.Data(bet45to54, between45to54),
+                new PieChart.Data(ov54, over54),
+                new PieChart.Data(unspc, unspec));
+        //genderGraph.setTitle("Gender Graph");
+        ageGraph.setLabelLineLength(20);
+        ageGraph.setLabelsVisible(true);
+        ageGraph.setData(pieChartData);
+    }
+
+    public void loadIncomeGraph(){
+        int lowInc = 0;
+        int midInc = 0;
+        int highInc = 0;
+        int unspec = 0;
+        String filePath = fph.getImpressionPath();
+        //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
+        int columnIndex = 3; // Change this to the index of the column you want to read (0-based)
+
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+
+
+            // Read each line from the CSV file
+            while ((nextLine = reader.readNext()) != null) {
+                // Check if the line has enough columns
+                if (columnIndex < nextLine.length) {
+                    // Get the value of the specified column
+                    String columnValue = nextLine[columnIndex];
+                    //System.out.println("Column Value: " + columnValue);
+                    //System.out.println(columnValue);
+                    // Increment the total entries
+                    if(columnValue.equals("Low")) {
+                        lowInc ++;
+                    } else if(columnValue.equals("Medium")) {
+                        midInc ++;
+                    }else if(columnValue.equals("High")){
+                        highInc++;
+                    } else unspec++;
+                } else {
+                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
+                }
+            }
+
+            //System.out.println("Females: " + females + "; Males: " + males);
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        //errorAlert.hide();
+        String lowIncome = "Low: " + lowInc;
+        String mediumIncome = "Medium: " +midInc;
+        String highIncome = "High: " + highInc;
+        String unspc = "unspecified: "+unspec;
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data(lowIncome, lowInc),
+                new PieChart.Data(mediumIncome, midInc),
+                new PieChart.Data(highIncome, highInc),
+                new PieChart.Data(unspc, unspec));
+        incomeGraph.setLabelLineLength(20);
+        incomeGraph.setLabelsVisible(true);
+        incomeGraph.setData(pieChartData);
     }
 
     public void loadTutorial(ActionEvent actionEvent) {

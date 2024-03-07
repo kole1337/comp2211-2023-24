@@ -49,8 +49,9 @@ public class ReadFile {
     }
 
     // Read data from a CSV file and store it in a map with the ID column as key
-    private static Map<String, String[]> readCSV(String streamPath) {
+    static Map<String, String[]> readCSV(String streamPath) {
         Map<String, String[]> data = new HashMap<>();
+        int gesh = 0;
         //        try (BufferedReader reader = new BufferedReader(new InputStreamReader(streamPath))) {
         try (BufferedReader br = new BufferedReader(new FileReader(streamPath))) {
             String line;
@@ -58,10 +59,12 @@ public class ReadFile {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
                 String id = parts[1]; // Assuming ID is in the second column
                 data.put(id, parts);
+                gesh++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(gesh);
         return data;
     }
 
@@ -73,6 +76,7 @@ public class ReadFile {
                 String[] parts = line.split(","); // Assuming CSV format is comma-separated
                 String id = parts[0]; // Assuming ID is in the second column
                 data.put(id, parts);
+
             }
         } catch (IOException e) {
             e.printStackTrace();

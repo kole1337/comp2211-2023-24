@@ -36,7 +36,8 @@ public class LoginController {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "You pressed loginButton.");
         //if login details are right, switch to dashboard
-        if(usernameField.getText().equals("admin") && passwordField.getText().equals("0000")){
+
+        if(checkAdmin(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -50,7 +51,7 @@ public class LoginController {
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
             //if the login details are wrong, show error
-        }else if (usernameField.getText().equals("user") && passwordField.getText().equals("0000")){
+        }else if (checkUser(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -73,5 +74,13 @@ public class LoginController {
 
             errorAlert.showAndWait();
         }
+    }
+
+    public Boolean checkUser(String username, String password) {
+        return username.equals("user") && password.equals("0000");
+    }
+
+    public Boolean checkAdmin(String username, String password) {
+        return username.equals("admin") && password.equals("0000");
     }
 }
