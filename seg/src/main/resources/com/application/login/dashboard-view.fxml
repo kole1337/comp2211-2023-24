@@ -38,33 +38,34 @@
 <!--          </Menu>-->
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Tutorial" />
-              <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
+              <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial" />
+                <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial" />
+                <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
             </items>
           </Menu>
 
         </menus>
       </MenuBar>
       <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" visible="false" />
-      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" visible="false" />
-      <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:" visible="false">
+      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
+      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
+      <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:" visible="false">
+      <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0" visible="false">
+      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
          <children>
             <Label text="Filters" visible="true" />
          </children>
           
       </VBox>
-      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;" visible="false">
+      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
          <children>
             <Label text="Data to view">
                <opaqueInsets>
@@ -91,11 +92,11 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:" visible="false">
+      <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:">
          <font>
             <Font size="18.0" />
          </font></Label>
-      <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:" visible="false">
+      <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:">
          <font>
             <Font size="18.0" />
          </font></Label>
@@ -119,7 +120,7 @@
       </StackedBarChart>
       <ScrollPane layoutX="205.0" layoutY="121.0" prefHeight="686.0" prefWidth="697.0">
          <content>
-            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="696.0" visible="false">
+            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="696.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
@@ -128,12 +129,12 @@
               </yAxis>
             </AreaChart>
          </content></ScrollPane>
-      <Button fx:id="loadCSVbutton3" layoutX="14.0" layoutY="726.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Clicks">
+      <Button fx:id="loadCSVbutton3" layoutX="16.0" layoutY="711.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Data">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:" visible="false">
+      <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:">
          <font>
             <Font size="18.0" />
          </font></Label>
@@ -186,19 +187,24 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:" visible="false">
+      <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:" visible="false">
+      <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1366.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@D:\year2\seg\comp2211\tutorial.png" />
+            <Image url="@D:\year2\seg\comp2211\tutorial1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="uploadPNG" fitHeight="814.0" fitWidth="1397.0" layoutX="13.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@D:\year2\seg\comp2211\tutorial2.png" />
          </image>
       </ImageView>
       <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">

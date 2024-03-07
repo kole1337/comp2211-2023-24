@@ -69,6 +69,7 @@ public class DashboardController {
     public Label zeroCostClickLabel;
     public Label totalClicksLabel;
     public Label avgClickPriceLabel;
+    public ImageView uploadPNG;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -547,6 +548,7 @@ public class DashboardController {
     //Disable tutorial overlay
     public void disableTutPNG(ActionEvent actionEvent) {
         tutorialOFF.setVisible(false);
+        uploadPNG.setVisible(false);
         tutPNG.setVisible(false);
     }
 
@@ -573,5 +575,10 @@ public class DashboardController {
 
     public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
         java.awt.Desktop.getDesktop().browse(URI.create("https://nikolaparushev2003.wixsite.com/ecs-adda/documentation"));
+    }
+
+    public void loadTutorial2(ActionEvent actionEvent) {
+        uploadPNG.setVisible(true);
+        tutorialOFF.setVisible(true);
     }
 }
