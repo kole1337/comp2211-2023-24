@@ -41,7 +41,7 @@ public class DatasetCreator {
             return createCountByTimeDataset(impressionsCsv, time);
         } else if (graphName.equals("TotalUniques")) {
             return createUniqueClicksDataset(time);
-        } else if (graphName.equals("Conversions")) {
+        } else if (graphName.equals("TotalConversions")) {
             return createConversionsDataset(time);
         } else if (graphName.equals("TotalCost")) {
             return createTotalCostDataset(time);
@@ -53,7 +53,7 @@ public class DatasetCreator {
             return createCPADataset(time);
         } else if (graphName.equals("CPM")){
             return createCPMDataset(time);
-        } else if (graphName.equals("Bounce")){
+        } else if (graphName.equals("TotalBounces")){
             return createBounceDataset(time);
         } else if (graphName.equals("BounceRate")){
             return createBounceRateDataset(time);

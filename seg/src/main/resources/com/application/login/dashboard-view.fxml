@@ -21,7 +21,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
 <AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
@@ -72,16 +76,30 @@
                   <Insets left="15.0" />
                </opaqueInsets>
             </Label>
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" text="Clicks" />
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" style="-fx-border-insets: 50;" text="Click cost" />
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" text="Bounces" />
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" text="Impressions" />
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" text="Conversion Rate" />
-            <RadioButton alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per acquisition">
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Clicks" fx:id = "TotalClicks" onAction="#loadCSV"/>
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" style="-fx-border-insets: 50;" text="Uniques" fx:id = "TotalUniques" onAction="#loadCSV"/>
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Bounces" fx:id = "TotalBounces" onAction="#loadCSV"/>
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Impressions" fx:id = "TotalImpressions" onAction="#loadCSV"/>
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Conversion Rate" fx:id = "TotalConversions" onAction="#loadCSV"/>
+             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Total Cost" fx:id = "TotalCost" onAction="#loadCSV"/>
+            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per acquisition" fx:id = "CPA" onAction="#loadCSV"/>
+             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per clicks" fx:id = "CPC" onAction="#loadCSV"/>
+             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per impression" fx:id = "CTR" onAction="#loadCSV"/>
+             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per thousand impressions" fx:id = "CPM" onAction="#loadCSV"/>
+             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Bounce Rate" fx:id = "BounceRate" onAction="#loadCSV">
                <opaqueInsets>
                   <Insets top="10.0" />
                </opaqueInsets>
-            </RadioButton>
+            </Button>
+             <ComboBox fx:id="ComboBox">
+                 <items>
+                     <FXCollections fx:factory="observableArrayList">
+                         <String fx:value = "hour" />
+                         <String fx:value = "day" />
+                         <String fx:value = "week" />
+                     </FXCollections>
+                 </items>
+             </ComboBox>
          </children>
          <opaqueInsets>
             <Insets />
