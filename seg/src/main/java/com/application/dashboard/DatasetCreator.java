@@ -8,6 +8,7 @@ import org.jfree.data.time.Hour;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
@@ -34,7 +35,9 @@ public class DatasetCreator {
 
     }
 
-    public Map<LocalDateTime, Double> createDataset(String graphName, String time) {
+    public Map<LocalDateTime, Double> createDataset(String graphName, String time, LocalDate startDate, LocalDate endDate) {
+        this.startTime = startDate.atStartOfDay();
+        this.endTime = endDate.atStartOfDay();
         if (graphName.equals("TotalClicks")) {
             return createCountByTimeDataset(clicksCsv, time);
         } else if (graphName.equals("TotalImpressions")) {
@@ -64,6 +67,8 @@ public class DatasetCreator {
     }
 
     private Map<LocalDateTime, Double> createCountByTimeDataset(String csvFile, String time) {
+        System.out.println(startTime);
+        System.out.println(endTime);
         Map<LocalDateTime, Double> countByTime = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             reader.readNext();
@@ -96,6 +101,7 @@ public class DatasetCreator {
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
+        System.out.println(countByTime);
         return countByTime;
     }
 
@@ -321,7 +327,5 @@ public class DatasetCreator {
         }
         return bounceRate;
     }
-
-
 
 }

@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Level;
@@ -102,11 +103,12 @@ public class DashboardController {
     @FXML
     public Button BounceRate;
     public ComboBox ComboBox;
+    public DatePicker startDate;
+    public DatePicker endDate;
 
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName(seriesName);
-
         // Iterate over the entries of the map and add them to the series
         for (Map.Entry<LocalDateTime, Double> entry : dataset.entrySet()) {
             String xValue = entry.getKey().toString(); // Assuming LocalDateTime.toString() provides the desired format
@@ -130,12 +132,14 @@ public class DashboardController {
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) ComboBox.getValue();
+        if(time == null){
+            time = "hour";
+        }
         loadingBar();
         dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         loadGraph(buttonId,time);
-        Graphs gg = new Graphs(fph);
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
         loadGenders();
@@ -178,7 +182,11 @@ public class DashboardController {
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
     }
-
+    public void loadComboBox(ActionEvent event){
+        ComboBox comboBox = (javafx.scene.control.ComboBox) event.getSource();
+        this.ComboBox = comboBox;
+        System.out.println(ComboBox.getValue());
+    }
     public void loadGraph(String selectedRadioButton,String time) {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
@@ -187,40 +195,14 @@ public class DashboardController {
         xAxis.setTickLabelGap(1); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         if (selectedRadioButton != null) {
-            if (selectedRadioButton.equals("TotalClicks")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalClicks", time), "TotalClicks"));
-            } else if (selectedRadioButton.equals("TotalImpressions")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalImpressions", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("TotalUniques")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalUniques", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("TotalBounces")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalBounces", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("TotalConversions")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalConversions", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("TotalCost")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalCost", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("CTR")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("CTR", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("CPA")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPA", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("CPC")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPC", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("CPM")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPM", time), "SomeOtherData"));
-            } else if (selectedRadioButton.equals("BounceRate")) {
-                dataChart.getData().clear();
-                dataChart.getData().add(convertMapToSeries(dc.createDataset("BounceRate", time), "SomeOtherData"));
+            dataChart.getData().clear();
+            if(startDate.getValue() == null){
+                startDate.setValue(LocalDate.of(1000,1,1));
             }
+            if(endDate.getValue() == null){
+                endDate.setValue(LocalDate.of(3000,1,1));
+            }
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedRadioButton, time,startDate.getValue(),endDate.getValue()), selectedRadioButton));
         }
     }
         // Customize the graph based on the selected radio button

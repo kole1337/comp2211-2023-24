@@ -26,6 +26,7 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.DatePicker?>
 <AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
@@ -91,7 +92,7 @@
                   <Insets top="10.0" />
                </opaqueInsets>
             </Button>
-             <ComboBox fx:id="ComboBox">
+             <ComboBox fx:id="ComboBox" onAction="#loadComboBox">
                  <items>
                      <FXCollections fx:factory="observableArrayList">
                          <String fx:value = "hour" />
@@ -100,6 +101,11 @@
                      </FXCollections>
                  </items>
              </ComboBox>
+             <!-- DatePicker for selecting the start date -->
+             <DatePicker fx:id="startDate" promptText="Start Date"/>
+
+             <!-- DatePicker for selecting the end date -->
+             <DatePicker fx:id="endDate" promptText="End Date" />
          </children>
          <opaqueInsets>
             <Insets />
@@ -217,12 +223,12 @@
       </Label>
       <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@D:\year2\seg\comp2211\tutorial1.png" />
+            <Image url="@tutorial1.png" />
          </image>
       </ImageView>
       <ImageView fx:id="uploadPNG" fitHeight="814.0" fitWidth="1397.0" layoutX="13.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@D:\year2\seg\comp2211\tutorial2.png" />
+            <Image url="@tutorial2.png" />
          </image>
       </ImageView>
       <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
