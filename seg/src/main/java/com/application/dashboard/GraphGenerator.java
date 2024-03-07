@@ -1,21 +1,13 @@
 package com.application.dashboard;
 
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Hour;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
-
 import javax.swing.*;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -25,7 +17,7 @@ public class GraphGenerator {
     private String xAxisLabel;
     private String yAxisLabel;
     private Map<LocalDateTime, Double> data;
-    private ChartFrame frame;
+    private JFrame frame;
 
     public GraphGenerator(String title, String xAxisLabel, String yAxisLabel, Map<LocalDateTime, Double> data) {
         this.title = title;
@@ -43,7 +35,7 @@ public class GraphGenerator {
             Hour hour = new Hour(dateTime.getHour(), dateTime.getDayOfMonth(), dateTime.getMonthValue(), dateTime.getYear());
             series.add(hour, entry.getValue());
         }
-        XYDataset dataset = new TimeSeriesCollection(series);
+        TimeSeriesCollection dataset = new TimeSeriesCollection(series);
 
         // Create the chart
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
@@ -56,29 +48,16 @@ public class GraphGenerator {
                 false
         );
 
-        // Customize the plot
-        XYPlot plot = chart.getXYPlot();
-        DateAxis xAxis = (DateAxis) plot.getDomainAxis();
-        xAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-
-        // Adjust the tick marks and intervals
-
-        xAxis.setAutoTickUnitSelection(true);
-        xAxis.setVerticalTickLabels(true); // Rotate tick labels vertically if needed
-
-        // Create a panel to hold the chart
+        // Create the chart panel
         ChartPanel chartPanel = new ChartPanel(chart);
 
-        // Create a scroll pane and add the chart panel to it
-        JScrollPane scrollPane = new JScrollPane(chartPanel);
-        scrollPane.setPreferredSize(new Dimension(800, 600)); // Adjust the preferred size as needed
-        // Display the scroll pane in a frame
-        JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(scrollPane);
+        // Create the frame to hold the chart panel
+        frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose the frame, not exit the application
+        frame.getContentPane().add(chartPanel, BorderLayout.CENTER);
         frame.pack();
         frame.setVisible(true);
     }
 
-
+    // Additional methods if needed
 }

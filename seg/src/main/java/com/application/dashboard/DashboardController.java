@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -62,20 +63,60 @@ public class DashboardController {
     private Scene scene;
     private Parent root;
     private Logger logger;
+    private DatasetCreator dc;
+    @FXML
+    public Button TotalClicks;
+    @FXML
+    public Button TotalImpressions;
+    @FXML
+    public Button TotalCost;
+    @FXML
+    public Button TotalUniques;
+    @FXML
+    public Button TotalBounces;
+    @FXML
+    public Button TotalConversions;
+    @FXML
+    public Button CPA;
+    @FXML
+    public Button CPC;
+    @FXML
+    public Button CTR;
+    @FXML
+    public Button CPM;
+    @FXML
+    public Button BounceRate;
+    public ComboBox ComboBox;
+
+    private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName(seriesName);
+
+        // Iterate over the entries of the map and add them to the series
+        for (Map.Entry<LocalDateTime, Double> entry : dataset.entrySet()) {
+            String xValue = entry.getKey().toString(); // Assuming LocalDateTime.toString() provides the desired format
+            Number yValue = entry.getValue();
+            series.getData().add(new XYChart.Data<>(xValue, yValue));
+        }
+
+        return series;
+    }
 
 
     public void loadCSV(ActionEvent actionEvent) {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "loadCSV button");
+        Button clickedButton = (Button) actionEvent.getSource();
+        String buttonId = clickedButton.getId();
+        String time = (String) ComboBox.getValue();
         loadingBar();
-        Graphs gg = new Graphs(fph);
-        gg.main();
+        dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
         loadGenders();
-        loadGraph();
+        loadGraph(buttonId,time);
         //load: graph, data to view, time slider, filters, number data
 //        sumImpressionsLabel.setVisible(true);
 //        uniqueImpressionLabel.setVisible(true);
@@ -102,46 +143,51 @@ public class DashboardController {
         }
     }
 
-    public void loadGraph(){
+    public void loadGraph(String selectedRadioButton,String time){
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
-
-        //Defining the X axis
         CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        xAxis.setTickLabelGap(1); // Set the spacing between major tick marks
+        xAxis.setTickLabelRotation(-45);
+        if(selectedRadioButton!=null){
+            if(selectedRadioButton.equals("TotalClicks")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalClicks",time),"TotalClicks"));
+            } else if(selectedRadioButton.equals("TotalImpressions")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalImpressions",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("TotalUniques")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalUniques",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("TotalBounces")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalBounces",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("TotalConversions")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalConversions",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("TotalCost")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("TotalCost",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("CTR")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("CTR",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("CPA")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPA",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("CPC")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPC",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("CPM")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("CPM",time),"SomeOtherData"));
+            }else if(selectedRadioButton.equals("BounceRate")) {
+                dataChart.getData().clear();
+                dataChart.getData().add(convertMapToSeries(dc.createDataset("BounceRate",time),"SomeOtherData"));
+            }
+        }
+        // Customize the graph based on the selected radio button
 
-        //defining the y Axis
-        NumberAxis yAxis = new NumberAxis(0, 15, 2.5);
-        yAxis.setLabel("Fruit units");
-
-        //Creating the Area chart
-        AreaChart<String, Number> areaChart = new AreaChart(xAxis, yAxis);
-        areaChart.setTitle("Average fruit consumption during one week");
-
-        //Prepare XYChart.Series objects by setting data
-        XYChart.Series series1 = new XYChart.Series();
-        series1.setName("John");
-        series1.getData().add(new XYChart.Data("Monday", 3));
-        series1.getData().add(new XYChart.Data("Tuesday", 4));
-        series1.getData().add(new XYChart.Data("Wednesday", 3));
-        series1.getData().add(new XYChart.Data("Thursday", 5));
-        series1.getData().add(new XYChart.Data("Friday", 4));
-        series1.getData().add(new XYChart.Data("Saturday", 10));
-        series1.getData().add(new XYChart.Data("Sunday", 12));
-
-        XYChart.Series series2 = new XYChart.Series();
-        series2.setName("Jane");
-        series2.getData().add(new XYChart.Data("Monday", 1));
-        series2.getData().add(new XYChart.Data("Tuesday", 3));
-        series2.getData().add(new XYChart.Data("Wednesday", 4));
-        series2.getData().add(new XYChart.Data("Thursday", 3));
-        series2.getData().add(new XYChart.Data("Friday", 3));
-        series2.getData().add(new XYChart.Data("Saturday", 5));
-        series2.getData().add(new XYChart.Data("Sunday", 4));
-
-        //Setting the XYChart.Series objects to area chart
-        areaChart.getData().addAll(series1,series2);
-        dataChart = areaChart;
-        logger.log(Level.INFO, "Finish creating");
     }
 
     public int countUniques(){
@@ -246,8 +292,6 @@ public class DashboardController {
 
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
-
-
             // Read each line from the CSV file
             while ((nextLine = reader.readNext()) != null) {
                 // Check if the line has enough columns
