@@ -30,18 +30,46 @@ import javafx.scene.control.Alert;
 
 public class TimeFrameControl extends DatasetCreator {
     /**
-     * This is a VBox that
+     * This is a VBox that holds for the time control DatePicker and ComboBox
      */
     private VBox timeControlVBox = new VBox ();
+    /**
+     * This is a DatePicker for users to select the start date they want to view
+     */
     private DatePicker fromDate = new DatePicker();
+    /**
+     * This is a ComboBox for users to select the start hour they want to view
+     */
     private ComboBox<String> fromHour = new ComboBox<>();
+    /**
+     * This is a ComboBox for users to select the start minute they want to view
+     */
     private ComboBox<String> fromMinute = new ComboBox<>();
+    /**
+     * This is a ComboBox for users to select the start second they want to view
+     */
     private ComboBox<String> fromSecond = new ComboBox<>();
+    /**
+     * This is a DatePicker for users to select the end date
+     */
     private DatePicker toDate = new DatePicker();
+    /**
+     * This is a ComboBox for users to select the end hour they want to view
+     */
     private ComboBox<String> toHour = new ComboBox<>();
+    /**
+     * This is a ComboBox for users to select the end minute they want to view
+     */
     private ComboBox<String> toMinute = new ComboBox<>();
+    /**
+     * This is a ComboBox for users to select the end second they want to view
+     */
     private ComboBox<String> toSecond = new ComboBox<>();
 
+    /**
+     * This is the constructor that create the listener of those date and time control.
+     * @param fph the file path handler
+     */
 
     public TimeFrameControl(FilePathHandler fph) {
         super(fph);
@@ -57,6 +85,10 @@ public class TimeFrameControl extends DatasetCreator {
         toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
 
     }
+
+    /**
+     * this is the method to create the time frame for user to control
+     */
 
     public void createTimeFrame(){
 
@@ -91,6 +123,13 @@ public class TimeFrameControl extends DatasetCreator {
         timeControlVBox.getChildren().add(showRangeButton);
     }
 
+    /**
+     * this is a method to create appropriate comboboxes for user to select hour/minute/second
+     * @param hour
+     * @param minute
+     * @param second
+     */
+
     private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
         hour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
         minute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
@@ -100,6 +139,12 @@ public class TimeFrameControl extends DatasetCreator {
         second.getSelectionModel().select("00"); // Default value
     }
 
+    /**
+     * this is a method to generate time options
+     * @param start
+     * @param end
+     * @return
+     */
     private java.util.List<String> generateTimeOptions(int start, int end) {
         java.util.List<String> options = new java.util.ArrayList<>();
         for (int i = start; i <= end; i++) {
@@ -107,6 +152,18 @@ public class TimeFrameControl extends DatasetCreator {
         }
         return options;
     }
+
+    /**
+     * This is the method to check whether the user select the valid from date and time and to date and time
+     * @param fromDate the start date
+     * @param fromHour the start hour
+     * @param fromMinute the start minute
+     * @param fromSecond the start second
+     * @param toDate the end date
+     * @param toHour the end hour
+     * @param toMinute the end minute
+     * @param toSecond the end second
+     */
     private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
         if (fromDate.getValue() != null && toDate.getValue() != null &&
                 fromHour.getValue() != null && fromMinute.getValue() != null && fromSecond.getValue() != null &&
@@ -142,7 +199,14 @@ public class TimeFrameControl extends DatasetCreator {
     }
 
 
-    // this is an override method
+    /**
+     * this is an override method
+     * @param graphName
+     * @param time
+     * @param fromTime
+     * @param toTime
+     * @return
+     */
     public Map<LocalDateTime, Integer> createDataset(String graphName, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         if (graphName.equals("TotalClicks")) {
             return createCountByTimeDataset(clicksCsv, time, fromTime, toTime);
@@ -154,7 +218,14 @@ public class TimeFrameControl extends DatasetCreator {
             return null;
         }
     }
-    // this is the method that get data within time frame selected by user
+
+    /**
+     * This is the method for user to get the data from csv within selected time frame
+     * @param csvFile the csvfile
+     * @param fromTime the start date and time
+     * @param toTime the end date and time
+     * @return the ArrayList<String[]> that holds the date and time within that range (start->end)
+     */
     private List<String []> getDataWithinTimeFrame(String csvFile, LocalDateTime fromTime, LocalDateTime toTime){
         try(CSVReader reader = new CSVReader(new FileReader(csvFile))){
             reader.readNext();
@@ -174,7 +245,14 @@ public class TimeFrameControl extends DatasetCreator {
         }
     }
 
-    // this is an override method
+    /**
+     * this is an override method
+     * @param csvFile
+     * @param time
+     * @param fromTime
+     * @param toTime
+     * @return
+     */
     private Map<LocalDateTime, Integer> createCountByTimeDataset(String csvFile, String time, LocalDateTime fromTime, LocalDateTime toTime) {
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();
         List<String []> records = getDataWithinTimeFrame(csvFile, fromTime, toTime);
@@ -203,7 +281,13 @@ public class TimeFrameControl extends DatasetCreator {
         return countByTime;
     }
 
-    // this is an override method
+    /**
+     * This is an override method
+     * @param time
+     * @param fromTime
+     * @param toTime
+     * @return
+     */
     private Map<LocalDateTime, Integer> createUniqueClicksDataset(String time, LocalDateTime fromTime, LocalDateTime toTime) {
         List<String> seen = new ArrayList<>();
         Map<LocalDateTime, Integer> countByTime = new TreeMap<>();

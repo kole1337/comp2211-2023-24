@@ -223,12 +223,13 @@
       </Label>
       <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@tutorial1.png" />
+
+            <Image url="@../../../tutorial1.png" />
          </image>
       </ImageView>
       <ImageView fx:id="uploadPNG" fitHeight="814.0" fitWidth="1397.0" layoutX="13.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@tutorial2.png" />
+            <Image url="@../../../tutorial2.png" />
          </image>
       </ImageView>
       <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
