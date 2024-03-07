@@ -12,7 +12,7 @@ Intel Core i3 or Ryzen 3 3100
 
 ### Recomeded specs:
 
-16 GB or mpre of ram is favored when large datasets are handled
+16 GB or more of ram is favored when large datasets are handled
 
 Application use:
 
@@ -41,4 +41,10 @@ below this are the various graphs that you can view data for
 
 ![img_3.png](img_3.png)
 
-load any of these views just select a time scale at the bottom dropdown and click on one of the data fields
+load any of these views just select a time scale at the bottom dropdown and click on one of the data fields  
+
+various metrics are displayed on the top of the graph
+
+In the top right corner a pie chart containing more metric representation, click on different tabs to display  
+
+![img_4.png](img_4.png)
