@@ -14,6 +14,8 @@ module com.example.seg {
     requires java.desktop;
     requires org.jfree.jfreechart;
 
+    requires javafx.graphics;
+
     opens com.application.login to javafx.fxml;
     exports com.application.login;
     exports com.application.dashboard;

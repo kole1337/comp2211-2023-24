@@ -19,6 +19,11 @@ import java.util.logging.Logger;
 *   1. Implement SQL
 * */
 
+/*
+* The controller for the Login panel.
+* Checks for credentials and switches scenes.
+* */
+
 public class LoginController {
     public Button loginButton;
     public PasswordField passwordField;
@@ -31,12 +36,19 @@ public class LoginController {
     private Parent root;
     private Logger logger;
 
+    /**
+     * Login function that checks if the user is
+     * an Admin or User.
+     * Hardcoded for now, will implement
+     * User System later.
+     * */
     @FXML
     public void loginFunc(ActionEvent event){
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "You pressed loginButton.");
+
         //if login details are right, switch to dashboard
-        if(usernameField.getText().equals("admin") && passwordField.getText().equals("0000")){
+        if(checkAdmin(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -44,13 +56,13 @@ public class LoginController {
                 stage.setScene(scene);
                 stage.show();
                 logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as admin. Opening dashboard." + System.currentTimeMillis());
+                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
             //if the login details are wrong, show error
-        }else if (usernameField.getText().equals("user") && passwordField.getText().equals("0000")){
+        }else if (checkUser(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -58,13 +70,14 @@ public class LoginController {
                 stage.setScene(scene);
                 stage.show();
                 logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as user. Opening dashboard." + System.currentTimeMillis());
+                logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
         }
         else {
+            logger.log(Level.SEVERE, "Wrong credentials entered..");
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setHeaderText("Problem");
             errorAlert.setContentText("Wrong credentials");
@@ -73,5 +86,15 @@ public class LoginController {
 
             errorAlert.showAndWait();
         }
+    }
+
+    public Boolean checkUser(String username, String password) {
+        logger.log(Level.SEVERE, "Checking user credentials.");
+        return username.equals("user") && password.equals("0000");
+    }
+
+    public Boolean checkAdmin(String username, String password) {
+        logger.log(Level.SEVERE, "Checking admin credentials.");
+        return username.equals("admin") && password.equals("0000");
     }
 }

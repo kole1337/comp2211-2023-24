@@ -4,9 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
+
 //import javafx.stage.FileChooser;
 public class FileChooser {
-
     private FilePathHandler pathHandler = new FilePathHandler();
     public static String main() {
         // Open file chooser dialog
@@ -19,7 +20,7 @@ public class FileChooser {
             System.out.println("Selected file: " + selectedFile.getAbsolutePath());
 
             // Open the selected file in the file explorer
-            openFileInExplorer(selectedFile);
+            //openFileInExplorer(selectedFile);
             return (selectedFile.getAbsolutePath());
         } else {
             System.out.println("No file selected.");
