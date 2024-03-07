@@ -39,32 +39,32 @@
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Tutorial" />
-              <MenuItem mnemonicParsing="false" text="Documentation" />
+              <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
             </items>
           </Menu>
 
         </menus>
       </MenuBar>
       <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
-      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
-      <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:">
+      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" visible="false" />
+      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" visible="false" />
+      <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:" visible="false">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:">
+      <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:" visible="false">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
+      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0" visible="false">
          <children>
             <Label text="Filters" visible="true" />
          </children>
           
       </VBox>
-      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;" visible="false">
          <children>
             <Label text="Data to view">
                <opaqueInsets>
@@ -91,11 +91,11 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:">
+      <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:" visible="false">
          <font>
             <Font size="18.0" />
          </font></Label>
-      <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:">
+      <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:" visible="false">
          <font>
             <Font size="18.0" />
          </font></Label>
@@ -119,7 +119,7 @@
       </StackedBarChart>
       <ScrollPane layoutX="205.0" layoutY="121.0" prefHeight="686.0" prefWidth="697.0">
          <content>
-            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="696.0">
+            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="696.0" visible="false">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
@@ -133,7 +133,7 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:">
+      <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:" visible="false">
          <font>
             <Font size="18.0" />
          </font></Label>
@@ -186,12 +186,12 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:">
+      <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:" visible="false">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:">
+      <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:" visible="false">
          <font>
             <Font size="18.0" />
          </font>

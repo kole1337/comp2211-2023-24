@@ -26,6 +26,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -36,10 +37,13 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * @TODO
- *   1. Implement CSV input
- *   2. Display CSV info
+/**
+ * A grand controller for the dashboard
+ * of the application.
+ * It is a bit messy, maybe some functions can be transferred
+ * to separate packages/classes.
+ * Every function contains explanation to what
+ * it is doing and why
  * */
 
 public class DashboardController {
@@ -75,16 +79,8 @@ public class DashboardController {
 
     /*
      * @TODO:
-     *   1. Total clicks
-     *   2. Average price per click
-     *   3. Zero cost click
-     *   4. Total Entries
-     *   5. Average pages viewed:
-     *   6. Age graph
-     *   7. Gender graph - fixes
-     *   8. Income graph
-     *   9. Context origin
-     *   10. Conversion graph
+     *   1. Context origin
+     *   2. Conversion graph
      * */
 
 
@@ -93,9 +89,8 @@ public class DashboardController {
         logger.log(Level.ALL, "loadCSV button");
         loadingBar();
         Graphs gg = new Graphs(fph);
-        //gg.main();
-//        TimeFrameControl tfc = new TimeFrameControl();
-//        tfc.createTimeFrame();
+        gg.main();
+
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniques());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
         loadGenders();
@@ -109,16 +104,22 @@ public class DashboardController {
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
 
         //load: graph, data to view, time slider, filters, number data
-//        sumImpressionsLabel.setVisible(true);
-//        uniqueImpressionLabel.setVisible(true);
-//        dataSelection.setVisible(true);
-//        filterSelection.setVisible(true);
-//        sliderTimeLabel.setVisible(true);
-//        timeFrameLabel.setVisible(true);
-//        dataChart.setVisible(true);
-//        loadCSVbutton.setVisible(false);
+        sumImpressionsLabel.setVisible(true);
+        uniqueImpressionLabel.setVisible(true);
+        totalClicksLabel.setVisible(true);
+        zeroCostClickLabel.setVisible(true);
+        avgClickPriceLabel.setVisible(true);
+        totalEntriesLabel.setVisible(true);
+        avgPagesViewedLabel.setVisible(true);
+        dataSelection.setVisible(true);
+        filterSelection.setVisible(true);
+        sliderTimeLabel.setVisible(true);
+        timeFrameLabel.setVisible(true);
+        dataChart.setVisible(true);
+        loadCSVbutton.setVisible(false);
     }
-    //Logout function for button
+
+    //Logout function for button.
     public void logoutButton(ActionEvent event) {
         try {
             root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
@@ -134,58 +135,21 @@ public class DashboardController {
         }
     }
 
+    //Function that would load the graph data inside the panel.
+    //Not implemented.
     public void loadGraph(){
-        logger = Logger.getLogger(getClass().getName());
-        logger.log(Level.INFO, "Creating data graph");
 
-        //Defining the X axis
-        CategoryAxis xAxis = new CategoryAxis();
-
-        //defining the y Axis
-        NumberAxis yAxis = new NumberAxis(0, 15, 2.5);
-        yAxis.setLabel("Fruit units");
-
-        //Creating the Area chart
-        AreaChart<String, Number> areaChart = new AreaChart(xAxis, yAxis);
-        areaChart.setTitle("Average fruit consumption during one week");
-
-        //Prepare XYChart.Series objects by setting data
-        XYChart.Series series1 = new XYChart.Series();
-        series1.setName("John");
-        series1.getData().add(new XYChart.Data("Monday", 3));
-        series1.getData().add(new XYChart.Data("Tuesday", 4));
-        series1.getData().add(new XYChart.Data("Wednesday", 3));
-        series1.getData().add(new XYChart.Data("Thursday", 5));
-        series1.getData().add(new XYChart.Data("Friday", 4));
-        series1.getData().add(new XYChart.Data("Saturday", 10));
-        series1.getData().add(new XYChart.Data("Sunday", 12));
-
-        XYChart.Series series2 = new XYChart.Series();
-        series2.setName("Jane");
-        series2.getData().add(new XYChart.Data("Monday", 1));
-        series2.getData().add(new XYChart.Data("Tuesday", 3));
-        series2.getData().add(new XYChart.Data("Wednesday", 4));
-        series2.getData().add(new XYChart.Data("Thursday", 3));
-        series2.getData().add(new XYChart.Data("Friday", 3));
-        series2.getData().add(new XYChart.Data("Saturday", 5));
-        series2.getData().add(new XYChart.Data("Sunday", 4));
-
-        //Setting the XYChart.Series objects to area chart
-        areaChart.getData().addAll(series1,series2);
-        dataChart = areaChart;
-        logger.log(Level.INFO, "Finish creating");
     }
 
+    //Function to count the unique impressions
     public int countUniques(){
         Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.ALL, "Loading Uniques");
+        logger.log(Level.ALL, "Loading Unique visits from impressions_log");
         String filePath = fph.getImpressionPath(); // Nikola - PC
         String csvFilePath = filePath;
-        int columnIndexToCount = 1; // Change this to the index of the column you want to count (0-based index)
+        int columnIndexToCount = 1; // Index of the column for data
         Set<String> uniqueEntries = new HashSet<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
-
-
             String[] line;
             while ((line = reader.readNext()) != null) {
                 if (line.length > columnIndexToCount) {
@@ -195,7 +159,7 @@ public class DashboardController {
             }
 
             int uniqueCount = uniqueEntries.size();
-            System.out.println("Number of unique entries in column " + columnIndexToCount + ": " + uniqueCount);
+            //System.out.println("Number of unique entries in column " + columnIndexToCount + ": " + uniqueCount);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CsvValidationException e) {
@@ -204,9 +168,10 @@ public class DashboardController {
         return uniqueEntries.size();
     }
 
+    //Function to count the zero cost clicks
     public int countZeroCostClick(){
         Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.ALL, "Loading Uniques");
+        logger.log(Level.ALL, "Loading Zero Cost Clicks");
         String filePath = fph.getClickPath(); // Nikola - PC
         String csvFilePath = filePath;
         int columnIndexToCount = 2; // Change this to the index of the column you want to count (0-based index)
@@ -224,7 +189,7 @@ public class DashboardController {
             }
 
             int uniqueCount = uniqueEntries.size();
-            System.out.println("Number of unique entries in column " + columnIndexToCount + ": " + uniqueCount);
+//            System.out.println("Number of unique entries in column " + columnIndexToCount + ": " + uniqueCount);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CsvValidationException e) {
@@ -233,10 +198,11 @@ public class DashboardController {
         return totalZeros;
     }
 
+    //Function to find the average price per click
     public double countAveragePricePerClick(){
         double average = 0;
         Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.ALL, "Loading Uniques");
+        logger.log(Level.ALL, "Loading Average Price per Click");
         String filePath = fph.getClickPath(); // Nikola - PC
         String csvFilePath = filePath;
         int columnIndexToCount = 2; // Change this to the index of the column you want to count (0-based index)
@@ -250,7 +216,7 @@ public class DashboardController {
                 totalPrice += Double.parseDouble(line[2]);
             }
 
-            System.out.println("Number of unique entries in column " + columnIndexToCount + ": ");
+//            System.out.println("Number of unique entries in column " + columnIndexToCount + ": ");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CsvValidationException e) {
@@ -260,6 +226,7 @@ public class DashboardController {
         return totalPrice/countTotalClicks();
     }
 
+    //Function to find the total impressions
     public int countTotalImpressions(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading Total Impressions");
@@ -273,13 +240,14 @@ public class DashboardController {
                 totalEntries++;
             }
 
-            System.out.println("Total Entries in Column: " + totalEntries);
+            //System.out.println("Total Entries in Column: " + totalEntries);
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
         return totalEntries;
     }
 
+    //Function to find the total clicks for the campaign
     public int countTotalClicks(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading Total clicks");
@@ -293,12 +261,14 @@ public class DashboardController {
                 totalEntries++;
             }
 
-            System.out.println("Total Entries in Column: " + totalEntries);
+            //System.out.println("Total Entries in Column: " + totalEntries);
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
         return totalEntries;
     }
+
+    //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading total entries from ads.");
@@ -312,16 +282,17 @@ public class DashboardController {
                 totalEntries++;
             }
 
-            System.out.println("Total Entries in Column: " + totalEntries);
+            //System.out.println("Total Entries in Column: " + totalEntries);
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
         return totalEntries;
     }
 
+    //Function to find the average number of pages
     public double countAvgPageViewed(){
         logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.ALL, "Loading total entries from ads.");
+        logger.log(Level.ALL, "Loading average pages viewed.");
         String filePath = fph.getServerPath();
         double avgPages = 0;
         Set<String> uniqueEntries = new HashSet<>();
@@ -338,7 +309,7 @@ public class DashboardController {
             }
 
             int uniqueCount = uniqueEntries.size();
-            System.out.println("Number of unique entries in column " + ": " + uniqueCount);
+            //System.out.println("Number of unique entries in column " + ": " + uniqueCount);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CsvValidationException e) {
@@ -349,6 +320,7 @@ public class DashboardController {
         return Math.round(avgPages * 100) / 100;
     }
 
+    //loading bar function
     public void loadingBar(){
         ButtonType cancelButtonType = new ButtonType("Cancel");
 
@@ -393,17 +365,19 @@ public class DashboardController {
         new Thread(task).start();
     }
 
+
+    //Function to find the gender separation.
     public void loadGenders(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading genders.");
         int males = 0;
         int females = 0;
         int unspec = 0;
         String filePath = fph.getImpressionPath();
-        //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
         int columnIndex = 2; // Change this to the index of the column you want to read (0-based)
 
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
-
 
             // Read each line from the CSV file
             while ((nextLine = reader.readNext()) != null) {
@@ -411,8 +385,6 @@ public class DashboardController {
                 if (columnIndex < nextLine.length) {
                     // Get the value of the specified column
                     String columnValue = nextLine[columnIndex];
-                    //System.out.println("Column Value: " + columnValue);
-                    //System.out.println(columnValue);
                     // Increment the total entries
                     if(columnValue.equals("Female")) {
                         females ++;
@@ -420,11 +392,11 @@ public class DashboardController {
                         males ++;
                     }else unspec++;
                 } else {
-                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
+//                    System.out.println("Column index out of bounds for line: " + String.join(",", nextLine));
                 }
             }
 
-            System.out.println("Females: " + females + "; Males: " + males);
+//            System.out.println("Females: " + females + "; Males: " + males);
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
@@ -443,7 +415,10 @@ public class DashboardController {
         genderGraph.setData(pieChartData);
     }
 
+    //function to load the age graph.
     public void loadAgeGraph(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading age graph.");
         int below25 = 0;
         int between25to34 = 0;
         int between35to44 = 0;
@@ -507,14 +482,17 @@ public class DashboardController {
         ageGraph.setData(pieChartData);
     }
 
+    //Load income graph
     public void loadIncomeGraph(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading income graph.");
         int lowInc = 0;
         int midInc = 0;
         int highInc = 0;
         int unspec = 0;
         String filePath = fph.getImpressionPath();
         //String filePath = "src/main/resources/2_week_campaign_2/impression_log.csv";
-        int columnIndex = 3; // Change this to the index of the column you want to read (0-based)
+        int columnIndex = 4; // Change this to the index of the column you want to read (0-based)
 
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
@@ -560,32 +538,40 @@ public class DashboardController {
         incomeGraph.setData(pieChartData);
     }
 
+    //Display tutorial overlay
     public void loadTutorial(ActionEvent actionEvent) {
         tutPNG.setVisible(true);
         tutorialOFF.setVisible(true);
-
     }
 
+    //Disable tutorial overlay
     public void disableTutPNG(ActionEvent actionEvent) {
         tutorialOFF.setVisible(false);
         tutPNG.setVisible(false);
     }
 
+    //Open dialogue box for opening files
     public void openCampaign(ActionEvent actionEvent) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-        File selectedFile;
+        String selectedFile;
         //System.out.println(selectedFile);
-//        FileChooser fc = new FileChooser();
+        FileChooser fc = new FileChooser();
         String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
         for (int i = 0; i < 3; i++) {
             //paths[i] = fc.main();
-            fileChooser.setTitle(paths[i]);
-            selectedFile = fileChooser.showOpenDialog(stage);
-            paths[i] = selectedFile.getAbsolutePath();
-            System.out.println(selectedFile);
+            //fileChooser.setTitle(paths[i]);
+            //fc.main();
+            selectedFile = fc.main();
+            paths[i] = selectedFile;
+//            System.out.println(selectedFile);
         }
+        System.out.println(paths[0]);
         fph.setClickPath(paths[0]);
         fph.setImpressionPath(paths[1]);
         fph.setServerPath(paths[2]);
+    }
+
+    public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
+        java.awt.Desktop.getDesktop().browse(URI.create("https://nikolaparushev2003.wixsite.com/ecs-adda/documentation"));
     }
 }

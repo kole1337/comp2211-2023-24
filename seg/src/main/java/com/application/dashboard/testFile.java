@@ -3,6 +3,9 @@ package com.application.dashboard;
 import java.io.*;
 import com.application.dashboard.ReadFile;
 
+/**
+ * This is a test file. It should be ignored.
+ * */
 public class testFile {
     public static void main(String[] args) throws FileNotFoundException {
         // Assuming the project structure is like: src/main/resources/2_week_campaign_2/merge.csv
