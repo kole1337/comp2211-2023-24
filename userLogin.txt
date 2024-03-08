@@ -1,0 +1,4 @@
+context userLogin
+sets
+	USER
+end

@@ -1,0 +1,55 @@
+machine userLoginSys
+sees userLogin
+variables
+	admin
+	user
+	login
+
+invariants
+	@inv0: admin <: USER
+	@inv1: user <: USER
+	@inv2: admin /\ user = {}
+	@inv3: login <: admin \/ user
+	
+
+events
+	event INITIALISATION
+	then
+		@act0: admin := {}
+		@act1: user := {}
+		@act2: login := {}
+		
+	end
+	
+	event NewUser
+	any
+		s
+	where
+		@grd1: s /: admin
+		@grd2: s /: user
+	then
+		@act1: user := user \/ {s}
+	end
+	
+	event NewAdmin
+	any
+		s
+	where
+		@grd1: s /: admin
+		@grd2: s /: user
+	then
+		//@act1: user := user \ {s}
+		@act1: admin := admin \/ {s}
+	end
+	
+	event Login
+	any
+		s
+	where
+		@grd1: s : admin \/ user
+		@grd2: s /: login
+	then
+		@act1: login := login \/ {s}
+	end
+	
+end
