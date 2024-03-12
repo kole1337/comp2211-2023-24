@@ -236,7 +236,6 @@ public class DashboardController {
     //Not implemented.
 
     public void createTimeFrame(){
-
         startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
         endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
         fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
@@ -247,20 +246,13 @@ public class DashboardController {
         toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
 
         setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
-
         setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
 
-
-
-
-        Button showRangeButton = new Button("Show");
+       Button showRangeButton = new Button("Show");
         showRangeButton.setOnAction(e -> {
             LocalDateTime fromDateTime = LocalDateTime.of(startDate.getValue(), LocalTime.of(Integer.parseInt(fromHour.getValue()), Integer.parseInt(fromMinute.getValue()), Integer.parseInt(fromSecond.getValue())));
             LocalDateTime toDateTime = LocalDateTime.of(endDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
-
-
         });
-
     }
     /**
      * this is a method to create appropriate comboboxes for user to select hour/minute/second
