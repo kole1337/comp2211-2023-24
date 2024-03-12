@@ -26,7 +26,7 @@
 
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.layout.HBox?>
-<AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/18.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
         <menus>
@@ -113,8 +113,8 @@
                    <ComboBox fx:id="toHour"/><Label text=":"/><ComboBox fx:id="toMinute"/><Label text=":"/><ComboBox fx:id="toSecond"/>
              </HBox>
              <Button text="show"/>
-             </VBox>>
-         </children>>
+             </VBox>
+         </children>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
