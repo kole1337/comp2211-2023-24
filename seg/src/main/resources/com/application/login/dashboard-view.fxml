@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -7,11 +9,11 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
@@ -21,12 +23,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import java.lang.String?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+
+<AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <MenuBar>
         <menus>
@@ -76,17 +74,17 @@
                   <Insets left="15.0" />
                </opaqueInsets>
             </Label>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Clicks" fx:id = "TotalClicks" onAction="#loadCSV"/>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" style="-fx-border-insets: 50;" text="Uniques" fx:id = "TotalUniques" onAction="#loadCSV"/>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Bounces" fx:id = "TotalBounces" onAction="#loadCSV"/>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Impressions" fx:id = "TotalImpressions" onAction="#loadCSV"/>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Conversion Rate" fx:id = "TotalConversions" onAction="#loadCSV"/>
-             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Total Cost" fx:id = "TotalCost" onAction="#loadCSV"/>
-            <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per acquisition" fx:id = "CPA" onAction="#loadCSV"/>
-             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per clicks" fx:id = "CPC" onAction="#loadCSV"/>
-             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per impression" fx:id = "CTR" onAction="#loadCSV"/>
-             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Cost per thousand impressions" fx:id = "CPM" onAction="#loadCSV"/>
-             <Button alignment="TOP_CENTER" mnemonicParsing="false" text="Bounce Rate" fx:id = "BounceRate" onAction="#loadCSV">
+            <Button fx:id="TotalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Clicks" />
+            <Button fx:id="TotalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" style="-fx-border-insets: 50;" text="Uniques" />
+            <Button fx:id="TotalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounces" />
+            <Button fx:id="TotalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Impressions" />
+            <Button fx:id="TotalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Conversion Rate" />
+             <Button fx:id="TotalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Total Cost" />
+            <Button fx:id="CPA" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per acquisition" />
+             <Button fx:id="CPC" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per clicks" />
+             <Button fx:id="CTR" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per impression" />
+             <Button fx:id="CPM" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per thousand impressions" />
+             <Button fx:id="BounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounce Rate">
                <opaqueInsets>
                   <Insets top="10.0" />
                </opaqueInsets>
@@ -94,9 +92,9 @@
              <ComboBox fx:id="ComboBox">
                  <items>
                      <FXCollections fx:factory="observableArrayList">
-                         <String fx:value = "hour" />
-                         <String fx:value = "day" />
-                         <String fx:value = "week" />
+                         <String fx:value="hour" />
+                         <String fx:value="day" />
+                         <String fx:value="week" />
                      </FXCollections>
                  </items>
              </ComboBox>
@@ -138,7 +136,7 @@
       </StackedBarChart>
       <ScrollPane layoutX="205.0" layoutY="121.0" prefHeight="686.0" prefWidth="697.0">
          <content>
-            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="696.0">
+            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="1199.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
