@@ -17,7 +17,10 @@ public class LoginApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Ad dashboard");
+
         stage.setScene(scene);
+        stage.setMinHeight(500);
+        stage.setMinWidth(500);
         stage.show();
     }
 
