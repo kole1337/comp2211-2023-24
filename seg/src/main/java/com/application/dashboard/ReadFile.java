@@ -17,7 +17,7 @@ public class ReadFile {
         //String file2 = "/2_week_campaign_2/impression_log.csv";
         String file2 = FileChooser.main();
         //InputStream inputStream = testFile.class.getResourceAsStream(file1);
-       // InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
+        // InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
 
 //        String file3 = "/2_week_campaign_2/merged.csv"; // Path to the first CSV file
 //        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
@@ -47,6 +47,7 @@ public class ReadFile {
         writeCSV(outputFile, mergedData);
         //return outputFile;
     }
+
 
     // Read data from a CSV file and store it in a map with the ID column as key
     static Map<String, String[]> readCSV(String streamPath) {
@@ -139,4 +140,4 @@ public class ReadFile {
         }
 
     }
-}
+    }
