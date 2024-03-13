@@ -9,8 +9,16 @@ module com.example.seg {
     requires org.kordamp.ikonli.javafx;
     requires eu.hansolo.tilesfx;
     requires java.logging;
+    requires com.opencsv;
+
+    requires java.desktop;
+    requires org.jfree.jfreechart;
+
+    requires javafx.graphics;
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
     exports com.application.dashboard;
+    exports com.application.files;
+    exports com.application.admin;
 }
