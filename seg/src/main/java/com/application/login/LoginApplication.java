@@ -21,8 +21,8 @@ public class LoginApplication extends Application {
         stage.setTitle("Ad dashboard");
 
         stage.setScene(scene);
-//        stage.setMinHeight(500);
-//        stage.setMinWidth(500);
+        stage.setMinHeight(720);
+        stage.setMinWidth(1280);
         stage.show();
     }
 
