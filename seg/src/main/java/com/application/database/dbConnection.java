@@ -22,6 +22,7 @@ public class dbConnection {
         }
     }
 
+    static PreparedStatement pstmt;
     static ResultSet rs;
 
     public dbConnection() throws SQLException {
@@ -47,9 +48,10 @@ public class dbConnection {
 //                    "(\"gesh5\",\"1234\");";
 //            statement.executeUpdate(insertGesh);
 
-        if(selectUser("gesh6", "1234")) {
-            System.out.println("User exists");
-        }else System.out.println("nuh uh");
+//        if(selectUser("gesh6", "1234")) {
+//            System.out.println("User exists");
+//        }else System.out.println("nuh uh");
+        insertUser("gesh69", "1234", "user");
     }
 
     public static void selectAll() throws SQLException {
@@ -66,6 +68,18 @@ public class dbConnection {
             if (rs.getString("username").equals(user) && rs.getString("password").equals(pass)) return true;
         }
         return false;
+    }
+
+    public static void insertUser(String username, String pass, String role) throws SQLException{
+
+        String inUser = "INSERT INTO users(username, password, role) VALUES (?,?,?)";
+
+        pstmt = conn.prepareStatement(inUser);
+        pstmt.setString(1, username);
+        pstmt.setString(2, pass);
+        pstmt.setString(3, role);
+        pstmt.executeUpdate();
+        System.out.println("INSERTED!");
     }
 
 }
