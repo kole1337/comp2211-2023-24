@@ -15,10 +15,12 @@ module com.example.seg {
     requires org.jfree.jfreechart;
 
     requires javafx.graphics;
+    requires java.sql;
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
     exports com.application.dashboard;
     exports com.application.files;
     exports com.application.admin;
+    exports com.application.database;
 }

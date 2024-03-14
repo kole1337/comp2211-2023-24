@@ -15,22 +15,23 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<AnchorPane fx:id="background" prefHeight="750.0" prefWidth="1385.0" styleClass="D:\year2\seg\comp2211\seg\src\main\resources\com\application\login\dashboard.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
-        <MenuBar>
+        <MenuBar layoutX="3.0" layoutY="2.0">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu fx:id="File" mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
                     </items>
@@ -40,36 +41,35 @@
                 <!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
                 <!--            </items>-->
                 <!--          </Menu>-->
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu fx:id="Help" mnemonicParsing="false" text="Help">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial" />
                         <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial" />
                         <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
                     </items>
                 </Menu>
+                <Menu fx:id="Window" mnemonicParsing="false" text="Window">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadTheme" text="Theme" />
+                    </items>
+                </Menu>
+                <Menu fx:id="Environment" mnemonicParsing="false" text="Environment">
+                    <items>
+                  <RadioMenuItem fx:id="lightTheme" mnemonicParsing="false" onAction="#enableLightTheme" text="Light theme" />
+                  <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#enableDarkTheme" text="Dark theme" />
+                    </items>
+                </Menu>
 
             </menus>
         </MenuBar>
-        <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-        <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
-        <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
-        <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
-        <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
+        <Button fx:id="logoutButton" layoutX="243.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
         <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
             <children>
                 <Label text="Filters" visible="true" />
             </children>
 
         </VBox>
-        <VBox fx:id="dataSelection" layoutX="8.0" layoutY="193.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+        <VBox fx:id="dataSelection" layoutX="2.0" layoutY="78.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="445.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
             <children>
                 <Label text="Data to view">
                     <opaqueInsets>
@@ -123,14 +123,6 @@
                 <Font name="System Bold" size="14.0" />
             </font>
         </Button>
-        <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:">
-            <font>
-                <Font size="18.0" />
-            </font></Label>
-        <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:">
-            <font>
-                <Font size="18.0" />
-            </font></Label>
         <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Impressions" visible="false">
             <font>
                 <Font name="System Bold" size="14.0" />
@@ -149,11 +141,7 @@
                 <NumberAxis side="LEFT" />
             </yAxis>
         </StackedBarChart>
-        <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:">
-            <font>
-                <Font size="18.0" />
-            </font></Label>
-        <TabPane layoutX="940.0" layoutY="140.0" prefHeight="445.0" prefWidth="439.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+        <TabPane layoutX="897.0" layoutY="78.0" prefHeight="445.0" prefWidth="439.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <Tab text="Age Graph">
                     <content>
@@ -202,9 +190,9 @@
                 </Tab>
             </tabs>
         </TabPane>
-        <ScrollPane layoutX="205.0" layoutY="140.0" prefHeight="686.0" prefWidth="697.0">
+        <ScrollPane layoutX="180.0" layoutY="78.0" prefHeight="686.0" prefWidth="717.0">
             <content>
-                <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="691.0">
+                <AreaChart fx:id="dataChart" prefHeight="680.0" prefWidth="709.0">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" />
                     </xAxis>
@@ -213,21 +201,11 @@
                     </yAxis>
                 </AreaChart>
             </content></ScrollPane>
-        <Button fx:id="loadCSVbutton3" layoutX="16.0" layoutY="711.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Data">
+        <Button fx:id="loadCSVbutton3" layoutX="2.0" layoutY="700.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Data">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Button>
-        <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
-        <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Label>
         <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
             <image>
 
@@ -243,5 +221,54 @@
             <font>
                 <Font name="System Bold" size="15.0" />
             </font></Button>
+      <Label layoutX="180.0" layoutY="51.0" text="Graph:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Pane layoutX="897.0" layoutY="556.0" prefHeight="240.0" prefWidth="439.0" style="-fx-border-color: black;">
+         <children>
+              <Label fx:id="sumImpressionsLabel" layoutY="1.0" text="Total impressions:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+              <Label fx:id="uniqueImpressionLabel" layoutY="107.0" text="Unique impressions:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+              <Label fx:id="zeroCostClickLabel" layoutY="82.0" text="Zero cost clicks:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+            </Label>
+              <Label fx:id="totalClicksLabel" layoutY="55.0" text="Total Clicks:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+            </Label>
+              <Label fx:id="avgClickPriceLabel" layoutX="1.0" layoutY="161.0" text="Average price per click:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+            </Label>
+              <Label fx:id="totalEntriesLabel" layoutY="28.0" text="Total entries from ads:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+              <Label fx:id="avgPagesViewedLabel" layoutX="2.0" layoutY="134.0" text="Average pages viewed:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+         </children>
+      </Pane>
+      <Label layoutX="897.0" layoutY="529.0" text="Data:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

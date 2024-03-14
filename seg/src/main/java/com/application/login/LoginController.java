@@ -1,6 +1,7 @@
 package com.application.login;
 
 import com.application.dashboard.DashboardController;
+import com.application.database.UserManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +27,12 @@ import java.util.logging.Logger;
 * */
 
 public class LoginController {
+
+    public UserManager userManager;
+
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
-    public Label labelTest;
-
     //---
     private Stage stage;
     private Scene scene;
@@ -43,11 +46,10 @@ public class LoginController {
      * User System later.
      * */
     @FXML
-    public void loginFunc(ActionEvent event){
+    public void loginFunc(ActionEvent event) throws SQLException {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "You pressed loginButton.");
 
-        //if login details are right, switch to dashboard
         if(checkAdmin(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
@@ -88,14 +90,14 @@ public class LoginController {
         }
     }
 
-    public Boolean checkUser(String username, String password) {
+    public Boolean checkUser(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking user credentials.");
-        return username.equals("user") && password.equals("0000");
+        return userManager.selectUser(username, password);
     }
 
-    public Boolean checkAdmin(String username, String password) {
+    public Boolean checkAdmin(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking admin credentials.");
-        return username.equals("admin") && password.equals("0000");
+        return userManager.selectAdmin(username, password);
     }
 }
 
