@@ -1,6 +1,7 @@
 package com.application.login;
 
 import com.application.dashboard.DashboardController;
+import com.application.database.dbConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,9 @@ import java.util.logging.Logger;
 * */
 
 public class LoginController {
+
+    public dbConnection db;
+
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
@@ -43,26 +48,27 @@ public class LoginController {
      * User System later.
      * */
     @FXML
-    public void loginFunc(ActionEvent event){
+    public void loginFunc(ActionEvent event) throws SQLException {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "You pressed loginButton.");
 
         //if login details are right, switch to dashboard
-        if(checkAdmin(usernameField.getText(), passwordField.getText())){
-            try {
-                root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-                logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
-            } catch (IOException e) {
-                logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.SEVERE, "Failed to create new Window.", e);
-            }
-            //if the login details are wrong, show error
-        }else if (checkUser(usernameField.getText(), passwordField.getText())){
+//        if(checkAdmin(usernameField.getText(), passwordField.getText())){
+//            try {
+//                root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
+//                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                scene = new Scene(root);
+//                stage.setScene(scene);
+//                stage.show();
+//                logger = Logger.getLogger(getClass().getName());
+//                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+//            } catch (IOException e) {
+//                logger = Logger.getLogger(getClass().getName());
+//                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+//            }
+//            //if the login details are wrong, show error
+        //}else
+            if (checkUser(usernameField.getText(), passwordField.getText())){
             try {
                 root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -88,14 +94,14 @@ public class LoginController {
         }
     }
 
-    public Boolean checkUser(String username, String password) {
+    public Boolean checkUser(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking user credentials.");
-        return username.equals("user") && password.equals("0000");
+        return db.selectUser(username, password);
     }
 
-    public Boolean checkAdmin(String username, String password) {
+    public Boolean checkAdmin(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking admin credentials.");
-        return username.equals("admin") && password.equals("0000");
+        return db.selectUser(username, password);
     }
 }
 

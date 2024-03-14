@@ -15,6 +15,7 @@ module com.example.seg {
     requires org.jfree.jfreechart;
 
     requires javafx.graphics;
+    requires java.sql;
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
