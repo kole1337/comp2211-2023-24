@@ -10,6 +10,7 @@
 <?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -21,212 +22,226 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="820.0" prefWidth="1409.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
-   <children>
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
-            </items>
-          </Menu>
-<!--          <Menu mnemonicParsing="false" text="Edit">-->
-<!--            <items>-->
-<!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
-<!--            </items>-->
-<!--          </Menu>-->
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial" />
-                <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial" />
-                <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
-            </items>
-          </Menu>
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
+                    </items>
+                </Menu>
+                <!--          <Menu mnemonicParsing="false" text="Edit">-->
+                <!--            <items>-->
+                <!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
+                <!--            </items>-->
+                <!--          </Menu>-->
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial" />
+                        <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
+                    </items>
+                </Menu>
 
-        </menus>
-      </MenuBar>
-      <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-      <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
-      <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
-      <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
-         <children>
-            <Label text="Filters" visible="true" />
-         </children>
-          
-      </VBox>
-      <VBox fx:id="dataSelection" layoutX="14.0" layoutY="191.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
-         <children>
-            <Label text="Data to view">
-               <opaqueInsets>
-                  <Insets left="15.0" />
-               </opaqueInsets>
-            </Label>
-            <Button fx:id="TotalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Clicks" />
-            <Button fx:id="TotalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" style="-fx-border-insets: 50;" text="Uniques" />
-            <Button fx:id="TotalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounces" />
-            <Button fx:id="TotalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Impressions" />
-            <Button fx:id="TotalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Conversion Rate" />
-             <Button fx:id="TotalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Total Cost" />
-            <Button fx:id="CPA" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per acquisition" />
-             <Button fx:id="CPC" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per clicks" />
-             <Button fx:id="CTR" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per impression" />
-             <Button fx:id="CPM" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per thousand impressions" />
-             <Button fx:id="BounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounce Rate">
-               <opaqueInsets>
-                  <Insets top="10.0" />
-               </opaqueInsets>
-            </Button>
-             <ComboBox fx:id="ComboBox">
-                 <items>
-                     <FXCollections fx:factory="observableArrayList">
-                         <String fx:value="hour" />
-                         <String fx:value="day" />
-                         <String fx:value="week" />
-                     </FXCollections>
-                 </items>
-             </ComboBox>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </VBox>
-      <Button fx:id="loadCSVbutton" layoutX="16.0" layoutY="706.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Clicks" visible="false">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Button>
-      <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Impressions" visible="false">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Button>
-      <Button fx:id="loadCSVbutton2" layoutX="16.0" layoutY="781.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Server Log" visible="false">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Button>
-      <StackedBarChart fx:id="genderBarChart" layoutX="1078.0" layoutY="403.0" prefHeight="400.0" prefWidth="277.0" title="Gender Graph" visible="false">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </StackedBarChart>
-      <ScrollPane layoutX="205.0" layoutY="121.0" prefHeight="686.0" prefWidth="697.0">
-         <content>
-            <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="1199.0">
-              <xAxis>
+            </menus>
+        </MenuBar>
+        <Button fx:id="logoutButton" layoutX="93.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
+        <Slider fx:id="sliderTimeLabel" layoutX="27.0" layoutY="140.0" />
+        <Label fx:id="timeFrameLabel" layoutX="67.0" layoutY="117.0" text="Time frame" />
+        <Label fx:id="uniqueImpressionLabel" layoutX="194.0" layoutY="25.0" text="Unique impressions:">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label fx:id="sumImpressionsLabel" layoutX="194.0" layoutY="55.0" text="Total impressions:">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <VBox fx:id="filterSelection" layoutX="16.0" layoutY="403.0" prefHeight="174.0" prefWidth="178.0">
+            <children>
+                <Label text="Filters" visible="true" />
+            </children>
+
+        </VBox>
+        <VBox fx:id="dataSelection" layoutX="8.0" layoutY="193.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="178.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+            <children>
+                <Label text="Data to view">
+                    <opaqueInsets>
+                        <Insets left="15.0" />
+                    </opaqueInsets>
+                </Label>
+                <Button fx:id="TotalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Clicks" />
+                <Button fx:id="TotalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" style="-fx-border-insets: 50;" text="Uniques" />
+                <Button fx:id="TotalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounces" />
+                <Button fx:id="TotalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Impressions" />
+                <Button fx:id="TotalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Conversion Rate" />
+                <Button fx:id="TotalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Total Cost" />
+                <Button fx:id="CPA" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per acquisition" />
+                <Button fx:id="CPC" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per clicks" />
+                <Button fx:id="CTR" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per impression" />
+                <Button fx:id="CPM" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Cost per thousand impressions" />
+                <Button fx:id="BounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadCSV" text="Bounce Rate">
+                    <opaqueInsets>
+                        <Insets top="10.0" />
+                    </opaqueInsets>
+                </Button>
+                <ComboBox fx:id="ComboBox">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="hour" />
+                            <String fx:value="day" />
+                            <String fx:value="week" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <VBox>
+                    <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="Start Date" />
+                    <HBox fx:id="fromTimeHBox">
+                        <ComboBox fx:id="fromHour" /><Label text=":" /><ComboBox fx:id="fromMinute" /><Label text=":" /><ComboBox fx:id="fromSecond" />
+                    </HBox>
+
+                    <!-- DatePicker for selecting the end date -->
+                    <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="End Date" />
+                    <HBox fx:id="toTimeHBox">
+                        <ComboBox fx:id="toHour" /><Label text=":" /><ComboBox fx:id="toMinute" /><Label text=":" /><ComboBox fx:id="toSecond" />
+                    </HBox>
+                    <Button text="show" />
+                </VBox>
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+        </VBox>
+        <Button fx:id="loadCSVbutton" layoutX="16.0" layoutY="706.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Clicks" visible="false">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Button>
+        <Label fx:id="totalClicksLabel" layoutX="484.0" layoutY="25.0" text="Total Clicks:">
+            <font>
+                <Font size="18.0" />
+            </font></Label>
+        <Label fx:id="avgClickPriceLabel" layoutX="486.0" layoutY="90.0" text="Average price per click:">
+            <font>
+                <Font size="18.0" />
+            </font></Label>
+        <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Impressions" visible="false">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Button>
+        <Button fx:id="loadCSVbutton2" layoutX="16.0" layoutY="781.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Server Log" visible="false">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Button>
+        <StackedBarChart fx:id="genderBarChart" layoutX="1078.0" layoutY="403.0" prefHeight="400.0" prefWidth="277.0" title="Gender Graph" visible="false">
+            <xAxis>
                 <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
+            </xAxis>
+            <yAxis>
                 <NumberAxis side="LEFT" />
-              </yAxis>
-            </AreaChart>
-         </content></ScrollPane>
-      <Button fx:id="loadCSVbutton3" layoutX="16.0" layoutY="711.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Data">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Button>
-      <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <TabPane layoutX="963.0" layoutY="55.0" prefHeight="445.0" prefWidth="439.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="Age Graph">
+            </yAxis>
+        </StackedBarChart>
+        <Label fx:id="zeroCostClickLabel" layoutX="484.0" layoutY="55.0" text="Zero cost clicks:">
+            <font>
+                <Font size="18.0" />
+            </font></Label>
+        <TabPane layoutX="940.0" layoutY="140.0" prefHeight="445.0" prefWidth="439.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Age Graph">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <PieChart fx:id="ageGraph" layoutX="-1.0" prefHeight="413.0" prefWidth="439.0" title="Age Graph" visible="true" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Gender Graph">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                            <children>
+                                <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0" title="Gender Graph" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Income graph">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                            <children>
+                                <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0" prefWidth="439.0" title="Income Graph" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Context origin">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                            <children>
+                                <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0" prefWidth="439.0" title="Context Graph" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Conversion">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0" title="Conversion Graph" visible="true" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <ScrollPane layoutX="205.0" layoutY="140.0" prefHeight="686.0" prefWidth="697.0">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <PieChart fx:id="ageGraph" layoutX="-1.0" prefHeight="413.0" prefWidth="439.0" title="Age Graph" visible="true" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Gender Graph">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                     <children>
-                        <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0" title="Gender Graph" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-          <Tab text="Income graph">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                     <children>
-                        <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0" prefWidth="439.0" title="Income Graph" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-            <Tab text="Context origin">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                     <children>
-                        <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0" prefWidth="439.0" title="Context Graph" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-            <Tab text="Conversion">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0" title="Conversion Graph" visible="true" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-      <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
-         <image>
+                <AreaChart fx:id="dataChart" prefHeight="667.0" prefWidth="691.0">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" />
+                    </yAxis>
+                </AreaChart>
+            </content></ScrollPane>
+        <Button fx:id="loadCSVbutton3" layoutX="16.0" layoutY="711.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="65.0" prefWidth="178.0" text="Load Data">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Button>
+        <Label fx:id="totalEntriesLabel" layoutX="710.0" layoutY="25.0" text="Total entries from ads:">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label fx:id="avgPagesViewedLabel" layoutX="710.0" layoutY="55.0" text="Average pages viewed:">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
+            <image>
 
-            <Image url="@../../../tutorial1.png" />
-         </image>
-      </ImageView>
-      <ImageView fx:id="uploadPNG" fitHeight="814.0" fitWidth="1397.0" layoutX="13.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" visible="false">
-         <image>
-            <Image url="@../../../tutorial2.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font></Button>
-   </children>
+                <Image url="@../../../tutorial1.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="uploadPNG" fitHeight="814.0" fitWidth="1397.0" layoutX="13.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" visible="false">
+            <image>
+                <Image url="@../../../tutorial2.png" />
+            </image>
+        </ImageView>
+        <Button fx:id="tutorialOFF" layoutX="1159.0" layoutY="706.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font></Button>
+    </children>
 </AnchorPane>

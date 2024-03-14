@@ -2,6 +2,9 @@ package com.application.dashboard;
 
 
 import com.application.files.FileChooser;
+import com.application.files.FileChooserExample;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,32 +12,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReadFile {
-    public static void main(String[] args) throws FileNotFoundException {
+public class ReadFile extends Application {
+    public static void main(String[] args) {
+        // Launch the JavaFX application
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
         //String file1 = "/2_week_campaign_2/click_log.csv"; // Path to the first CSV file
-        String file1 = FileChooser.main();
+        Stage stage = new Stage();
+        FileChooserExample fileChooserExample = new FileChooserExample();
+        fileChooserExample.start(null);
+        //  FileChooserExample fileChooserExample = new FileChooserExample();
+        //fileChooserExample.start(null); // Start the JavaFX application without a stage
 
-        //String file2 = "/2_week_campaign_2/impression_log.csv";
-        String file2 = FileChooser.main();
-        //InputStream inputStream = testFile.class.getResourceAsStream(file1);
-       // InputStream inputStream2 = testFile.class.getResourceAsStream(file2);
+        String file1 = fileChooserExample.getSelectedFile();
+        fileChooserExample.start(null);
+        String file2 = fileChooserExample.getSelectedFile();
+        String file3 = MergeCSV.main(file1, file2);
+        fileChooserExample.start(null);
+        String file5 = fileChooserExample.getSelectedFile();
+        // ColumnSwitch.switchColumns(file5);
 
-//        String file3 = "/2_week_campaign_2/merged.csv"; // Path to the first CSV file
-//        InputStream inputStream3 = testFile.class.getResourceAsStream(file3);
-        String file3 = MergeCSV.main(file1,file2); // Path to the first CSV file
-        //FileInputStream inputStream3 = new FileInputStream(file3);
-        String file5 = FileChooser.main();
-        ColumnSwitch.switchColumns(file5); // Path to the second CSV file
-
-
-        String file4 = ColumnSwitch.switchColumns(file5);; // Output file path for merged CSV
-        InputStream inputStream4 = testFile.class.getResourceAsStream(file4);
-
+        String file4 = ColumnSwitch.switchColumns(file5);
         String outputFile = "seg/src/main/resources/2_week_campaign_2/merge.csv";
 
         // Read data from the first CSV file
         Map<String, String[]> data1 = readCSV(file3);
-        //System.out.println(data1);
 
         // Read data from the second CSV file
         Map<String, String[]> data2 = readCSV2(file4);
@@ -42,11 +47,11 @@ public class ReadFile {
         // Merge the data based on the common ID column
         List<String[]> mergedData = mergeData(data1, data2);
 
-
         // Write the merged data into a new CSV file with headings
         writeCSV(outputFile, mergedData);
-        //return outputFile;
     }
+
+
 
     // Read data from a CSV file and store it in a map with the ID column as key
     static Map<String, String[]> readCSV(String streamPath) {
@@ -139,4 +144,4 @@ public class ReadFile {
         }
 
     }
-}
+    }

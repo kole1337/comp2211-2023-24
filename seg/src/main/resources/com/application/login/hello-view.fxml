@@ -6,25 +6,45 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.login.LoginController">
-   <children>
-      <TextField fx:id="usernameField" layoutX="609.0" layoutY="349.0" promptText="username" />
-      <PasswordField fx:id="passwordField" layoutX="609.0" layoutY="405.0" promptText="password" />
-      <Button fx:id="loginButton" layoutX="609.0" layoutY="462.0" mnemonicParsing="false" onAction="#loginFunc" prefHeight="56.0" prefWidth="149.0" text="Login">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font></Button>
-      <Label layoutX="609.0" layoutY="269.0" prefHeight="17.0" prefWidth="149.0" style="-fx-alignment: center;" text="LOGIN" textAlignment="JUSTIFY">
-         <font>
-            <Font size="37.0" />
-         </font>
-      </Label>
-      <ImageView fitHeight="212.0" fitWidth="181.0" layoutX="593.0" layoutY="57.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../adda_logo.png" />
-         </image></ImageView>
-   </children>
-</Pane>
+
+<BorderPane minHeight="350.0" minWidth="350.0" style="-fx-background-color: pink;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.login.LoginController">
+   <top>
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </top>
+   <left>
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <VBox minHeight="350.0" minWidth="350.0" style="-fx-background-color: green;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView accessibleText="logo of the ocmpany - ecs adda" fitHeight="185.0" fitWidth="147.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../adda_logo.png" />
+               </image>
+            </ImageView>
+            <Label prefHeight="17.0" prefWidth="149.0" style="-fx-alignment: center;" text="LOGIN" textAlignment="JUSTIFY">
+               <font>
+                  <Font size="37.0" />
+               </font>
+            </Label>
+            <TextField fx:id="usernameField" promptText="username" />
+            <PasswordField fx:id="passwordField" promptText="password" />
+            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginFunc" prefHeight="56.0" prefWidth="201.0" text="Login">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
