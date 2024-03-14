@@ -33,8 +33,6 @@ public class LoginController {
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
-    public Label labelTest;
-
     //---
     private Stage stage;
     private Scene scene;

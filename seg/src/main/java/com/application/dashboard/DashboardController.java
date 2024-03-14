@@ -2,6 +2,7 @@ package com.application.dashboard;
 
 import com.application.files.FileChooser;
 import com.application.files.FilePathHandler;
+import com.application.login.LoginController;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import javafx.collections.FXCollections;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
@@ -27,9 +29,12 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +78,7 @@ public class DashboardController {
     public Label totalClicksLabel;
     public Label avgClickPriceLabel;
     public ImageView uploadPNG;
+    public AnchorPane background;
     private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
@@ -756,5 +762,42 @@ public class DashboardController {
     public void loadTutorial2(ActionEvent actionEvent) {
         uploadPNG.setVisible(true);
         tutorialOFF.setVisible(true);
+    }
+
+    public void loadTheme(ActionEvent actionEvent) {
+    }
+
+
+    boolean light = true;
+    boolean dark = false;
+    public void enableLightTheme(ActionEvent actionEvent) {
+        if (light == false) {
+            String currentDirectory = System.getProperty("user.dir");
+
+            // Define the relative path to your stylesheet
+            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
+            System.out.println(currentDirectory);
+
+            background.getStylesheets().setAll(stylesheetPath);
+            light = true;
+            dark = false;
+            System.out.println("light theme");
+        }
+    }
+
+    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException {
+        if(dark == false){
+            String currentDirectory = System.getProperty("user.dir");
+
+            // Define the relative path to your stylesheet
+            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
+            System.out.println(currentDirectory);
+
+            background.getStylesheets().setAll(stylesheetPath);
+            dark = true;
+            light = false;
+            System.out.println("dark theme");
+
+        }
     }
 }
