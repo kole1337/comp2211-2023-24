@@ -122,6 +122,7 @@ public class DashboardController {
     public ComboBox<String> toMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> toSecond = new ComboBox<>();
+    CategoryAxis xAxis = new CategoryAxis();
 
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -211,15 +212,13 @@ public class DashboardController {
         System.out.println(ComboBox.getValue());
     }
     //load the graph
-    public void loadGraph(String selectedRadioButton,String time) {
+    public void loadGraph(String selectedButton, String time) {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        xAxis.setTickLabelGap(1); // Set the spacing between major tick marks
+        dataChart.getData().clear();
+        xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
-        if (selectedRadioButton != null) {
-            dataChart.getData().clear();
+        if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
             if(startDate.getValue() == null){
                 startDate.setValue(LocalDate.of(1000,1,1));
@@ -228,7 +227,18 @@ public class DashboardController {
             if(endDate.getValue() == null){
                 endDate.setValue(LocalDate.of(3000,1,1));
             }
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedRadioButton, time,startDate.getValue(),endDate.getValue()), selectedRadioButton));
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,startDate.getValue(),endDate.getValue()), selectedButton));
+            // Increase the spacing between tick labels
+            xAxis.setTickLabelGap(10);
+
+            // Rotate the tick labels by -45 degrees
+            xAxis.setTickLabelRotation(-45);
+
+            // Enable auto-ranging for the x-axis
+            dataChart.getXAxis().setAutoRanging(true);
+
+            // Force a layout update
+            dataChart.layout();
         }
     }
         // Customize the graph based on the selected radio button
