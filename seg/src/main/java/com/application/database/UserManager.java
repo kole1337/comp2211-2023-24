@@ -68,6 +68,7 @@ public class UserManager {
     }
 
     public static Boolean selectAdmin( String user, String pass) throws SQLException{
+        //getconn();
         rs = statement.executeQuery("select username, password, role from users");
 
         while(rs.next()){

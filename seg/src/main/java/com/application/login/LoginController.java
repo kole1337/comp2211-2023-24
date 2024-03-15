@@ -49,7 +49,8 @@ public class LoginController {
      * User System later.
      */
     @FXML
-    public void loginFunc(ActionEvent event) throws SQLException {
+    public void loginFunc(ActionEvent event) throws Exception {
+        dbConnection.makeConn("root", "jojo12345");
 
         logger.log(Level.INFO, "You pressed loginButton.");
 
