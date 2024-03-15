@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class LoginController {
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
+
     //---
     private Stage stage;
     private Scene scene;
@@ -100,6 +102,7 @@ public class LoginController {
 //                ac.loadUsers();
 
                 stage.setScene(scene);
+
                 stage.setMinHeight(720);
                 stage.setMinWidth(1280);
                 stage.show();

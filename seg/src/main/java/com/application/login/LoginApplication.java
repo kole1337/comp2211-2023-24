@@ -17,12 +17,12 @@ public class LoginApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
         stage.setTitle("Ad dashboard");
 
         stage.setScene(scene);
-        stage.setMinHeight(720);
-        stage.setMinWidth(1280);
+        stage.setMinHeight(scene.getRoot().minHeight(-1));
+        stage.setMinWidth(scene.getRoot().minWidth(-1));
         stage.show();
     }
 
