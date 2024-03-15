@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import static org.testng.AssertJUnit.*;
 
@@ -32,7 +33,7 @@ public class JavaFXTest extends ApplicationTest {
     }
 
     @Test
-    public void testUserLogin(){
+    public void testUserLogin() throws SQLException {
         assertTrue("Login successful.",lc.checkUser("user","0000"));
         assertTrue("Login successful.",lc.checkAdmin("admin","0000"));
         assertFalse("Login not successful.",lc.checkUser("gesh","1234"));

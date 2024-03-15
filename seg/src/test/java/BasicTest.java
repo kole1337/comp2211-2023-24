@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.testng.AssertJUnit.*;
 import static org.testng.AssertJUnit.assertFalse;
 public class BasicTest {
@@ -17,7 +19,7 @@ public class BasicTest {
     FileChooser fc = new FileChooser();
     ReadFile rc = new ReadFile();
     @Test
-    public void testLogin() {
+    public void testLogin() throws SQLException {
         assertTrue("Login successful.",lc.checkUser("user","0000"));
         assertTrue("Login successful.",lc.checkAdmin("admin","0000"));
         assertFalse("Login not successful.",lc.checkUser("gesh","1234"));

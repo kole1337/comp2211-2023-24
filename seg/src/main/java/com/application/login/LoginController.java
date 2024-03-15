@@ -1,6 +1,9 @@
 package com.application.login;
 
+import com.application.admin.AdminController;
 import com.application.dashboard.DashboardController;
+import com.application.database.DbConnection;
+import com.application.database.UserManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,58 +14,49 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /*
-* @TODO
-*   1. Implement SQL
-* */
-
-/*
-* The controller for the Login panel.
-* Checks for credentials and switches scenes.
-* */
+ * The controller for the Login panel.
+ * Checks for credentials and switches scenes.
+ * */
 
 public class LoginController {
+
+    /**
+     * @UserManager: Connect with the DB
+     * */
+    public UserManager userManager;
+    public DbConnection dbConnection;
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
-    public Label labelTest;
-
     //---
     private Stage stage;
     private Scene scene;
     private Parent root;
-    private Logger logger;
+    private Logger logger = Logger.getLogger(getClass().getName());
+    ;
 
-    /**
+
+
+        /**
      * Login function that checks if the user is
      * an Admin or User.
      * Hardcoded for now, will implement
      * User System later.
-     * */
+     */
     @FXML
-    public void loginFunc(ActionEvent event){
-        logger = Logger.getLogger(getClass().getName());
+    public void loginFunc(ActionEvent event) throws Exception {
+        dbConnection.makeConn("root", "jojo12345");
+
         logger.log(Level.INFO, "You pressed loginButton.");
 
-        //if login details are right, switch to dashboard
-        if(checkAdmin(usernameField.getText(), passwordField.getText())){
-            try {
-                root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-                logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
-            } catch (IOException e) {
-                logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.SEVERE, "Failed to create new Window.", e);
-            }
-            //if the login details are wrong, show error
-        }else if (checkUser(usernameField.getText(), passwordField.getText())){
+
+        //if the login details are wrong, show error
+        if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
                 root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -75,8 +69,7 @@ public class LoginController {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
-        }
-        else {
+        }else {
             logger.log(Level.SEVERE, "Wrong credentials entered..");
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setHeaderText("Problem");
@@ -88,14 +81,51 @@ public class LoginController {
         }
     }
 
-    public Boolean checkUser(String username, String password) {
+    public Boolean checkUser(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking user credentials.");
-        return username.equals("user") && password.equals("0000");
+        return userManager.selectUser(username, password);
     }
 
-    public Boolean checkAdmin(String username, String password) {
-        logger.log(Level.SEVERE, "Checking admin credentials.");
-        return username.equals("admin") && password.equals("0000");
+    public void adminFunc(ActionEvent event) throws Exception {
+        dbConnection.makeConn("root", "jojo12345");
+
+        logger.log(Level.INFO, "Checking admin credentials");
+        if (checkAdmin(usernameField.getText(), passwordField.getText())) {
+            try {
+                root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+
+//                AdminController ac = new AdminController();
+//                ac.loadUsers();
+
+                stage.setScene(scene);
+                stage.setMinHeight(720);
+                stage.setMinWidth(1280);
+                stage.show();
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+            } catch (IOException e) {
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            logger.log(Level.SEVERE, "Wrong credentials entered..");
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setHeaderText("Problem");
+            errorAlert.setContentText("Wrong credentials");
+            usernameField.setText("");
+            passwordField.setText("");
+
+            errorAlert.showAndWait();
+        }
     }
+    public Boolean checkAdmin(String username, String password) throws SQLException {
+        logger.log(Level.SEVERE, "Checking admin credentials.");
+        return userManager.selectAdmin(username, password);
+    }
+
 }
 
