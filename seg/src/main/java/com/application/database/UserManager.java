@@ -50,11 +50,12 @@ public class UserManager {
 
 
 
-    public static void selectAll() throws SQLException {
+    public static ResultSet selectAll() throws SQLException {
         rs = statement.executeQuery("select * from users");
-        while(rs.next()){
-            System.out.println(rs.getString("username") + ", " + rs.getString("password"));
-        }
+//        while(rs.next()){
+//            System.out.println(rs.getString("username") + ", " + rs.getString("password"));
+//        }
+        return rs;
     }
 
     public static Boolean selectUser( String user, String pass) throws SQLException{

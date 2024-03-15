@@ -23,4 +23,5 @@ module com.example.seg {
     exports com.application.files;
     exports com.application.admin;
     exports com.application.database;
+    opens com.application.admin to javafx.fxml;
 }
