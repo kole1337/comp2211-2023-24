@@ -1,5 +1,6 @@
 package com.application.login;
 
+import com.application.admin.AdminController;
 import com.application.dashboard.DashboardController;
 import com.application.database.UserManager;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
 public class LoginController {
 
     /**
-     * @UserManager: Connect with the DB 
+     * @UserManager: Connect with the DB
      * */
     public UserManager userManager;
 
@@ -89,6 +90,8 @@ public class LoginController {
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
 
+//                AdminController ac = new AdminController();
+//                ac.loadUsers();
 
                 stage.setScene(scene);
                 stage.setMinHeight(720);
@@ -99,6 +102,8 @@ public class LoginController {
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         } else {
             logger.log(Level.SEVERE, "Wrong credentials entered..");

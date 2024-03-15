@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class UserManager {
 
-    private static Connection conn;
+    static Connection conn;
     static Statement statement;
     static PreparedStatement pstmt;
     static ResultSet rs;
@@ -55,11 +55,12 @@ public class UserManager {
     public UserManager() throws Exception {
     }
 
-    public static void selectAll() throws SQLException {
+    public static ResultSet selectAll() throws SQLException {
         rs = statement.executeQuery("select * from users");
-        while(rs.next()){
-            System.out.println(rs.getString("username") + ", " + rs.getString("password"));
-        }
+//        while(rs.next()){
+//            System.out.println(rs.getString("username") + ", " + rs.getString("password"));
+//        }
+        return rs;
     }
 
     public static Boolean selectUser( String user, String pass) throws SQLException{

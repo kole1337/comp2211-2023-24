@@ -26,7 +26,7 @@
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <Button layoutX="387.0" layoutY="622.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="107.0" text="New User" />
+                        <Button fx:id="newUserButton" layoutX="387.0" layoutY="622.0" mnemonicParsing="false" onAction="#createNewUser" prefHeight="45.0" prefWidth="107.0" text="New User" />
                         <Button layoutX="788.0" layoutY="622.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="107.0" text="Export Users" />
                         <Button fx:id="logoutButton" layoutX="1010.0" layoutY="622.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logoutFunc" prefHeight="58.0" prefWidth="123.0" text="LOGOUT">
                            <tooltip>
@@ -37,17 +37,16 @@
                               </Tooltip>
                            </tooltip>
                         </Button>
-                        <TableView layoutX="387.0" layoutY="106.0" prefHeight="510.0" prefWidth="508.0">
+                        <TableView fx:id="showUsers" layoutX="387.0" layoutY="106.0" prefHeight="510.0" prefWidth="508.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="First name" />
-                            <TableColumn prefWidth="75.0" text="Surname" />
-                              <TableColumn text="Username" />
-                              <TableColumn prefWidth="85.0" text="Password" />
+                              <TableColumn fx:id="userName" text="Username" />
+                              <TableColumn fx:id="password" prefWidth="85.0" text="Password" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
+                        <Button fx:id="loadUsersButton" layoutX="616.0" layoutY="632.0" mnemonicParsing="false" onAction="#loadUsers" text="Load users" />
                      </children>
                   </AnchorPane>
                   <VBox VBox.vgrow="ALWAYS" />
