@@ -8,24 +8,20 @@ import java.util.logging.Logger;
 public class UserManager {
 
     private static Connection conn;
-    static Statement statement;
-    static PreparedStatement pstmt;
-    static ResultSet rs;
-    static Logger logger = Logger.getLogger(UserManager.class.getName());
+    private static Statement statement;
+    private static PreparedStatement pstmt;
+    private static ResultSet rs;
+    private static final Logger logger = Logger.getLogger(UserManager.class.getName());
 
 
 
-    static {
+    public static void getconn(){
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda", "root", "jojo12345");
+            conn = DbConnection.getConn();
             statement = conn.createStatement();
         } catch (SQLException e) {
-            logger.log(Level.WARNING, "Username or password are not valid");
+            logger.log(Level.WARNING, "Could not create statement");
             e.printStackTrace();
-
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Could not establish connection with SQL database");
-            throw new RuntimeException();
         }
     }
 
@@ -52,8 +48,7 @@ public class UserManager {
 
 
 
-    public UserManager() throws Exception {
-    }
+
 
     public static void selectAll() throws SQLException {
         rs = statement.executeQuery("select * from users");
