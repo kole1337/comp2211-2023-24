@@ -2,6 +2,7 @@ package com.application.login;
 
 import com.application.admin.AdminController;
 import com.application.dashboard.DashboardController;
+import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,7 +29,7 @@ public class LoginController {
      * @UserManager: Connect with the DB
      * */
     public UserManager userManager;
-
+    public DbConnection dbConnection;
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
@@ -39,7 +40,9 @@ public class LoginController {
     private Logger logger = Logger.getLogger(getClass().getName());
     ;
 
-    /**
+
+
+        /**
      * Login function that checks if the user is
      * an Admin or User.
      * Hardcoded for now, will implement
@@ -82,7 +85,9 @@ public class LoginController {
         return userManager.selectUser(username, password);
     }
 
-    public void adminFunc(ActionEvent event) throws SQLException {
+    public void adminFunc(ActionEvent event) throws Exception {
+        dbConnection.makeConn("root", "jojo12345");
+
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
             try {
