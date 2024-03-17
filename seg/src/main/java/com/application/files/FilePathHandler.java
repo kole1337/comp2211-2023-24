@@ -1,5 +1,10 @@
 package com.application.files;
 
+import com.opencsv.CSVReader;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,6 +14,40 @@ public class FilePathHandler {
     private String serverPath;
     private Logger logger = Logger.getLogger(getClass().getName());
 
+
+    public void fileTypeHandler(List<File> files){
+        try{
+            for (int i = 0; i < 3; i++) {
+
+
+                FileReader filereader = new FileReader(files.get(i));
+                CSVReader csvReader = new CSVReader(filereader);
+                System.out.println("readng");
+                String[] nextRecord;
+
+                nextRecord = csvReader.readNext();
+                String firstLn = "";
+                for (int j = 0; j < nextRecord.length; j++) {
+                    firstLn += nextRecord[j];
+                }
+                firstLn = firstLn.toLowerCase();
+                firstLn = firstLn.replaceAll("\\s+", "");
+                System.out.println(firstLn);
+
+                if (firstLn.equals("dateidclickcost")) {
+                    setClickPath(files.get(i).getAbsolutePath());
+                }
+                if (firstLn.equals("dateidgenderageincomecontextimpressioncost")) {
+                    setImpressionPath(files.get(i).getAbsolutePath());
+                }
+                if (firstLn.equals("entrydateidexitdatepagesviewedconversion")) {
+                    setServerPath(files.get(i).getAbsolutePath());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public void setClickPath(String csvPath) {
         logger.log(Level.INFO, "Setting click_log path.");

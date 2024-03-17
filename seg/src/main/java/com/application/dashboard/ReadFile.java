@@ -1,7 +1,7 @@
 package com.application.dashboard;
 
 
-import com.application.files.FileChooser;
+import com.application.files.FileChooserWindow;
 import com.application.files.FileChooserExample;
 import javafx.application.Application;
 import javafx.stage.Stage;

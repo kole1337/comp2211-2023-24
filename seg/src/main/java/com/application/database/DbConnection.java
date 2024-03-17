@@ -18,8 +18,8 @@ public class DbConnection {
         try {
             logger.log(Level.INFO, "establishing connection");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",user , pass);
-            DataManager.getconn();
-            UserManager.getconn();
+            DataManager.getConn();
+            UserManager.getConn();
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Username or password are not valid");
             e.printStackTrace();
