@@ -192,7 +192,7 @@
         </TabPane>
         <ScrollPane layoutX="180.0" layoutY="78.0" prefHeight="686.0" prefWidth="717.0">
             <content>
-                <AreaChart fx:id="dataChart" prefHeight="680.0" prefWidth="709.0">
+                <AreaChart fx:id="dataChart" prefHeight="680.0" prefWidth="1222.0">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" />
                     </xAxis>
