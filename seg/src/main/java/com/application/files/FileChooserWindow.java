@@ -1,13 +1,16 @@
 package com.application.files;
 
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.List;
 
 //import javafx.stage.FileChooser;
-public class FileChooser {
+public class FileChooserWindow {
     private FilePathHandler pathHandler = new FilePathHandler();
     public static String main() {
         // Open file chooser dialog
@@ -27,9 +30,27 @@ public class FileChooser {
         }
 
 
-
-
         return null;
+    }
+
+    public List<File> openFileBox() {
+        // Open file chooser dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open 1st file");
+        ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
+
+        fileChooser.getExtensionFilters().add(ex1);
+        List<File> selectedFile = fileChooser.showOpenMultipleDialog(null);
+
+        if(selectedFile != null){
+            //System.out.println("Open file: " + selectedFile.getAbsolutePath());
+        }
+        FilePathHandler obj = new FilePathHandler();
+        obj.fileTypeHandler(selectedFile);
+        System.out.println(obj.getClickPath());
+        return selectedFile;
+
+
     }
 
     private static void openFileInExplorer(File file) {

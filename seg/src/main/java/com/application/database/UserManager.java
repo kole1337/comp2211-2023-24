@@ -15,7 +15,7 @@ public class UserManager {
 
 
 
-    public static void getconn(){
+    public static void getConn(){
         try {
             conn = DbConnection.getConn();
             statement = conn.createStatement();
