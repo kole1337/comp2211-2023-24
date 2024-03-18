@@ -63,6 +63,11 @@ import java.util.logging.Logger;
 
 public class DashboardController {
     public TabPane chartPane;
+    public Label clicksLoadedLabel;
+    public Label impressionLoadedLabel;
+    public Label serverLoadedLabel;
+    public Label totalBouncesLabel;
+    public Label bounceRateLabel;
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -140,6 +145,10 @@ public class DashboardController {
     public ComboBox<String> toSecond = new ComboBox<>();
     CategoryAxis xAxis = new CategoryAxis();
 
+    boolean clicksLoaded = false;
+    boolean impressionsLoaded = false;
+    boolean serverLoaded = false;
+
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName(seriesName);
@@ -163,6 +172,7 @@ public class DashboardController {
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         dbConnection.makeConn("root", "jojo12345");
+
     }
 
 
@@ -194,6 +204,29 @@ public class DashboardController {
         avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
+    }
+
+    public void loadDataGraphs(ActionEvent actionEvent){
+        dataChart.layout();
+        Button clickedButton = (Button) actionEvent.getSource();
+        String buttonId = clickedButton.getId();
+        String time = (String) ComboBox.getValue();
+
+        //to set hour as default time
+        if(time == null){
+            time = "hour";
+        }
+        //to set total clicks as default graph
+        if(buttonId.equals("loadCSVbutton3")){
+            buttonId = "TotalClicks";
+        }
+        loadingBar();
+        dc = new DatasetCreator(fph);
+//        TimeFrameControl tfc = new TimeFrameControl();
+//        tfc.createTimeFrame();
+        loadGraph(buttonId,time);
+        dataChart.layout();
+
     }
 
     public void loadGraphs(ActionEvent actionEvent) {
@@ -258,6 +291,8 @@ public class DashboardController {
             // Force a layout update
             dataChart.layout();
         }
+        dataChart.layout();
+
     }
     // Customize the graph based on the selected radio button
     //Function that would load the graph data inside the panel.
@@ -382,26 +417,16 @@ public class DashboardController {
         return dataman.selectTotalData("clicklog");
     }
 
+    public int totalBounces(){
+
+
+        return 1;
+    }
+
     //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading total entries from ads.");
-//        String filePath = fph.getServerPath();
-//        int totalEntries = 0;
-//        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
-//            String[] nextLine;
-//            nextLine = reader.readNext();
-//            // Read each line from the CSV file
-//            while ((nextLine = reader.readNext()) != null) {
-//                totalEntries++;
-//            }
-//
-//            //System.out.println("Total Entries in Column: " + totalEntries);
-//        } catch (IOException | CsvValidationException e) {
-//            e.printStackTrace();
-//        }
-
-
         return dataman.selectTotalData("serverlog");
     }
 
@@ -436,7 +461,7 @@ public class DashboardController {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                for (int i = 0; i <= 1000; i++) {
+                for (int i = 0; i <= 100; i++) {
                     updateProgress(i, 100);
                     Thread.sleep(50); // Simulate some work being done
                 }
@@ -455,6 +480,10 @@ public class DashboardController {
 
         // Start the task in a new thread
         new Thread(task).start();
+    }
+
+    public void loadHistogramClickCost(){
+
     }
 
 
@@ -514,7 +543,7 @@ public class DashboardController {
     public void loadContextOriginChart(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading income graph.");
-//
+
         int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -529,6 +558,7 @@ public class DashboardController {
     }
 
     public void loadConversionChart(){
+
         int[] vals = dataman.getUniqueAppearanceInt("conversion", "serverlog");
         String[] names = dataman.getUniqueAppearanceString("conversion", "serverlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -561,36 +591,34 @@ public class DashboardController {
     //Open dialogue box for opening files
     public void openCampaign(){
         FileChooserWindow fileChooser = new FileChooserWindow();
-        //FilePathHandler pathHandler = new FilePathHandler();
-
-        //pathHandler.fileTypeHandler(fileChooser.openFileBox());
-        //String selectedFile;
-        //System.out.println(selectedFile);
-
-        //String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
-//        for (int i = 0; i < 3; i++) {
-//            //paths[i] = fc.main();
-//            //fileChooser.setTitle(paths[i]);
-//            //fc.main();
-//            selectedFile = fc.main();
-//            paths[i] = selectedFile;
-////            System.out.println(selectedFile);
-//        }
 
         fph.fileTypeHandler(fileChooser.openFileBox());
         System.out.println(fph.getImpressionPath());
         System.out.println(fph.getClickPath());
         System.out.println(fph.getServerPath());
         loadingBar();
+        System.out.println("Ready ^_^!");
+    }
+
+    public void loadSQL(){
         try {
-            if(fph.getClickPath() != null)
+
+            if(fph.getClickPath() != null) {
                 writeClicksDB();
-
-            if(fph.getImpressionPath()!= null)
+                clicksLoadedLabel.setText("clicks_log.csv: loaded");
+                clicksLoaded = true;
+            }
+            if(fph.getImpressionPath()!= null) {
                 writeImpressionsDB();
-
-            if(fph.getServerPath()!= null)
+                impressionLoadedLabel.setText("impression_log.csv: loaded");
+                impressionsLoaded = true;
+            }
+            if(fph.getServerPath()!= null) {
                 writeServerDB();
+                serverLoadedLabel.setText("server_log.csv: loaded");
+                serverLoaded = true;
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -675,16 +703,17 @@ public class DashboardController {
     boolean dark = false;
     public void enableLightTheme(ActionEvent actionEvent) {
         if (light == false) {
-            String currentDirectory = System.getProperty("user.dir");
-
-            // Define the relative path to your stylesheet
-            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
-            System.out.println(currentDirectory);
-
-            background.getStylesheets().setAll(stylesheetPath);
+//            String currentDirectory = System.getProperty("user.dir");
+//
+//            // Define the relative path to your stylesheet
+//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
+//            System.out.println(currentDirectory);
+//
+//            background.getStylesheets().setAll(stylesheetPath);
             light = true;
             dark = false;
             System.out.println("light theme");
+            background.getStylesheets().clear();
         }
     }
 
@@ -694,7 +723,7 @@ public class DashboardController {
 
             // Define the relative path to your stylesheet
             String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
-            System.out.println(currentDirectory);
+            //System.out.println(currentDirectory);
 
             background.getStylesheets().setAll(stylesheetPath);
             dark = true;
@@ -705,4 +734,6 @@ public class DashboardController {
     }
 
 
+    public void selectClickGraph(ActionEvent actionEvent) {
+    }
 }

@@ -17,7 +17,6 @@ public class DbConnection {
     public static void makeConn(String user, String pass)throws Exception{
         try {
             logger.log(Level.INFO, "establishing connection");
-
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",user , pass);
             DataManager.getConn();
             UserManager.getConn();
