@@ -36,6 +36,7 @@ public class DatasetCreator {
         this.clicksCsv = fph.getClickPath();
         this.impressionsCsv = fph.getImpressionPath();
         this.serverCsv = fph.getServerPath();
+        System.out.println(clicksCsv);
 
     }
     //function that calls specific functions to create datasets

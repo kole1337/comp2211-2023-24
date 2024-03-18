@@ -126,7 +126,7 @@ public class DashboardController {
     public Button BounceRate;
     public ComboBox ComboBox;
     @FXML
-    public VBox timeControlVBox = new VBox ();
+    public VBox timeControlVBox = new VBox();
     @FXML
     public DatePicker startDate = new DatePicker();
     @FXML
@@ -169,6 +169,7 @@ public class DashboardController {
      * */
 
     DbConnection dbConnection = new DbConnection();
+
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         dbConnection.makeConn("root", "jojo12345");
@@ -206,25 +207,25 @@ public class DashboardController {
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
     }
 
-    public void loadDataGraphs(ActionEvent actionEvent){
+    public void loadDataGraphs(ActionEvent actionEvent) {
         dataChart.layout();
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) ComboBox.getValue();
 
         //to set hour as default time
-        if(time == null){
+        if (time == null) {
             time = "hour";
         }
         //to set total clicks as default graph
-        if(buttonId.equals("loadCSVbutton3")){
+        if (buttonId.equals("loadCSVbutton3")) {
             buttonId = "TotalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        loadGraph(buttonId,time);
+        loadGraph(buttonId, time);
         dataChart.layout();
 
     }
@@ -244,7 +245,7 @@ public class DashboardController {
     public void logoutButton(ActionEvent event) {
         try {
             root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
@@ -255,8 +256,9 @@ public class DashboardController {
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
     }
+
     //get time variable from combo box
-    public void loadComboBox(ActionEvent event){
+    public void loadComboBox(ActionEvent event) {
         ComboBox comboBox = (javafx.scene.control.ComboBox) event.getSource();
         this.ComboBox = comboBox;
         System.out.println(ComboBox.getValue());
@@ -271,14 +273,14 @@ public class DashboardController {
         xAxis.setTickLabelRotation(-45);
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
-            if(startDate.getValue() == null){
-                startDate.setValue(LocalDate.of(1000,1,1));
+            if (startDate.getValue() == null) {
+                startDate.setValue(LocalDate.of(1000, 1, 1));
             }
             //to set end date way far in the future as dafault, so it reads every data
-            if(endDate.getValue() == null){
-                endDate.setValue(LocalDate.of(3000,1,1));
+            if (endDate.getValue() == null) {
+                endDate.setValue(LocalDate.of(3000, 1, 1));
             }
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,startDate.getValue(),endDate.getValue()), selectedButton));
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, startDate.getValue(), endDate.getValue()), selectedButton));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -298,15 +300,15 @@ public class DashboardController {
     //Function that would load the graph data inside the panel.
     //Not implemented.
 
-    public void createTimeFrame(){
-        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+    public void createTimeFrame() {
+        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
 
         //  setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
         // setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
@@ -317,8 +319,10 @@ public class DashboardController {
             LocalDateTime toDateTime = LocalDateTime.of(endDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
         });*/
     }
+
     /**
      * this is a method to create appropriate comboboxes for user to select hour/minute/second
+     *
      * @param hour
      * @param minute
      * @param second
@@ -335,6 +339,7 @@ public class DashboardController {
 
     /**
      * this is a method to generate time options
+     *
      * @param start
      * @param end
      * @return
@@ -349,9 +354,7 @@ public class DashboardController {
     }
 
 
-
-
-    private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
+    private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour, ComboBox<String> fromMinute, ComboBox<String> fromSecond, DatePicker toDate, ComboBox<String> toHour, ComboBox<String> toMinute, ComboBox<String> toSecond) {
         if (fromDate.getValue() != null && toDate.getValue() != null &&
                 fromHour.getValue() != null && fromMinute.getValue() != null && fromSecond.getValue() != null &&
                 toHour.getValue() != null && toMinute.getValue() != null && toSecond.getValue() != null) {
@@ -381,64 +384,63 @@ public class DashboardController {
     }
 
 
-
     //Function to count the unique impressions
-    public int countUniqueImpressions(){
+    public int countUniqueImpressions() {
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
         return dataman.selectTotalData("impressionlog");
     }
 
     //Function to count the zero cost clicks
-    public int countZeroCostClick(){
+    public int countZeroCostClick() {
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
         return dataman.selectZeroClickCost();
     }
 
     //Function to find the average price per click
-    public double countAveragePricePerClick(){
+    public double countAveragePricePerClick() {
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Average Price per Click");
         return dataman.selectAvgData("clickCost", "clicklog");
     }
 
     //Function to find the total impressions
-    public int countTotalImpressions(){
+    public int countTotalImpressions() {
 
         return dataman.selectTotalData("impressionlog");
     }
 
     //Function to find the total clicks for the campaign
-    public int countTotalClicks(){
+    public int countTotalClicks() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Total clicks");
 
         return dataman.selectTotalData("clicklog");
     }
 
-    public int totalBounces(){
+    public int totalBounces() {
 
 
         return 1;
     }
 
     //Function to find the total entries from adds - needs better explanation
-    public int countTotalEntries(){
+    public int countTotalEntries() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading total entries from ads.");
         return dataman.selectTotalData("serverlog");
     }
 
     //Function to find the average number of pages
-    public double countAvgPageViewed(){
+    public double countAvgPageViewed() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading average pages viewed.");
         return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
     }
 
     //loading bar function
-    public void loadingBar(){
+    public void loadingBar() {
         ButtonType cancelButtonType = new ButtonType("Cancel");
 
         Dialog<ButtonType> progressDialog = new Dialog<>();
@@ -482,13 +484,13 @@ public class DashboardController {
         new Thread(task).start();
     }
 
-    public void loadHistogramClickCost(){
+    public void loadHistogramClickCost() {
 
     }
 
 
     //Function to find the gender separation.
-    public void loadGenders(){
+    public void loadGenders() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading genders.");
         logger = Logger.getLogger(DashboardController.class.getName());
@@ -507,7 +509,7 @@ public class DashboardController {
     }
 
     //function to load the age graph.
-    public void loadAgeGraph(){
+    public void loadAgeGraph() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading age graph.");
         logger = Logger.getLogger(DashboardController.class.getName());
@@ -525,7 +527,7 @@ public class DashboardController {
     }
 
     //Load income graph
-    public void loadIncomeGraph(){
+    public void loadIncomeGraph() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog");
@@ -540,7 +542,7 @@ public class DashboardController {
         incomeGraph.setData(pieChartData);
     }
 
-    public void loadContextOriginChart(){
+    public void loadContextOriginChart() {
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.ALL, "Loading income graph.");
 
@@ -557,8 +559,7 @@ public class DashboardController {
         contextOriginGraph.setData(pieChartData);
     }
 
-    public void loadConversionChart(){
-
+    public void loadConversionChart() {
         int[] vals = dataman.getUniqueAppearanceInt("conversion", "serverlog");
         String[] names = dataman.getUniqueAppearanceString("conversion", "serverlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -589,7 +590,7 @@ public class DashboardController {
     }
 
     //Open dialogue box for opening files
-    public void openCampaign(){
+    public void openCampaign() {
         FileChooserWindow fileChooser = new FileChooserWindow();
 
         fph.fileTypeHandler(fileChooser.openFileBox());
@@ -600,26 +601,26 @@ public class DashboardController {
         System.out.println("Ready ^_^!");
     }
 
-    public void loadSQL(){
+    public void loadSQL() {
         try {
 
-            if(fph.getClickPath() != null) {
+            if (fph.getClickPath() != null) {
                 writeClicksDB();
                 clicksLoadedLabel.setText("clicks_log.csv: loaded");
                 clicksLoaded = true;
             }
-            if(fph.getImpressionPath()!= null) {
+            if (fph.getImpressionPath() != null) {
                 writeImpressionsDB();
                 impressionLoadedLabel.setText("impression_log.csv: loaded");
                 impressionsLoaded = true;
             }
-            if(fph.getServerPath()!= null) {
+            if (fph.getServerPath() != null) {
                 writeServerDB();
                 serverLoadedLabel.setText("server_log.csv: loaded");
                 serverLoaded = true;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Ready ^_^!");
@@ -635,14 +636,14 @@ public class DashboardController {
         nextRecord = clickCSVReader.readNext();
 
 
-
-        while((nextRecord = clickCSVReader.readNext()) != null ) {
+        while ((nextRecord = clickCSVReader.readNext()) != null) {
 //            nextRecord = clickCSVReader.readNext();
             dataman.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
 
         }
 
     }
+
     void writeImpressionsDB() throws Exception {
 
         FileReader impressionReader = new FileReader(fph.getImpressionPath());
@@ -653,7 +654,7 @@ public class DashboardController {
         nextRecord = clickCSVReader.readNext();
 
 
-        while((nextRecord = clickCSVReader.readNext()) != null ) {
+        while ((nextRecord = clickCSVReader.readNext()) != null) {
             //nextRecord = clickCSVReader.readNext();
             dataman.addImpressionLog(nextRecord[0], nextRecord[1],
                     nextRecord[2], nextRecord[3], nextRecord[4],
@@ -662,6 +663,7 @@ public class DashboardController {
 
 
     }
+
     void writeServerDB() throws Exception {
 
         FileReader clickReader = new FileReader(fph.getServerPath());
@@ -674,10 +676,10 @@ public class DashboardController {
 
         while ((nextRecord = clickCSVReader.readNext()) != null) {
             //nextRecord = clickCSVReader.readNext();
-            if("n/a".equals(nextRecord[2])) {
+            if ("n/a".equals(nextRecord[2])) {
                 dataman.addServerLog(nextRecord[0], nextRecord[1], null,
                         Integer.parseInt(nextRecord[3]), nextRecord[4]);
-            }else{
+            } else {
                 dataman.addServerLog(nextRecord[0], nextRecord[1], nextRecord[2],
                         Integer.parseInt(nextRecord[3]), nextRecord[4]);
             }
@@ -701,6 +703,7 @@ public class DashboardController {
 
     boolean light = true;
     boolean dark = false;
+
     public void enableLightTheme(ActionEvent actionEvent) {
         if (light == false) {
 //            String currentDirectory = System.getProperty("user.dir");
@@ -718,7 +721,7 @@ public class DashboardController {
     }
 
     public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException {
-        if(dark == false){
+        if (dark == false) {
             String currentDirectory = System.getProperty("user.dir");
 
             // Define the relative path to your stylesheet
