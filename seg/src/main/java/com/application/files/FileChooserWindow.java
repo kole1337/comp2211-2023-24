@@ -1,14 +1,18 @@
 package com.application.files;
 
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.*;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 
-public class FileChooser {
-    // Assuming FilePathHandler class definition is elsewhere
+//import javafx.stage.FileChooser;
+public class FileChooserWindow {
     private FilePathHandler pathHandler = new FilePathHandler();
     private static Integer numberOfFiles = 3;
     private static FileFilter filter = new FileFilter() {
@@ -46,7 +50,25 @@ public class FileChooser {
         return null;
     }
 
-    // The openFileInExplorer method remains unchanged
+    public List<File> openFileBox() {
+        // Open file chooser dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open 1st file");
+        ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
+
+        fileChooser.getExtensionFilters().add(ex1);
+        List<File> selectedFile = fileChooser.showOpenMultipleDialog(null);
+
+        if(selectedFile != null){
+            //System.out.println("Open file: " + selectedFile.getAbsolutePath());
+        }
+        FilePathHandler obj = new FilePathHandler();
+        obj.fileTypeHandler(selectedFile);
+        System.out.println(obj.getClickPath());
+        return selectedFile;
+
+
+    }
     private static void openFileInExplorer(File file) {
         // Check if Desktop is supported
         if (Desktop.isDesktopSupported()) {

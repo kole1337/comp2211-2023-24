@@ -17,9 +17,9 @@ public class DbConnection {
     public static void makeConn(String user, String pass)throws Exception{
         try {
             logger.log(Level.INFO, "establishing connection");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda","root" , "149162536496481Mkt!");
-            DataManager.getconn();
-            UserManager.getconn();
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",user , pass);
+            DataManager.getConn();
+            UserManager.getConn();
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Username or password are not valid");
             e.printStackTrace();
