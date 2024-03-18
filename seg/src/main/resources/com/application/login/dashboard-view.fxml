@@ -211,7 +211,7 @@
         </TabPane>
         <ScrollPane layoutX="260.0" layoutY="78.0" prefHeight="741.0" prefWidth="717.0">
             <content>
-                <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="707.0">
+                <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="1176.0">
                     <xAxis>
                         <CategoryAxis side="BOTTOM" />
                     </xAxis>
@@ -300,11 +300,17 @@
                 <Font name="System Bold" size="15.0" />
             </font>
       </Button>
-      <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="727.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs" />
+      <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="727.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Button>
       <Label fx:id="clicksLoadedLabel" layoutX="406.0" layoutY="56.0" text="clicks_log.csv: not loaded" />
       <Label fx:id="impressionLoadedLabel" layoutX="585.0" layoutY="56.0" text="impression_log.csv: not loaded" />
       <Label fx:id="serverLoadedLabel" layoutX="793.0" layoutY="56.0" text="server_log.csv: not loaded" />
-      <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" style="-fx-background-color: RGB(220,220,220);" text="Load SQL" />
+      <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Button>
       <CheckBox layoutX="25.0" layoutY="128.0" mnemonicParsing="false" text="clicks" />
       <CheckBox layoutX="25.0" layoutY="78.0" mnemonicParsing="false" onAction="#selectClickGraph" text="clicks" />
     </children>

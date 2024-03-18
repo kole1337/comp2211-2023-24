@@ -1,5 +1,6 @@
 package com.application.login;
 
+import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.files.FilePathHandler;
 import javafx.application.Application;
@@ -29,7 +30,11 @@ public class LoginApplication extends Application {
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(LoginApplication.class.getName());
         logger.log(Level.INFO, "Launching application.");
-
+        try {
+            DbConnection.makeConn("root", "jojo12345");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         launch();
     }
 }
