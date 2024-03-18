@@ -7,7 +7,7 @@ public class MergeCSV {
     public static String main(String file1, String file2) {
         //String file1 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\click_log.csv"; // Path to the first CSV file
         //String file2 = "C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\impression_log.csv"; // Path to the second CSV file
-        String outputFile = "seg/src/main/resources/2_week_campaign_2/merged.csv"; // Output file path for merged CSV
+        String outputFile = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\merged.csv"; // Output file path for merged CSV
         //add
 
 

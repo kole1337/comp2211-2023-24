@@ -21,6 +21,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import org.jfree.chart.ChartFrame;
@@ -79,7 +80,7 @@ public class DashboardController {
     public Label avgClickPriceLabel;
     public ImageView uploadPNG;
     public AnchorPane background;
-    public FilePathHandler fph = new FilePathHandler();
+    private FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
     private Stage stage;
@@ -300,6 +301,10 @@ public class DashboardController {
         }
         return options;
     }
+
+
+
+
     private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
         if (fromDate.getValue() != null && toDate.getValue() != null &&
                 fromHour.getValue() != null && fromMinute.getValue() != null && fromSecond.getValue() != null &&
@@ -739,6 +744,7 @@ public class DashboardController {
         uploadPNG.setVisible(false);
         tutPNG.setVisible(false);
     }
+
     //Open dialogue box for opening files
     public void openCampaign(ActionEvent actionEvent) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
@@ -746,7 +752,14 @@ public class DashboardController {
         //System.out.println(selectedFile);
         FileChooser fc = new FileChooser();
         String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
-        paths = fc.main();
+        for (int i = 0; i < 3; i++) {
+            //paths[i] = fc.main();
+            //fileChooser.setTitle(paths[i]);
+            //fc.main();
+            selectedFile = fc.main();
+            paths[i] = selectedFile;
+//            System.out.println(selectedFile);
+        }
         System.out.println(paths[0]);
         fph.setClickPath(paths[0]);
         fph.setImpressionPath(paths[1]);

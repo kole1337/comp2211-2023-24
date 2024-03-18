@@ -1,5 +1,5 @@
 import com.application.dashboard.ReadFile;
-import com.application.files.FileChooser;
+import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.login.LoginApplication;
 import com.application.login.LoginController;
@@ -16,7 +16,7 @@ public class BasicTest {
 
     LoginController lc = new LoginController();
     FilePathHandler fph = new FilePathHandler();
-    FileChooser fc = new FileChooser();
+    FileChooserWindow fc = new FileChooserWindow();
     ReadFile rc = new ReadFile();
     @Test
     public void testLogin() throws SQLException {
