@@ -5,10 +5,31 @@
 /*    -fx-background-color: red;*/
 /*}*/
 #background{
-    -fx-background-color: gray;
+    -fx-background-color: RGB(244, 244, 244);
+    -fx-text-fill: black;
     /*-fx-text-fill: black;*/
 }
 
-/*.label{*/
-/*    -fx-text-fill: white;*/
-/*}*/
+.label{
+    -fx-text-fill: black;
+}
+
+.button{
+    -fx-background-color: RGB(220,220,220);
+    -fx-border-color: black;
+}
+
+.menu-bar{
+    -fx-background-color: RGB(220,220,220);
+    -fx-background-color: black;
+}
+.menu{
+    -fx-background-color: RGB(220,220,220);
+    /*-fx-text-fill: black;*/
+}
+
+.menu-item{
+    -fx-background-color: RGB(220,220,220);
+    -fx-text-fill: black;
+}
+

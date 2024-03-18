@@ -166,6 +166,15 @@ public  class DataManager {
         return totals;
     }
 
+    public void loadCSVintoDB(){
+
+        try {
+            statement.executeUpdate("LOAD DATA INFILE 'C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2weeks\\click_log.csv' INTO TABLE clicklog FIELDS TERMINATED BY ',' IGNORE 1 LINES (date, id, clickCost)");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public int uniqueValues(String column, String table){
         int totals = 0;
         try {
