@@ -30,11 +30,7 @@ public class LoginApplication extends Application {
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(LoginApplication.class.getName());
         logger.log(Level.INFO, "Launching application.");
-        try {
-            DbConnection.makeConn("root", "jojo12345");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        DbConnection db = new DbConnection();
         launch();
     }
 }

@@ -19,6 +19,11 @@ public class DbConnection {
 
     public DbConnection(){
         readFromFile("D:\\year2\\seg\\user.txt");
+        try {
+            makeConn();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -27,12 +32,11 @@ public class DbConnection {
      * @param pass password for database access
      * @throws Exception if the username/password are invalid will throw an SQL exception, if no connection can be established a runtime error will be thrown
      */
-    public static void makeConn(String user, String pass)throws Exception{
-//        user = getUser();
-//        pass = getPass();
+    public static void makeConn()throws Exception{
+
         try {
             logger.log(Level.INFO, "establishing connection");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",user , pass);
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",getUser() , getPass());
             DataManager.getConn();
             UserManager.getConn();
         } catch (SQLException e) {
