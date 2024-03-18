@@ -162,7 +162,7 @@ public class DashboardController {
     DbConnection dbConnection = new DbConnection();
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
-        dbConnection.makeConn("root", "jojo12345");
+        dbConnection.makeConn("root", "Gourim@08");
     }
 
 

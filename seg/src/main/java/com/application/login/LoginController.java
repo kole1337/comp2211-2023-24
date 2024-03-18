@@ -52,7 +52,7 @@ public class LoginController {
      */
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
-        dbConnection.makeConn("root", "jojo12345");
+        dbConnection.makeConn("root", "Gourim@08");
 
         logger.log(Level.INFO, "You pressed loginButton.");
 
@@ -89,7 +89,7 @@ public class LoginController {
     }
 
     public void adminFunc(ActionEvent event) throws Exception {
-        dbConnection.makeConn("root", "jojo12345");
+        dbConnection.makeConn("root", "Gourim@08");
 
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
