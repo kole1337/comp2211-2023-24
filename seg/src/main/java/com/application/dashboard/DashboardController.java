@@ -79,7 +79,7 @@ public class DashboardController {
     public Label avgClickPriceLabel;
     public ImageView uploadPNG;
     public AnchorPane background;
-    private FilePathHandler fph = new FilePathHandler();
+    public FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
     private Stage stage;
@@ -300,10 +300,6 @@ public class DashboardController {
         }
         return options;
     }
-
-
-
-
     private void validateDateTime(DatePicker fromDate, ComboBox<String> fromHour,  ComboBox<String> fromMinute,  ComboBox<String> fromSecond, DatePicker toDate,  ComboBox<String> toHour,  ComboBox<String> toMinute,  ComboBox<String> toSecond) {
         if (fromDate.getValue() != null && toDate.getValue() != null &&
                 fromHour.getValue() != null && fromMinute.getValue() != null && fromSecond.getValue() != null &&
@@ -743,7 +739,6 @@ public class DashboardController {
         uploadPNG.setVisible(false);
         tutPNG.setVisible(false);
     }
-
     //Open dialogue box for opening files
     public void openCampaign(ActionEvent actionEvent) {
         javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();

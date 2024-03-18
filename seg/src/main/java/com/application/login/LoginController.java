@@ -34,12 +34,12 @@ public class LoginController {
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
-
     //---
     private Stage stage;
     private Scene scene;
     private Parent root;
     private Logger logger = Logger.getLogger(getClass().getName());
+    private FXMLLoader fxmlLoader;
     ;
 
 
@@ -53,14 +53,11 @@ public class LoginController {
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
         dbConnection.makeConn("root", "jojo12345");
-
         logger.log(Level.INFO, "You pressed loginButton.");
-
-
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
-                root = FXMLLoader.load(getClass().getResource("import-view.fxml"));
+                root = fxmlLoader.load(getClass().getResource("import-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
                 stage.setScene(scene);
@@ -94,7 +91,7 @@ public class LoginController {
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
             try {
-                root = FXMLLoader.load(getClass().getResource("admin-view.fxml"));
+                root = fxmlLoader.load(getClass().getResource("admin-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
 
