@@ -30,7 +30,7 @@ public class LoginController {
      * @UserManager: Connect with the DB
      * */
     public UserManager userManager;
-    public DbConnection dbConnection;
+    public DbConnection dbConnection = new DbConnection();
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
@@ -89,7 +89,7 @@ public class LoginController {
     }
 
     public void adminFunc(ActionEvent event) throws Exception {
-        dbConnection.makeConn("root", "jojo12345");
+        //dbConnection.makeConn("root", "jojo12345");
 
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
