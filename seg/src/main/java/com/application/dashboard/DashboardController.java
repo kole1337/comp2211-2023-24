@@ -751,14 +751,7 @@ public class DashboardController {
         //System.out.println(selectedFile);
         FileChooser fc = new FileChooser();
         String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
-        for (int i = 0; i < 3; i++) {
-            //paths[i] = fc.main();
-            //fileChooser.setTitle(paths[i]);
-            //fc.main();
-            selectedFile = fc.main();
-            paths[i] = selectedFile;
-//            System.out.println(selectedFile);
-        }
+        paths = fc.main();
         System.out.println(paths[0]);
         fph.setClickPath(paths[0]);
         fph.setImpressionPath(paths[1]);

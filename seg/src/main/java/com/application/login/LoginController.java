@@ -60,13 +60,13 @@ public class LoginController {
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
-                root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
+                root = FXMLLoader.load(getClass().getResource("import-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
                 logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
+                logger.log(Level.INFO, "Logging in as user. Opening import campaign.");
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -107,7 +107,7 @@ public class LoginController {
                 stage.setMinWidth(1280);
                 stage.show();
                 logger = Logger.getLogger(getClass().getName());
-                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+                logger.log(Level.INFO, "Logging in as admin. Opening import-campaign.");
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);

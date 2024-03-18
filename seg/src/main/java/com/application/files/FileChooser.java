@@ -1,37 +1,52 @@
 package com.application.files;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.logging.Logger;
 
-//import javafx.stage.FileChooser;
 public class FileChooser {
+    // Assuming FilePathHandler class definition is elsewhere
     private FilePathHandler pathHandler = new FilePathHandler();
-    public static String main() {
+    private static Integer numberOfFiles = 3;
+    private static FileFilter filter = new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+            return file.getName().endsWith(".csv");
+        }
+        @Override
+        public String getDescription() {
+            return null;
+        }
+    };
+    public static String[] main() { // Change return type to String[]
         // Open file chooser dialog
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select file");
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setDialogTitle("Select files"); // Updated for clarity
+        fileChooser.setMultiSelectionEnabled(true); // Enable multiple file selection
+
         int returnValue = fileChooser.showOpenDialog(null);
-
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            File[] selectedFiles = fileChooser.getSelectedFiles(); // Get all selected files
+            String[] filePaths = new String[numberOfFiles];
 
-            // Open the selected file in the file explorer
-            //openFileInExplorer(selectedFile);
-            return (selectedFile.getAbsolutePath());
+            // Iterate over selected files and print paths
+            for (int i = 0; i < 3; i++) {
+                System.out.println("Selected file: " + selectedFiles[i].getAbsolutePath());
+                filePaths[i] = selectedFiles[i].getAbsolutePath();
+            }
+
+            return filePaths; // Return the paths of selected files
         } else {
-            System.out.println("No file selected.");
+            System.out.println("No files selected.");
         }
-
-
-
-
         return null;
     }
 
+    // The openFileInExplorer method remains unchanged
     private static void openFileInExplorer(File file) {
         // Check if Desktop is supported
         if (Desktop.isDesktopSupported()) {
@@ -53,4 +68,3 @@ public class FileChooser {
         }
     }
 }
-
