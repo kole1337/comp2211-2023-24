@@ -22,38 +22,36 @@ public class Multithread_ClicksDb implements Runnable{
     public Multithread_ClicksDb(FilePathHandler fph,DashboardController dash,Thread main){
         this.fph = fph;
         this.dash = dash;
-        this.dat = new DataManager();
-        this.mainthread = main;
+        //this.dat = new DataManager();
+        //this.mainthread = main;
 
     }
     private void writeClicksDB() throws Exception {
+        try (FileReader clickReader = new FileReader(fph.getClickPath());
+             CSVReader clickCSVReader = new CSVReader(clickReader)) {
+            System.out.println("Reading click_log CSV");
+            String[] nextRecord;
 
-        FileReader clickReader = new FileReader(fph.getClickPath());
-        CSVReader clickCSVReader = new CSVReader(clickReader);
-        System.out.println("reading  click_log CSV");
-        String[] nextRecord;
+            nextRecord = clickCSVReader.readNext(); //read the header
 
-        nextRecord = clickCSVReader.readNext();
+            while ((nextRecord = clickCSVReader.readNext()) != null) {
+                try {
+                    dat.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
+                } catch (SQLException e) {
+                    logger.log(Level.SEVERE, "SQL error occurred", e);
+                    // Handle SQLException appropriately
+                }
+            }
 
-
-
-        while((nextRecord = clickCSVReader.readNext()) != null ) {
-            //TODO:figure out the sql exception thrown when 2 sql exceptions are entered at once
-          try {
-              dat.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
-          }catch (SQLException e){
-                e.printStackTrace();
-          }catch (Exception e){
-              throw new RuntimeException("failed to insert into table");
-          }
+            logger.log(Level.INFO, "Loaded clicks_log.csv");
+            synchronized (dash) {
+                logger.log(Level.INFO, "Notifying main thread");
+                dash.notify(); // Notify main thread after completion
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error occurred during insertion", e);
+            throw new RuntimeException("Failed to insert into table");
         }
-
-        logger.log(Level.INFO,"Loaded clicks_log.csv");
-        logger.log(Level.INFO,"Notifying main thread");
-        mainthread.notify();
-        wait();
-        dash.clicksLoadedLabel.setText("clicks_log.csv: loaded");
-        dash.setClicksLoaded(true);
     }
 
     @Override
