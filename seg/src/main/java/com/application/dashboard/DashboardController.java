@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -208,6 +209,16 @@ public class DashboardController {
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
     }
+    public void loadCSVWithinDates(ActionEvent actionEvent){
+        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
+
+        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
+        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClickWithinDates());
+        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
+        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
+        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
+    }
 
     public void loadDataGraphs(ActionEvent actionEvent){
         dataChart.layout();
@@ -323,6 +334,7 @@ public class DashboardController {
     //Function that would load the graph data inside the panel.
     //Not implemented.
 
+
     public void createTimeFrame(){
         startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
         endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
@@ -333,8 +345,8 @@ public class DashboardController {
         toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
         toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
 
-      //  setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
-       // setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
+       setupTimeComboBoxes(); // Setup method for time ComboBoxes
+       setupTimeComboBoxes(); // Setup method for time ComboBoxes
 
      /*  Button showRangeButton = new Button("Show");
         showRangeButton.setOnAction(e -> {
@@ -342,20 +354,49 @@ public class DashboardController {
             LocalDateTime toDateTime = LocalDateTime.of(endDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
         });*/
     }
+    public String getStartDateTimeAsString() {
+        LocalDate date = startDate.getValue();
+        String hour = fromHour.getValue();
+        String minute = fromMinute.getValue();
+        String second = fromSecond.getValue();
+
+        if (date != null && hour != null && minute != null && second != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String dateString = date.format(formatter);
+            // Assuming hour, minute, and second are already in 'HH', 'mm', and 'ss' format
+            return dateString + " " + hour + ":" + minute + ":" + second;
+        } else {
+            // Handle case where some values are not selected
+            return null; // or some default value or throw an exception as per your requirement
+        }
+    }
+    public String getEndDateTimeAsString() {
+        LocalDate date = endDate.getValue();
+        String hour = toHour.getValue();
+        String minute = toMinute.getValue();
+        String second = toSecond.getValue();
+
+        if (date != null && hour != null && minute != null && second != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String dateString = date.format(formatter);
+            // Assuming hour, minute, and second are already in 'HH', 'mm', and 'ss' format
+            return dateString + " " + hour + ":" + minute + ":" + second;
+        } else {
+            // Handle case where some values are not selected
+            return null; // or some default value or throw an exception as per your requirement
+        }
+    }
     /**
      * this is a method to create appropriate comboboxes for user to select hour/minute/second
-     * @param hour
-     * @param minute
-     * @param second
      */
 
-    private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
-        hour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
-        minute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
-        second.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
-        hour.getSelectionModel().select("00"); // Default value
-        minute.getSelectionModel().select("00"); // Default value
-        second.getSelectionModel().select("00"); // Default value
+    private void setupTimeComboBoxes() {
+        fromHour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
+        fromMinute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
+        fromSecond.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
+        toHour.getSelectionModel().select("00"); // Default value
+        toMinute.getSelectionModel().select("00"); // Default value
+        toSecond.getSelectionModel().select("00"); // Default value
     }
 
     /**
@@ -413,12 +454,22 @@ public class DashboardController {
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
         return dataman.selectTotalData("impressionlog");
     }
+    public int countUniqueImpressionsWithinDates(){
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading Unique visits within start and end time from impressions_log");
+        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+    }
 
     //Function to count the zero cost clicks
     public int countZeroCostClick(){
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
         return dataman.selectZeroClickCost();
+    }
+    public int countZeroCostClickWithinDates(){
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO,"Loading Zero Cost within start and end time Clicks");
+        return dataman.selectZeroClickCostWithinRange(getStartDateTimeAsString(),getEndDateTimeAsString());
     }
 
     //Function to find the average price per click
@@ -427,11 +478,20 @@ public class DashboardController {
         logger.log(Level.INFO, "Loading Average Price per Click");
         return dataman.selectAvgData("clickCost", "clicklog");
     }
+    public double countAverageProcePerClickWithinDates(){
+        Logger logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading Average Price per Click");
+        return dataman.selectAvgDataWithinRange("clickCost", "clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
+    }
+
 
     //Function to find the total impressions
     public int countTotalImpressions(){
 
         return dataman.selectTotalData("impressionlog");
+    }
+    public int countTotalImpressionsWithinDates(){
+        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
     }
 
     //Function to find the total clicks for the campaign
@@ -440,6 +500,11 @@ public class DashboardController {
         logger.log(Level.INFO, "Loading Total clicks");
 
         return dataman.selectTotalData("clicklog");
+    }
+    public int countTotalClicksWithinDates(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading Total clicks within start and end time");
+        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
     }
 
     public int totalBounces(){
@@ -454,12 +519,21 @@ public class DashboardController {
         logger.log(Level.ALL, "Loading total entries from ads.");
         return dataman.selectTotalData("serverlog");
     }
-
+    public int countTotalEntriesWithinDates(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.ALL, "Loading total entries from ads within start and end time.");
+        return dataman.selectTotalDataWithinRange("severlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+    }
     //Function to find the average number of pages
     public double countAvgPageViewed(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading average pages viewed.");
         return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
+    }
+    public double countAvgPageViewedWithinDates(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading average pages viewed.");
+        return Math.round(dataman.selectAvgDataWithinRange("pagesViewed", "serverlog", getStartDateTimeAsString(),getEndDateTimeAsString()) * 100) / 100;
     }
 
     //loading bar function

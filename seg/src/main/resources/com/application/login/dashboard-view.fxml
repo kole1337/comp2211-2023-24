@@ -114,7 +114,7 @@
                     <HBox fx:id="toTimeHBox">
                         <ComboBox fx:id="toHour" /><Label text=":" /><ComboBox fx:id="toMinute" /><Label text=":" /><ComboBox fx:id="toSecond" />
                     </HBox>
-                    <Button text="show" />
+                    <Button text="show" onAction="#loadCSVWithinDates"/>
                 </VBox>
             </children>
             <opaqueInsets>
