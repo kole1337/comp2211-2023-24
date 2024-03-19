@@ -70,8 +70,7 @@ public class DashboardController {
     public Label serverLoadedLabel;
     public Label totalBouncesLabel;
     public Label bounceRateLabel;
-    public DatePicker fromDate;
-    public DatePicker toDate;
+
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -132,7 +131,7 @@ public class DashboardController {
     @FXML
     public VBox timeControlVBox = new VBox ();
     @FXML
-    public DatePicker startDate = new DatePicker();
+    public DatePicker fromDate = new DatePicker();
     @FXML
     public ComboBox<String> fromHour = new ComboBox<>();
     @FXML
@@ -140,7 +139,7 @@ public class DashboardController {
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
     @FXML
-    public DatePicker endDate = new DatePicker();
+    public DatePicker toDate = new DatePicker();
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
@@ -336,14 +335,14 @@ public class DashboardController {
 
 
     public void createTimeFrame(){
-        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        fromDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
 
        setupTimeComboBoxes(); // Setup method for time ComboBoxes
        setupTimeComboBoxes(); // Setup method for time ComboBoxes
@@ -355,7 +354,7 @@ public class DashboardController {
         });*/
     }
     public String getStartDateTimeAsString() {
-        LocalDate date = startDate.getValue();
+        LocalDate date = fromDate.getValue();
         String hour = fromHour.getValue();
         String minute = fromMinute.getValue();
         String second = fromSecond.getValue();
@@ -371,7 +370,7 @@ public class DashboardController {
         }
     }
     public String getEndDateTimeAsString() {
-        LocalDate date = endDate.getValue();
+        LocalDate date = toDate.getValue();
         String hour = toHour.getValue();
         String minute = toMinute.getValue();
         String second = toSecond.getValue();
