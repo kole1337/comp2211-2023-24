@@ -295,7 +295,7 @@ public class DashboardController {
                 toDate.setValue(LocalDate.of(year,month,day));
             }
 
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue()), selectedButton));
+            dataChart.getData().add(dataman.getData(selectedButton,"Gender","Female"));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 

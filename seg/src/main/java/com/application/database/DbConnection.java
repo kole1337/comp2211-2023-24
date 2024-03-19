@@ -37,7 +37,7 @@ public class DbConnection {
         try {
             logger.log(Level.INFO, "establishing connection");
 
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",getUser() , getPass());
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda", "root" , "149162536496481Mkt!");
 
             DataManager.getConn();
             UserManager.getConn();
