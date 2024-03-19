@@ -454,6 +454,7 @@ public class DashboardController {
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
         return dataman.selectTotalData("impressionlog");
     }
+    // function to count the unique impressions within dates
     public int countUniqueImpressionsWithinDates(){
         Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Unique visits within start and end time from impressions_log");
