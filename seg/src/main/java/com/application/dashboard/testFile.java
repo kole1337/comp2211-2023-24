@@ -23,8 +23,10 @@ public class testFile extends Application {
     public void start(Stage stage) throws Exception {
         DataManager dataman = new DataManager();
         DbConnection dbconn = new DbConnection();
-        dbconn.makeConn("root", "jojo12345");
+        //dbconn.readFromFile("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
 
+        //dbconn.makeConn("root", "jojo12345");
+        //dbconn.createPassFile();
 
 
 //        InputStream is = new BufferedInputStream(new FileInputStream(fph.getImpressionPath()));
@@ -48,7 +50,7 @@ public class testFile extends Application {
 //            }
 //        System.out.println(count);
 
-        dataman.loadCSVintoDB();
+        //dataman.loadCSVintoDB();
         }
 
 

@@ -2,8 +2,10 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -26,9 +28,9 @@
                               <Font size="30.0" />
                            </font>
                         </Label>
-                        <Button fx:id="newUserButton" layoutX="387.0" layoutY="622.0" mnemonicParsing="false" onAction="#createNewUser" prefHeight="45.0" prefWidth="107.0" text="New User" />
-                        <Button layoutX="788.0" layoutY="622.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="107.0" text="Export Users" />
-                        <Button fx:id="logoutButton" layoutX="1010.0" layoutY="622.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logoutFunc" prefHeight="58.0" prefWidth="123.0" text="LOGOUT">
+                        <Button fx:id="newUserButton" layoutX="170.0" layoutY="622.0" mnemonicParsing="false" onAction="#createNewUser" prefHeight="45.0" prefWidth="107.0" text="New User" />
+                        <Button layoutX="571.0" layoutY="629.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="107.0" text="Export Users" />
+                        <Button fx:id="logoutButton" layoutX="1100.0" layoutY="638.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logoutFunc" prefHeight="58.0" prefWidth="123.0" text="LOGOUT">
                            <tooltip>
                               <Tooltip text="Logout button">
                                  <font>
@@ -37,7 +39,7 @@
                               </Tooltip>
                            </tooltip>
                         </Button>
-                        <TableView fx:id="showUsers" layoutX="387.0" layoutY="106.0" prefHeight="510.0" prefWidth="508.0">
+                        <TableView fx:id="showUsers" layoutX="170.0" layoutY="105.0" prefHeight="510.0" prefWidth="508.0">
                           <columns>
                               <TableColumn fx:id="userName" text="Username" />
                               <TableColumn fx:id="password" prefWidth="85.0" text="Password" />
@@ -46,7 +48,19 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Button fx:id="loadUsersButton" layoutX="616.0" layoutY="632.0" mnemonicParsing="false" onAction="#loadUsers" text="Load users" />
+                        <Button fx:id="loadUsersButton" layoutX="388.0" layoutY="632.0" mnemonicParsing="false" onAction="#loadUsers" text="Load users" />
+                        <AnchorPane layoutX="890.0" layoutY="260.0" prefHeight="330.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="statusLabel" layoutX="44.0" layoutY="31.0" text="Status: not connected" />
+                              <Label layoutX="44.0" layoutY="14.0" text="Database connection" />
+                              <TextField fx:id="getDBusername" layoutX="26.0" layoutY="80.0" promptText="username" />
+                              <PasswordField fx:id="getDBpassword" layoutX="27.0" layoutY="123.0" promptText="password" />
+                              <TextField fx:id="getDBname" layoutX="27.0" layoutY="180.0" promptText="database" visible="false" />
+                              <Button layoutX="48.0" layoutY="235.0" mnemonicParsing="false" onAction="#connectToDB" prefHeight="45.0" prefWidth="107.0" text="Connect" />
+                              <Button fx:id="checkConnectionDB" layoutX="35.0" layoutY="183.0" mnemonicParsing="false" onAction="#checkConnection" prefHeight="45.0" prefWidth="134.0" text="Check connection" />
+                           </children>
+                        </AnchorPane>
+                        <Label fx:id="test" layoutX="846.0" layoutY="186.0" text="Label" />
                      </children>
                   </AnchorPane>
                   <VBox VBox.vgrow="ALWAYS" />

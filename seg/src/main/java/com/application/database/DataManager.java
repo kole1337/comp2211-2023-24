@@ -197,4 +197,38 @@ public  class DataManager {
         }
         return totals;
     }
+
+    public int getFirstDate(String period, String table) {
+        int totals = 0;
+
+        try {
+            rs = statement.executeQuery("SELECT MIN("+period+"(date)) FROM " +table);
+            int i = 0;
+            while(rs.next()){
+
+                totals = rs.getInt(1);
+                ++i;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
+
+    public int getLastDate(String period, String table) {
+        int totals = 0;
+
+        try {
+            rs = statement.executeQuery("SELECT MAX("+period+"(date)) FROM " +table);
+            int i = 0;
+            while(rs.next()){
+
+                totals = rs.getInt(1);
+                ++i;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
 }

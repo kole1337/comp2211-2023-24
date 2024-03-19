@@ -30,7 +30,7 @@ public class LoginController {
      * @UserManager: Connect with the DB
      * */
     public UserManager userManager;
-    public DbConnection dbConnection;
+    public DbConnection dbConnection = new DbConnection();
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
@@ -52,7 +52,8 @@ public class LoginController {
      */
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
-        dbConnection.makeConn("root", "jojo12345");
+        //dbConnection.makeConn("root", "jojo12345");
+
         logger.log(Level.INFO, "You pressed loginButton.");
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
@@ -81,12 +82,12 @@ public class LoginController {
     }
 
     public Boolean checkUser(String username, String password) throws SQLException {
-        logger.log(Level.SEVERE, "Checking user credentials.");
+        logger.log(Level.INFO, "Checking user credentials.");
         return userManager.selectUser(username, password);
     }
 
     public void adminFunc(ActionEvent event) throws Exception {
-        dbConnection.makeConn("root", "jojo12345");
+        //dbConnection.makeConn("root", "jojo12345");
 
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
@@ -103,8 +104,12 @@ public class LoginController {
                 stage.setMinHeight(720);
                 stage.setMinWidth(1280);
                 stage.show();
+<<<<<<< HEAD
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.INFO, "Logging in as admin. Opening import-campaign.");
+=======
+                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+>>>>>>> de92dae537836aab97efc6df86466ec7a5048241
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);

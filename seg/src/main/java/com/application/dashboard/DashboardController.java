@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
+import javafx.util.Callback;
 import org.jfree.chart.ChartFrame;
 
 import javax.swing.*;
@@ -68,6 +69,8 @@ public class DashboardController {
     public Label serverLoadedLabel;
     public Label totalBouncesLabel;
     public Label bounceRateLabel;
+    public DatePicker fromDate;
+    public DatePicker toDate;
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -128,15 +131,11 @@ public class DashboardController {
     @FXML
     public VBox timeControlVBox = new VBox ();
     @FXML
-    public DatePicker fromDate = new DatePicker();
-    @FXML
     public ComboBox<String> fromHour = new ComboBox<>();
     @FXML
     public ComboBox<String> fromMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
-    @FXML
-    public DatePicker toDate = new DatePicker();
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
@@ -171,7 +170,7 @@ public class DashboardController {
     DbConnection dbConnection = new DbConnection();
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
-        dbConnection.makeConn("root", "jojo12345");
+        //dbConnection.makeConn("root", "jojo12345");
 
     }
 
@@ -242,17 +241,21 @@ public class DashboardController {
 
     //Logout function for button.
     public void logoutButton(ActionEvent event) {
-        try {
-            root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
-            stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-            logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.INFO, "Opening hello view.");
-        } catch (IOException e) {
-            logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+        Alert a = new Alert(Alert.AlertType.WARNING, "Signing out! All information will be lost!", ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = a.showAndWait();
+        if(result.isPresent() && result.get()==ButtonType.OK) {
+            try {
+                root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.INFO, "Opening hello view.");
+            } catch (IOException e) {
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            }
         }
     }
     //get time variable from combo box
@@ -267,18 +270,31 @@ public class DashboardController {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
+
+        dataChart.layout();
+
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
-        System.out.println(fromDate.getValue());
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
             if(fromDate.getValue() == null){
-                fromDate.setValue(LocalDate.of(1000,1,3));
+                int day = dataman.getFirstDate("day","clicklog");
+                int month = dataman.getFirstDate("month","clicklog");
+                int year = dataman.getFirstDate("year","clicklog");
+
+                fromDate.setValue(LocalDate.of(year,month,day));
             }
             //to set end date way far in the future as dafault, so it reads every data
             if(toDate.getValue() == null){
-                toDate.setValue(LocalDate.of(3000, 1,10));
+
+                int day = dataman.getLastDate("DAY","clicklog");
+                int month = dataman.getLastDate("MONTH","clicklog");
+                int year = dataman.getLastDate("YEAR","clicklog");
+
+
+                toDate.setValue(LocalDate.of(year,month,day));
             }
+
             dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue()), selectedButton));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
@@ -290,7 +306,7 @@ public class DashboardController {
             dataChart.getXAxis().setAutoRanging(true);
 
             // Force a layout update
-            dataChart.layout();
+
         }
         dataChart.layout();
 
