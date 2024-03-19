@@ -128,7 +128,7 @@ public class DashboardController {
     @FXML
     public VBox timeControlVBox = new VBox ();
     @FXML
-    public DatePicker startDate = new DatePicker();
+    public DatePicker fromDate = new DatePicker();
     @FXML
     public ComboBox<String> fromHour = new ComboBox<>();
     @FXML
@@ -136,7 +136,7 @@ public class DashboardController {
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
     @FXML
-    public DatePicker endDate = new DatePicker();
+    public DatePicker toDate = new DatePicker();
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
@@ -269,16 +269,17 @@ public class DashboardController {
         dataChart.getData().clear();
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
+        System.out.println(fromDate.getValue());
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
-            if(startDate.getValue() == null){
-                startDate.setValue(LocalDate.of(1000,1,1));
+            if(fromDate.getValue() == null){
+                fromDate.setValue(LocalDate.of(1000,1,3));
             }
             //to set end date way far in the future as dafault, so it reads every data
-            if(endDate.getValue() == null){
-                endDate.setValue(LocalDate.of(3000,1,1));
+            if(toDate.getValue() == null){
+                toDate.setValue(LocalDate.of(3000, 1,10));
             }
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,startDate.getValue(),endDate.getValue()), selectedButton));
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue()), selectedButton));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -299,14 +300,14 @@ public class DashboardController {
     //Not implemented.
 
     public void createTimeFrame(){
-        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
-        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate,fromHour,fromMinute, fromSecond, endDate, toHour, toMinute,toSecond));
+        fromDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
 
       //  setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
        // setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
@@ -366,13 +367,15 @@ public class DashboardController {
                 errorAlert.setHeaderText("Invalid Date-Time Selection");
                 errorAlert.setContentText("The end date-time must be after the start date-time.");
                 errorAlert.showAndWait();
-
                 // Optionally, reset the "to" date-time selection to match the "from" date-time or to a valid state
                 toDate.setValue(fromDate.getValue());
                 toHour.setValue(fromHour.getValue());
                 toMinute.setValue(fromMinute.getValue());
                 toSecond.setValue(fromSecond.getValue());
             }
+            System.out.println("date changed");
+            fromDate.setValue(fromDate.getValue());
+            toDate.setValue(toDate.getValue());
         }
     }
 
@@ -621,39 +624,30 @@ public class DashboardController {
     }
 
     void writeClicksDB() throws Exception {
-
+        ArrayList<String[]> clickLogs = new ArrayList<>();
         FileReader clickReader = new FileReader(fph.getClickPath());
         CSVReader clickCSVReader = new CSVReader(clickReader);
         System.out.println("readng");
         String[] nextRecord;
-
         nextRecord = clickCSVReader.readNext();
-
-
-
         while((nextRecord = clickCSVReader.readNext()) != null ) {
-//            nextRecord = clickCSVReader.readNext();
-            dataman.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
-
+            clickLogs.add(nextRecord);
+            dataman.addClickLog(clickLogs);
         }
 
     }
     void writeImpressionsDB() throws Exception {
-
+        ArrayList<String[]> impressionLogs = new ArrayList<>();
         FileReader impressionReader = new FileReader(fph.getImpressionPath());
         CSVReader clickCSVReader = new CSVReader(impressionReader);
         System.out.println("readng");
         String[] nextRecord;
-
         nextRecord = clickCSVReader.readNext();
-
-
         while((nextRecord = clickCSVReader.readNext()) != null ) {
                 //nextRecord = clickCSVReader.readNext();
-                dataman.addImpressionLog(nextRecord[0], nextRecord[1],
-                        nextRecord[2], nextRecord[3], nextRecord[4],
-                        nextRecord[5], Double.parseDouble(nextRecord[6]));
+                impressionLogs.add(nextRecord);
             }
+
 
 
     }

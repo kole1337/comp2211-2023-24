@@ -1,6 +1,7 @@
 package com.application.dashboard;
 
-import com.application.files.FileChooser;
+
+import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,21 +29,15 @@ public class ImportController {
     public void initialize(){
         dashboardButton.setDisable(true);
     }
-    public void openCampaign(ActionEvent actionEvent) {
-        logger.log(Level.INFO,"pressed open campaign button");
-        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-        String selectedFile;
-        //System.out.println(selectedFile);
-        FileChooser fc = new FileChooser();
-        String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
-        paths = fc.main();
-        System.out.println(paths[0]);
-        fph.setClickPath(paths[0]);
-        fph.setImpressionPath(paths[1]);
-        fph.setServerPath(paths[2]);
-        if(paths.length == 3){
-            dashboardButton.setDisable(false);
-        }
+    public void openCampaign(){
+        FileChooserWindow fileChooser = new FileChooserWindow();
+
+        fph.fileTypeHandler(fileChooser.openFileBox());
+        System.out.println(fph.getImpressionPath());
+        System.out.println(fph.getClickPath());
+        System.out.println(fph.getServerPath());
+        System.out.println("Ready ^_^!");
+        dashboardButton.setDisable(false);
     }
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
