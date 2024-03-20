@@ -15,10 +15,13 @@ public class DbConnection {
     private static String user;
     private static String pass;
 
+    private static  String url = "jdbc:mysql://localhost:3306/adda";
+
 
 
     public DbConnection(){
-        readFromFile("D:\\year2\\seg\\user.txt");
+        readFromFile("seg/src/main/resources/user.txt");
+
         try {
             makeConn();
         }catch(Exception e){
@@ -36,9 +39,11 @@ public class DbConnection {
 
         try {
             logger.log(Level.INFO, "establishing connection");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda",getUser() , getPass());
+            conn = DriverManager.getConnection(url,getUser() , getPass());
             DataManager.getConn();
             UserManager.getConn();
+
+
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Username or password are not valid");
             e.printStackTrace();
@@ -69,7 +74,7 @@ public class DbConnection {
     }
     public static void createPassFile(){
         try {
-            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\filename.txt");
+            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
                 System.out.println(myObj.getAbsolutePath());
@@ -90,6 +95,10 @@ public class DbConnection {
 
     public static String getPass() {
         return pass;
+    }
+
+    public static String getUrl(){
+        return url;
     }
 
     /**

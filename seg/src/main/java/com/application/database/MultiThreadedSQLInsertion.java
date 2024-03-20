@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -13,10 +16,11 @@ import javax.sql.DataSource;
 
 public class MultiThreadedSQLInsertion {
     // Database credentials
-    static final String JDBC_URL = "jdbc:mysql://localhost:3306/adda";
-    static final String DB_USER = "root";
-    static final String DB_PASSWORD = "jojo12345";
+    static final String JDBC_URL = DbConnection.getUrl();
+    static final String DB_USER = DbConnection.getUser();
+    static final String DB_PASSWORD = DbConnection.getPass();
 
+    private static Logger logger = Logger.getLogger(MultiThreadedSQLInsertion.class.getName());
     private static Connection conn;
 
     // Define the number of threads
@@ -33,7 +37,6 @@ public class MultiThreadedSQLInsertion {
         config.setLeakDetectionThreshold(300000);
 
         DataSource dataSource = new HikariDataSource(config);
-
         conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
         String csvFilePath ="D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
 //        String csvFilePath = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2month\\impression_log.csv";
@@ -52,7 +55,9 @@ public class MultiThreadedSQLInsertion {
 
         // Shutdown the executor after all tasks are completed
         executor.shutdown();
+
     }
+
 
     static class InsertTask implements Runnable {
         private final String dataLine;
@@ -94,11 +99,13 @@ public class MultiThreadedSQLInsertion {
                     preparedStatement.setDouble(7, Double.parseDouble(values[6]));
 
                     preparedStatement.executeUpdate();
+                    conn.close();
 
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
         }
     }
 }
