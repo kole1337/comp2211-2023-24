@@ -146,8 +146,8 @@
                 </HBox>
                 <Button text="show" onAction="#loadCSVWithinDates"/>
             </VBox>
-            <TextField fx:id="timeSpentBounce" promptText="time spent for a bounce" />
-            <TextField fx:id="pageViewedBounce" promptText="page viewed for a bounce"/>
+            <TextField fx:id="timeSpentBounce" promptText="time spent for a bounce" layoutX="100" layoutY="110"/>
+            <TextField fx:id="pageViewedBounce" promptText="page viewed for a bounce" layoutX="100" layoutY="113"/>
         </children>
         <opaqueInsets>
             <Insets/>
