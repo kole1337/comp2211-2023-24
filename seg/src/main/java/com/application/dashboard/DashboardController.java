@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -146,6 +147,12 @@ public class DashboardController {
     public ComboBox<String> toMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> toSecond = new ComboBox<>();
+    @FXML
+    public TextField timeSpentBounce ;
+
+    @FXML
+    public TextField pageViewedBounce;
+
     CategoryAxis xAxis = new CategoryAxis();
 
     boolean clicksLoaded = false;
@@ -176,6 +183,25 @@ public class DashboardController {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
 
+        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+        });
+        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+
+        });
     }
 
 
@@ -241,6 +267,27 @@ public class DashboardController {
         dataChart.layout();
 
     }
+    public void loadDataGraphsWithinRange(ActionEvent actionEvent){
+        dataChart.layout();
+        Button clickedButton = (Button) actionEvent.getSource();
+        String buttonId = clickedButton.getId();
+        String time = (String) ComboBox.getValue();
+
+        //to set hour as default time
+        if(time == null){
+            time = "hour";
+        }
+        //to set total clicks as default graph
+        if(buttonId.equals("loadCSVbutton3")){
+            buttonId = "TotalClicks";
+        }
+        loadingBar();
+        dc = new DatasetCreator(fph);
+//        TimeFrameControl tfc = new TimeFrameControl();
+//        tfc.createTimeFrame();
+        loadGraph(buttonId,time);
+        dataChart.layout();
+    }
 
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
@@ -252,6 +299,7 @@ public class DashboardController {
         chartPane.layout();
 
     }
+    // add new load Graphs function handle the date range
 
     //Logout function for button.
     public void logoutButton(ActionEvent event) {
@@ -313,7 +361,20 @@ public class DashboardController {
             }
 
 
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue()), selectedButton));
+
+            if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
+                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
+                }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
+                }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
+                }else{
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
+                }
+            }else {
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+            }
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -604,6 +665,7 @@ public class DashboardController {
         genderGraph.setLabelsVisible(true);
         genderGraph.setData(pieChartData);
     }
+
 
     //function to load the age graph.
     public void loadAgeGraph(){
