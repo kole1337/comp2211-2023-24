@@ -30,6 +30,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.TextField?>
 <AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0"
             styleClass="D:\year2\seg\comp2211\seg\src\main\resources\com\application\login\dashboard.css"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
@@ -120,6 +121,8 @@
                     </FXCollections>
                 </items>
             </ComboBox>
+
+
             <VBox prefHeight="129.0" prefWidth="178.0">
                 <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" onAction="#createTimeFrame" prefHeight="25"
                             prefWidth="200" promptText="Start Date"/>
@@ -143,6 +146,8 @@
                 </HBox>
                 <Button text="show" onAction="#loadCSVWithinDates"/>
             </VBox>
+            <TextField fx:id="timeSpentBounce" promptText="time spent for a bounce" />
+            <TextField fx:id="pageViewedBounce" promptText="page viewed for a bounce"/>
         </children>
         <opaqueInsets>
             <Insets/>
