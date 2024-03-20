@@ -13,6 +13,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -63,7 +64,7 @@ import java.util.logging.Logger;
  * it is doing and why
  * */
 
-public class DashboardController {
+public class DashboardController implements Initializable {
     public TabPane chartPane;
     public Label clicksLoadedLabel;
     public Label impressionLoadedLabel;
@@ -148,6 +149,34 @@ public class DashboardController {
     boolean clicksLoaded = false;
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Assuming you have defined the ComboBoxes in your controller class
+        ObservableList<String> hours = FXCollections.observableArrayList();
+        ObservableList<String> minutes = FXCollections.observableArrayList();
+        ObservableList<String> seconds = FXCollections.observableArrayList();
+
+        for (int i = 0; i <= 23; i++) {
+            hours.add(String.format("%02d", i));
+        }
+
+        for (int i = 0; i <= 59; i++) {
+            minutes.add(String.format("%02d", i));
+        }
+
+        for (int i = 0; i <= 59; i++) {
+            seconds.add(String.format("%02d", i));
+        }
+
+// Set the previously populated hour, minute, and second lists to the ComboBoxes
+        fromHour.setItems(hours);
+        fromMinute.setItems(minutes);
+        fromSecond.setItems(seconds);
+        toHour.setItems(hours);
+        toMinute.setItems(minutes);
+        toSecond.setItems(seconds);
+    }
+
 
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -788,4 +817,6 @@ public class DashboardController {
 
     public void selectClickGraph(ActionEvent actionEvent) {
     }
+
+
 }
