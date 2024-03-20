@@ -20,14 +20,14 @@ public class MultiThreadedSQLInsertion {
     private static Connection conn;
 
     // Define the number of threads
-    static final int NUM_THREADS = 500; // Adjust according to your requirements
+    static final int NUM_THREADS = 5000; // Adjust according to your requirements
 
     public static void main(String[] args) throws SQLException {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(JDBC_URL);
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);
-        config.setMaximumPoolSize(100);
+        config.setMaximumPoolSize(2500);
         config.setConnectionTimeout(300000);
         config.setIdleTimeout(120000);
         config.setLeakDetectionThreshold(300000);
@@ -35,8 +35,8 @@ public class MultiThreadedSQLInsertion {
         DataSource dataSource = new HikariDataSource(config);
 
         conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
-//        String csvFilePath ="D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
-        String csvFilePath = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2month\\impression_log.csv";
+        String csvFilePath ="D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
+//        String csvFilePath = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2month\\impression_log.csv";
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
