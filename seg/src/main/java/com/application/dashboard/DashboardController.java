@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -71,6 +72,7 @@ public class DashboardController {
     public Label bounceRateLabel;
     public DatePicker fromDate;
     public DatePicker toDate;
+    public BarChart histogramClicks;
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -198,7 +200,7 @@ public class DashboardController {
 ////        TimeFrameControl tfc = new TimeFrameControl();
 ////        tfc.createTimeFrame();
 //        loadGraph(buttonId,time);
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
+       // uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
 //
 
@@ -239,6 +241,8 @@ public class DashboardController {
         loadIncomeGraph();
         loadContextOriginChart();
         loadConversionChart();
+//        loadHistogramChart();
+        loadHistogramClickCost();
         chartPane.layout();
 
     }
@@ -507,9 +511,77 @@ public class DashboardController {
         new Thread(task).start();
     }
 
-    public void loadHistogramClickCost(){
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getAverageClickCostPerDay("clicklog");
+//
+//        // Create a sorted TreeMap to ensure dates are in order
+//        TreeMap<String, Double> sortedDateAndClickCost = new TreeMap<>(dateAndClickCost);
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : sortedDateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//
+//    }
+public void loadHistogramClickCost() {
+    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
 
+    // Create data series for the histogram chart
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+    // Populate data series with dates and corresponding click costs
+    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
     }
+
+    // Add data series to the histogram chart
+    histogramClicks.getData().add(series);
+    histogramClicks.setTitle("Histogram");
+
+    // Adjust the width of the bars
+//    double barWidth = 100; // Adjust this value as needed
+//    for (XYChart.Data<String, Number> data : series.getData()) {
+//        Node bar = data.getNode();
+//        if (bar != null) {
+//            bar.setStyle("-fx-bar-width: " + barWidth + ";");
+//        }
+//    }
+}
+
+
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//
+//        // Create a new map to store aggregated click costs by day
+//        Map<String, Double> aggregatedClickCostsByDay = new HashMap<>();
+//
+//        // Aggregate click costs by day
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            String date = LocalDate.parse(entry.getKey(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+//            double clickCost = entry.getValue();
+//            aggregatedClickCostsByDay.put(date, aggregatedClickCostsByDay.getOrDefault(date, 0.0) + clickCost);
+//        }
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding aggregated click costs by day
+//        for (Map.Entry<String, Double> entry : aggregatedClickCostsByDay.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//    }
+
 
 
     //Function to find the gender separation.
@@ -598,6 +670,45 @@ public class DashboardController {
             conversionGraph.setData(pieChartData);
 
     }
+//    public void loadHistogramChart() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("serverlog");
+//
+//        // Create a category axis for the X-axis
+//        CategoryAxis xAxis = new CategoryAxis();
+//        xAxis.setLabel("Date");
+//
+//        // Create a number axis for the Y-axis
+//        NumberAxis yAxis = new NumberAxis();
+//        yAxis.setLabel("Click Cost");
+//
+//        // Create a histogram chart
+//        LineChart<String, Number> histogramChart = new LineChart<>(xAxis, yAxis);
+//
+//        // Set chart title
+//        histogramChart.setTitle("Click Costs Over Time");
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramChart.getData().add(series);
+//
+//        // Add the histogram chart to your layout
+//        // Replace 'yourPane' with the actual Pane or other layout container you want to add the chart to
+//        //histogramClicks.getChildren().add(histogramChart);
+//        histogramClicks.setLabelLineLength(20);
+//        histogramClicks.setLabelsVisible(true);
+//        histogramClicks.setData(histogramChart);
+//
+//    }
+
+
+
 
 
     //Display tutorial overlay

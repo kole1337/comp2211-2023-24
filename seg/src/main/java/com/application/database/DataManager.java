@@ -1,6 +1,9 @@
 package com.application.database;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -221,4 +224,90 @@ public  class DataManager {
         }
         return totals;
     }
+//    public Map<String, Double> getDateAndClickCost(String table) {
+//        Map<String, Double> dateAndClickCost = new HashMap<>();
+//
+//        try {
+//           // String query = "SELECT date, clickCost FROM "+table;
+//            ResultSet resultSet = statement.executeQuery("SELECT Date, clickCost FROM "+table);
+//
+//            while (resultSet.next()) {
+//                String date = resultSet.getString("Date");
+//                double clickCost = resultSet.getDouble("clickCost");
+//                dateAndClickCost.put(date, clickCost);
+//            }
+//            System.out.println(dateAndClickCost);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return dateAndClickCost;
+//    }
+//public Map<String, Double> getDateAndClickCost(String table) {
+//    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+//
+//    try {
+//        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
+//        ResultSet resultSet = statement.executeQuery(query);
+//
+//        while (resultSet.next()) {
+//            String date = resultSet.getString("Date");
+//            double clickCost = resultSet.getDouble("clickCost");
+//            dateAndClickCost.put(date, clickCost);
+//            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//
+//    return dateAndClickCost;
+//}
+public Map<String, Double> getDateAndClickCost(String table) {
+    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+
+    try {
+        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            String date = resultSet.getString("Date");
+            double clickCost = resultSet.getDouble("clickCost");
+            if (clickCost != 0.0) {
+                dateAndClickCost.put(date, clickCost);
+            }
+            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return dateAndClickCost;
+}
+
+    public Map<String, Double> getAverageClickCostPerDay(String table) {
+        Map<String, Double> averageClickCostPerDay = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+
+        try {
+            String query = "SELECT DATE(date) AS Date, AVG(clickCost) AS AvgClickCost FROM " + table + " GROUP BY DATE(date) ORDER BY Date";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String date = resultSet.getString("Date");
+                double avgClickCost = resultSet.getDouble("AvgClickCost");
+                averageClickCostPerDay.put(date, avgClickCost);
+                System.out.println("Date: " + date + ", Avg Click Cost: " + avgClickCost);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return averageClickCostPerDay;
+    }
+
+
+
+
+
+
+
 }
