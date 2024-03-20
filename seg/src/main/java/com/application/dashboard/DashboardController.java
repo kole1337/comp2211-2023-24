@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -270,32 +271,15 @@ public class DashboardController {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
-
         dataChart.layout();
-
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
-            if(fromDate.getValue() == null){
-                int day = dataman.getFirstDate("day","clicklog");
-                int month = dataman.getFirstDate("month","clicklog");
-                int year = dataman.getFirstDate("year","clicklog");
+            String startDate = getFromDateTime();
+            String endDate = getToDateTime();
+            dataChart.getData().add(dataman.getData(selectedButton,startDate,endDate, "Male" , "" ,"", ""));
 
-                fromDate.setValue(LocalDate.of(year,month,day));
-            }
-            //to set end date way far in the future as dafault, so it reads every data
-            if(toDate.getValue() == null){
-
-                int day = dataman.getLastDate("DAY","clicklog");
-                int month = dataman.getLastDate("MONTH","clicklog");
-                int year = dataman.getLastDate("YEAR","clicklog");
-
-
-                toDate.setValue(LocalDate.of(year,month,day));
-            }
-
-            dataChart.getData().add(dataman.getData(selectedButton,"Gender","Female"));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -310,6 +294,70 @@ public class DashboardController {
         }
         dataChart.layout();
 
+    }
+
+    public String getToDateTime(){
+        if(toDate.getValue() == null){
+            int day = dataman.getLastDate("day","clicklog");
+            int month = dataman.getLastDate("month","clicklog");
+            int year = dataman.getLastDate("year","clicklog");
+
+            toDate.setValue(LocalDate.of(year,month,day));
+        }
+        if(toHour.getValue() == null){
+            int hour = dataman.getLastDate("hour","clicklog");
+            toHour.setValue(Integer.toString(hour));
+        }
+        if(toMinute.getValue() == null){
+            int minute = dataman.getLastDate("minute","clicklog");
+            toMinute.setValue(Integer.toString(minute));
+        }
+        if(toSecond.getValue() == null){
+            int second = dataman.getLastDate("second","clicklog");
+            toSecond.setValue(Integer.toString(second));
+        }
+        LocalDate selectedDate = toDate.getValue();
+        int hour = Integer.parseInt(toHour.getValue());
+        int minute = Integer.parseInt(toMinute.getValue());
+        int second = Integer.parseInt(toSecond.getValue());
+
+        LocalDateTime dateTime = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute, second));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return dateTime.format(formatter);
+    }
+    public String getFromDateTime() {
+        if (fromDate.getValue() == null) {
+            int day = dataman.getFirstDate("day", "clicklog");
+            int month = dataman.getFirstDate("month", "clicklog");
+            int year = dataman.getFirstDate("year", "clicklog");
+
+            fromDate.setValue(LocalDate.of(year, month, day));
+        }
+        if (fromHour.getValue() == null) {
+            int hour = dataman.getFirstDate("hour", "clicklog");
+            fromHour.setValue(Integer.toString(hour));
+        }
+        if (fromMinute.getValue() == null) {
+            int minute = dataman.getFirstDate("minute", "clicklog");
+            fromMinute.setValue(Integer.toString(minute));
+        }
+        if (fromSecond.getValue() == null) {
+            int second = dataman.getFirstDate("second", "clicklog");
+            fromSecond.setValue(Integer.toString(second));
+        }
+
+        LocalDate selectedDate = fromDate.getValue();
+        int hour = Integer.parseInt(fromHour.getValue());
+        int minute = Integer.parseInt(fromMinute.getValue());
+        int second = Integer.parseInt(fromSecond.getValue());
+
+        LocalDateTime dateTime = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute, second));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return dateTime.format(formatter);
     }
         // Customize the graph based on the selected radio button
     //Function that would load the graph data inside the panel.
