@@ -1,6 +1,9 @@
 package com.application.database;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +20,14 @@ public  class DataManager {
 //    public static void main(String[] args) throws SQLException {
 //    }
 
+    public static void deleteData(String tableName){
+        try{
+            pstmt = conn.prepareStatement("DELETE FROM " + tableName +";");
+
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Could not delete data from table: " + tableName);
+        }
+    }
 
     public static void getConn(){
         try {
@@ -199,42 +210,11 @@ public  class DataManager {
         }
         return totals;
     }
-    public int selectZeroClickCostWithinRange(String startDateTime, String endDateTime){
-        int totals = 0;
-        try{
-            String query = "SELECT COUNT(*) FROM clicklog" +
-                    " WHERE date_column >= '" + startDateTime +
-                    "' AND date_column <= '" + endDateTime + "'";
-
-            rs = statement.executeQuery(query);
-            if(rs.next()) {
-                totals = rs.getInt(1);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return totals;
-    }
 
     public int selectAvgData(String column, String table){
         int totals = 0;
         try {
             rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table);
-            if(rs.next()) {
-                totals = rs.getInt(1);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return totals;
-    }
-    public int selectAvgDataWithinRange(String column, String table, String startDateTime, String endDateTime){
-        int totals = 0;
-        try{
-            String query = "SELECT AVG("+ column+ ") FROM " + table +
-                    " WHERE date_column >= '" + startDateTime +
-                    "' AND date_column <= '" + endDateTime + "'";
-            rs = statement.executeQuery(query);
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -261,47 +241,8 @@ public  class DataManager {
         }
         return totals;
     }
-/*
-String query = "SELECT AVG("+ column+ ") FROM " + table +
-                    " WHERE date_column >= '" + startDateTime +
-                    "' AND date_column <= '" + endDateTime + "'";
- */
-    public int[] getUniqueAppearanceIntWithinDates(String column, String table, String startDateTime, String endDateTime){
-        int uniqueVals = uniqueValues(column, table);
-        int totals[] = new int[uniqueVals];
-
-        try {
-            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" GROUP BY "+column);
-            int i = 0;
-            while(rs.next()){
-
-                totals[i] = rs.getInt("count");
-                ++i;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return totals;
-    }
 
     public String[] getUniqueAppearanceString(String column, String table){
-        int uniqueVals = uniqueValues(column, table);
-        String totals[] = new String[uniqueVals];
-
-        try {
-            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" GROUP BY "+column);
-            int i = 0;
-            while(rs.next()){
-
-                totals[i] = rs.getString(column);
-                ++i;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return totals;
-    }
-    public String[] getUniqueAppearanceStringWithinDates(String column, String table, String startDateTime, String endDateTime){
         int uniqueVals = uniqueValues(column, table);
         String totals[] = new String[uniqueVals];
 
@@ -375,5 +316,90 @@ String query = "SELECT AVG("+ column+ ") FROM " + table +
         }
         return totals;
     }
+//    public Map<String, Double> getDateAndClickCost(String table) {
+//        Map<String, Double> dateAndClickCost = new HashMap<>();
+//
+//        try {
+//           // String query = "SELECT date, clickCost FROM "+table;
+//            ResultSet resultSet = statement.executeQuery("SELECT Date, clickCost FROM "+table);
+//
+//            while (resultSet.next()) {
+//                String date = resultSet.getString("Date");
+//                double clickCost = resultSet.getDouble("clickCost");
+//                dateAndClickCost.put(date, clickCost);
+//            }
+//            System.out.println(dateAndClickCost);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return dateAndClickCost;
+//    }
+//public Map<String, Double> getDateAndClickCost(String table) {
+//    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+//
+//    try {
+//        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
+//        ResultSet resultSet = statement.executeQuery(query);
+//
+//        while (resultSet.next()) {
+//            String date = resultSet.getString("Date");
+//            double clickCost = resultSet.getDouble("clickCost");
+//            dateAndClickCost.put(date, clickCost);
+//            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//    }
+//
+//    return dateAndClickCost;
+//}
+public Map<String, Double> getDateAndClickCost(String table) {
+    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+
+    try {
+        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
+        ResultSet resultSet = statement.executeQuery(query);
+
+        while (resultSet.next()) {
+            String date = resultSet.getString("Date");
+            double clickCost = resultSet.getDouble("clickCost");
+            if (clickCost != 0.0) {
+                dateAndClickCost.put(date, clickCost);
+            }
+            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return dateAndClickCost;
+}
+
+    public Map<String, Double> getAverageClickCostPerDay(String table) {
+        Map<String, Double> averageClickCostPerDay = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+
+        try {
+            String query = "SELECT DATE(date) AS Date, AVG(clickCost) AS AvgClickCost FROM " + table + " GROUP BY DATE(date) ORDER BY Date";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String date = resultSet.getString("Date");
+                double avgClickCost = resultSet.getDouble("AvgClickCost");
+                averageClickCostPerDay.put(date, avgClickCost);
+                System.out.println("Date: " + date + ", Avg Click Cost: " + avgClickCost);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return averageClickCostPerDay;
+    }
+
+
+
+
+
+
 
 }

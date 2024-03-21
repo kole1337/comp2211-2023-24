@@ -1,12 +1,9 @@
 package com.application.dashboard;
 
-import com.application.database.DataManager;
-import com.application.database.DbConnection;
+import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
-import com.application.login.LoginController;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,25 +24,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
-import javafx.util.Callback;
+import javafx.util.Duration;
 import org.jfree.chart.ChartFrame;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -64,13 +53,21 @@ import java.util.logging.Logger;
  * it is doing and why
  * */
 
-public class DashboardController {
+public class DashboardController{
     public TabPane chartPane;
     public Label clicksLoadedLabel;
     public Label impressionLoadedLabel;
     public Label serverLoadedLabel;
     public Label totalBouncesLabel;
     public Label bounceRateLabel;
+
+    public DatePicker fromDate;
+    public DatePicker toDate;
+
+    public BarChart histogramClicks;
+
+    public ImageView loadingGIF;
+
 
     DataManager dataman = new DataManager();
 
@@ -159,6 +156,7 @@ public class DashboardController {
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
 
+
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName(seriesName);
@@ -178,7 +176,6 @@ public class DashboardController {
      *   2. Conversion graph
      * */
 
-    DbConnection dbConnection = new DbConnection();
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
@@ -206,7 +203,7 @@ public class DashboardController {
 
 
     public void loadCSV(ActionEvent actionEvent) {
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "loadCSV button");
 //        Button clickedButton = (Button) actionEvent.getSource();
 //        String buttonId = clickedButton.getId();
@@ -224,7 +221,7 @@ public class DashboardController {
 ////        TimeFrameControl tfc = new TimeFrameControl();
 ////        tfc.createTimeFrame();
 //        loadGraph(buttonId,time);
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
+       // uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
 
 
@@ -298,6 +295,8 @@ public class DashboardController {
         loadIncomeGraph();
         loadContextOriginChart();
         loadConversionChart();
+//        loadHistogramChart();
+        loadHistogramClickCost();
         chartPane.layout();
 
     }
@@ -512,7 +511,6 @@ public class DashboardController {
 
     //Function to count the unique impressions
     public int countUniqueImpressions(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
         return dataman.selectTotalData("impressionlog");
     }
@@ -525,7 +523,6 @@ public class DashboardController {
 
     //Function to count the zero cost clicks
     public int countZeroCostClick(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
         return dataman.selectZeroClickCost();
     }
@@ -537,7 +534,6 @@ public class DashboardController {
 
     //Function to find the average price per click
     public double countAveragePricePerClick(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Average Price per Click");
         return dataman.selectAvgData("clickCost", "clicklog");
     }
@@ -559,7 +555,7 @@ public class DashboardController {
 
     //Function to find the total clicks for the campaign
     public int countTotalClicks(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.INFO, "Loading Total clicks");
 
         return dataman.selectTotalData("clicklog");
@@ -584,7 +580,7 @@ public class DashboardController {
 
     //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading total entries from ads.");
         return dataman.selectTotalData("serverlog");
     }
@@ -595,7 +591,7 @@ public class DashboardController {
     }
     //Function to find the average number of pages
     public double countAvgPageViewed(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.INFO, "Loading average pages viewed.");
         return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
     }
@@ -650,16 +646,84 @@ public class DashboardController {
         new Thread(task).start();
     }
 
-    public void loadHistogramClickCost(){
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getAverageClickCostPerDay("clicklog");
+//
+//        // Create a sorted TreeMap to ensure dates are in order
+//        TreeMap<String, Double> sortedDateAndClickCost = new TreeMap<>(dateAndClickCost);
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : sortedDateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//
+//    }
+public void loadHistogramClickCost() {
+    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
 
+    // Create data series for the histogram chart
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+    // Populate data series with dates and corresponding click costs
+    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
     }
+
+    // Add data series to the histogram chart
+    histogramClicks.getData().add(series);
+    histogramClicks.setTitle("Histogram");
+
+    // Adjust the width of the bars
+//    double barWidth = 100; // Adjust this value as needed
+//    for (XYChart.Data<String, Number> data : series.getData()) {
+//        Node bar = data.getNode();
+//        if (bar != null) {
+//            bar.setStyle("-fx-bar-width: " + barWidth + ";");
+//        }
+//    }
+}
+
+
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//
+//        // Create a new map to store aggregated click costs by day
+//        Map<String, Double> aggregatedClickCostsByDay = new HashMap<>();
+//
+//        // Aggregate click costs by day
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            String date = LocalDate.parse(entry.getKey(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+//            double clickCost = entry.getValue();
+//            aggregatedClickCostsByDay.put(date, aggregatedClickCostsByDay.getOrDefault(date, 0.0) + clickCost);
+//        }
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding aggregated click costs by day
+//        for (Map.Entry<String, Double> entry : aggregatedClickCostsByDay.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//    }
+
 
 
     //Function to find the gender separation.
     public void loadGenders(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading genders.");
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
@@ -677,9 +741,9 @@ public class DashboardController {
 
     //function to load the age graph.
     public void loadAgeGraph(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading age graph.");
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
@@ -695,7 +759,7 @@ public class DashboardController {
 
     //Load income graph
     public void loadIncomeGraph(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
@@ -710,7 +774,7 @@ public class DashboardController {
     }
 
     public void loadContextOriginChart(){
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
 
         int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog");
@@ -742,6 +806,45 @@ public class DashboardController {
             conversionGraph.setData(pieChartData);
 
     }
+//    public void loadHistogramChart() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("serverlog");
+//
+//        // Create a category axis for the X-axis
+//        CategoryAxis xAxis = new CategoryAxis();
+//        xAxis.setLabel("Date");
+//
+//        // Create a number axis for the Y-axis
+//        NumberAxis yAxis = new NumberAxis();
+//        yAxis.setLabel("Click Cost");
+//
+//        // Create a histogram chart
+//        LineChart<String, Number> histogramChart = new LineChart<>(xAxis, yAxis);
+//
+//        // Set chart title
+//        histogramChart.setTitle("Click Costs Over Time");
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramChart.getData().add(series);
+//
+//        // Add the histogram chart to your layout
+//        // Replace 'yourPane' with the actual Pane or other layout container you want to add the chart to
+//        //histogramClicks.getChildren().add(histogramChart);
+//        histogramClicks.setLabelLineLength(20);
+//        histogramClicks.setLabelsVisible(true);
+//        histogramClicks.setData(histogramChart);
+//
+//    }
+
+
+
 
 
     //Display tutorial overlay
@@ -768,25 +871,75 @@ public class DashboardController {
         loadingBar();
         System.out.println("Ready ^_^!");
     }
-
+    public void setClicksLoaded(Boolean bool){
+        clicksLoaded = bool;
+    }
+    public void setimpressionsLoaded(Boolean bool){
+        impressionsLoaded = bool;
+    }
+    public void setserverLoaded(Boolean bool){
+        serverLoaded = bool;
+    }
     public void loadSQL(){
+
+//        Runnable servrun = new Multithread_ServerDB(fph,this,Thread.currentThread());
+//        Thread servThread = new Thread(servrun);
+        //Runnable imprun = new Multithread_ImpressionsDB(fph,this,Thread.currentThread());
+        //Thread impresThread = new Thread(imprun);
+
+        Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+        testClickThread tct = new testClickThread();
+        testServerThread tst = new testServerThread();
+
+//        Runnable clickrun = new Multithread_ClicksDb(fph,this,Thread.currentThread());
+//        Thread clickTread = new Thread(clickrun);
+//        Iterator<Map.Entry<Integer, Boolean>> it;
+//        Map.Entry<Integer, Boolean> entry;
+//        Map<Integer,Boolean> finished;
+
         try {
 
+            //finished = new HashMap<>();
             if(fph.getClickPath() != null) {
-                writeClicksDB();
-                clicksLoadedLabel.setText("clicks_log.csv: loaded");
-                clicksLoaded = true;
+                //finished.put(1,false);
+                //clickTread.start();
+                tct.main(fph.getClickPath());
             }
             if(fph.getImpressionPath()!= null) {
-                writeImpressionsDB();
-                impressionLoadedLabel.setText("impression_log.csv: loaded");
-                impressionsLoaded = true;
+                //finished.put(2,false);
+                //impresThread.start();
+                multiImpress.main(fph.getImpressionPath());
             }
             if(fph.getServerPath()!= null) {
-                writeServerDB();
-                serverLoadedLabel.setText("server_log.csv: loaded");
-                serverLoaded = true;
+                //finished.put(3,false);
+                //servThread.start();
+                tst.main(fph.getServerPath());
             }
+
+//                while(!finished.isEmpty()) {
+//
+//                    it = finished.entrySet().iterator();
+//                    while (it.hasNext()){
+//                        entry = it.next();
+//                        if(entry.getKey() == 1 && entry.getValue()){
+//                            finished.remove(1);
+//                            logger.log(Level.INFO,"notifying clicks thread");
+//                            clickrun.notify();
+//                        }
+//                        else if(entry.getKey() == 2 && entry.getValue()){
+//                            finished.remove(2);
+//                            logger.log(Level.INFO,"notifying impressions thread");
+//                            //impresThread.notify();
+//                        }
+//                        else if(entry.getKey() == 3 && entry.getValue()){
+//                            finished.remove(3);
+//                            logger.log(Level.INFO,"notifying server thread");
+//                            servThread.notify();
+//                        }
+//                    }
+//                    wait();
+//                }
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -794,66 +947,7 @@ public class DashboardController {
         System.out.println("Ready ^_^!");
     }
 
-    void writeClicksDB() throws Exception {
 
-        FileReader clickReader = new FileReader(fph.getClickPath());
-        CSVReader clickCSVReader = new CSVReader(clickReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-
-        while((nextRecord = clickCSVReader.readNext()) != null ) {
-//            nextRecord = clickCSVReader.readNext();
-            dataman.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
-
-        }
-
-    }
-    void writeImpressionsDB() throws Exception {
-
-        FileReader impressionReader = new FileReader(fph.getImpressionPath());
-        CSVReader clickCSVReader = new CSVReader(impressionReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-        while((nextRecord = clickCSVReader.readNext()) != null ) {
-                //nextRecord = clickCSVReader.readNext();
-                dataman.addImpressionLog(nextRecord[0], nextRecord[1],
-                        nextRecord[2], nextRecord[3], nextRecord[4],
-                        nextRecord[5], Double.parseDouble(nextRecord[6]));
-            }
-
-
-    }
-    void writeServerDB() throws Exception {
-
-        FileReader clickReader = new FileReader(fph.getServerPath());
-        CSVReader clickCSVReader = new CSVReader(clickReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-        while ((nextRecord = clickCSVReader.readNext()) != null) {
-            //nextRecord = clickCSVReader.readNext();
-            if("n/a".equals(nextRecord[2])) {
-                dataman.addServerLog(nextRecord[0], nextRecord[1], null,
-                        Integer.parseInt(nextRecord[3]), nextRecord[4]);
-            }else{
-                dataman.addServerLog(nextRecord[0], nextRecord[1], nextRecord[2],
-                        Integer.parseInt(nextRecord[3]), nextRecord[4]);
-            }
-        }
-
-
-    }
 
     public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
         Desktop.getDesktop().browse(URI.create("https://nikolaparushev2003.wixsite.com/ecs-adda/documentation"));
@@ -871,38 +965,34 @@ public class DashboardController {
     boolean light = true;
     boolean dark = false;
     public void enableLightTheme(ActionEvent actionEvent) {
-        if (light == false) {
-//            String currentDirectory = System.getProperty("user.dir");
-//
-//            // Define the relative path to your stylesheet
-//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
-//            System.out.println(currentDirectory);
-//
-//            background.getStylesheets().setAll(stylesheetPath);
+        if (!light) {
             light = true;
             dark = false;
-            System.out.println("light theme");
+            logger.log(Level.INFO,"Light theme displayed");
             background.getStylesheets().clear();
         }
     }
 
-    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException {
-        if(dark == false){
+    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException, URISyntaxException {
+        if(!dark){
             String currentDirectory = System.getProperty("user.dir");
 
             // Define the relative path to your stylesheet
-            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
+//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
+            File test = new File(DashboardController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+            String stylesheetPath = getClass().getClassLoader().getResource("darktheme.css").toExternalForm();;
             //System.out.println(currentDirectory);
 
-            background.getStylesheets().setAll(stylesheetPath);
+            background.getStylesheets().add(stylesheetPath);
             dark = true;
             light = false;
-            System.out.println("dark theme");
+            logger.log(Level.INFO,"Dark theme displayed");
 
         }
     }
 
 
-    public void selectClickGraph(ActionEvent actionEvent) {
-    }
+    public void selectClickGraph(ActionEvent actionEvent) {}
+
 }

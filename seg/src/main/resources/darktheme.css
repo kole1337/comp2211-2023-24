@@ -1,0 +1,58 @@
+#background{
+    -fx-background-color: RGB(81, 81, 81);
+}
+#dataSelection{
+    -fx-background-color: RGB(50, 50, 50);
+}
+
+
+.label{
+    -fx-text-fill: white;
+}
+
+.anchor-pane{
+    -fx-text-fill: white;
+}
+
+.tab-pane{
+    -fx-text-fill: white;
+}
+
+.chart{
+
+}
+
+.chart-legend{
+    -fx-background-color: RGB(100,100,100);
+    -fx-text-fill: white;
+}
+
+.button{
+    -fx-background-color: RGB(145, 145, 145);
+
+    /*-fx-border-color: black;*/
+}
+
+.combo-box{
+   -fx-background-color: RGB(145, 145, 145);
+}
+
+#dataChart{
+    -fx-background-color: RGB(200, 200, 200);
+    -fx-text-fill: white;
+}
+
+
+
+.menu-bar{
+    -fx-background-color: RGB(32, 32, 32);
+}
+
+.menu{
+    -fx-text-fill: black;
+}
+
+#logoutButton{
+    -fx-background-color: RGB(32, 32, 32);
+    -fx-text-fill: white;
+}
