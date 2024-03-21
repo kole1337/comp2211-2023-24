@@ -127,7 +127,7 @@ public class DashboardController implements Initializable {
     public Button CPM;
     @FXML
     public Button BounceRate;
-    public ComboBox ComboBox;
+    public ComboBox timeBox;
     @FXML
     public VBox timeControlVBox = new VBox ();
     @FXML
@@ -192,6 +192,7 @@ public class DashboardController implements Initializable {
         contextFilter.setValue(" ");
         ageFilter.setValue(" ");
         incomeFilter.setValue(" ");
+        timeBox.setValue("hour");
     }
 
 
@@ -276,7 +277,7 @@ public class DashboardController implements Initializable {
         dataChart.layout();
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
-        String time = (String) ComboBox.getValue();
+        String time = (String) timeBox.getValue();
 
         //to set hour as default time
         if (time == null) {
@@ -298,7 +299,7 @@ public class DashboardController implements Initializable {
         dataChart.layout();
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
-        String time = (String) ComboBox.getValue();
+        String time = (String) timeBox.getValue();
 
         //to set hour as default time
         if(time == null){
@@ -351,10 +352,10 @@ public class DashboardController implements Initializable {
     }
 
     //get time variable from combo box
-    public void loadComboBox(ActionEvent event) {
+    public void loadtimeBox(ActionEvent event) {
         ComboBox comboBox = (javafx.scene.control.ComboBox) event.getSource();
-        this.ComboBox = comboBox;
-        System.out.println(ComboBox.getValue());
+        this.timeBox = comboBox;
+        System.out.println(timeBox.getValue());
     }
 
     //load the graph
@@ -369,7 +370,7 @@ public class DashboardController implements Initializable {
             //to set start date way back in the past as default, so it reads every data
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
-            dataChart.getData().add(dataman.getData(selectedButton,startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
+            dataChart.getData().add(dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
             }
             //to set end date way far in the future as dafault, so it reads every data
         if(toDate.getValue() == null){

@@ -253,12 +253,12 @@ public  class DataManager {
         }
         return totals;
     }
-    public XYChart.Series<String, Number> getData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
+    public XYChart.Series<String, Number> getData(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         if (rateData.contains(dataName)) {
-            return getRateData(dataName, startDate, endDate, gender, income, context, age);
+            return getRateData(dataName, timePeriod, startDate, endDate, gender, income, context, age);
         } else {
-            String query = queryGenerator(dataName, startDate, endDate, gender, income, context, age);
+            String query = queryGenerator(dataName, timePeriod, startDate, endDate, gender, income, context, age);
             try {
                 System.out.println(dataName);
                 rs = statement.executeQuery(query);
@@ -282,15 +282,15 @@ public  class DataManager {
         }
     }
 
-    public XYChart.Series<String,Number> getRateData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
+    public XYChart.Series<String,Number> getRateData(String dataName, String timePeriod,  String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         ResultSet rs1 = null;
         ResultSet rs2 = null;
         String query1 = "";
         String query2 = "";
         if (dataName.equals("CTR")) {
-            query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
-            query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
+            query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
             try {
                 rs1 = statement.executeQuery(query1);
                 rs2 = statement1.executeQuery(query2);
@@ -304,8 +304,8 @@ public  class DataManager {
             }
         }
         if (dataName.equals("CPA")) {
-                query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalConversions", startDate, endDate, gender, income, context, age);
+                query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalConversions", timePeriod,  startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
@@ -322,8 +322,8 @@ public  class DataManager {
 
             }
         if (dataName.equals("CPM")) {
-                query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
+                query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalImpressions",timePeriod, startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
@@ -337,8 +337,8 @@ public  class DataManager {
                 }
             }
         if (dataName.equals("CPC")) {
-                query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+                query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalClicks", timePeriod,  startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
@@ -353,8 +353,8 @@ public  class DataManager {
 
             }
         if (dataName.equals("bounceRate")) {
-                query1 = queryGenerator("totalBounces", startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+                query1 = queryGenerator("totalBounces", timePeriod,  startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
@@ -372,34 +372,44 @@ public  class DataManager {
         }
 
 
-    private String queryGenerator(String dataName, String startDate, String endDate, String gender, String income, String context, String age){
+    private String queryGenerator(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age){
         String query = "";
         String filterQuery = filterQueryHelper(gender,age,income,context);
+        if(timePeriod.equals("hour")){
+            timePeriod = "'%Y-%m-%d %H:00:00'";
+        }
+        else if(timePeriod.equals("day")) {
+            timePeriod = "'%Y-%m-%d 00:00:00'";
+        }
+        else if(timePeriod.equals("week")){
+            timePeriod = "'%Y-%V'";
+        }
+
         if(dataName.equals("totalClicks")){
-            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM clicklog as click " +  "JOIN impressionlog AS impression ON click.id = impression.id "+ filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
         }
         if(dataName.equals("totalImpressions")){
-            query = "SELECT DATE_FORMAT(date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+            query = "SELECT DATE_FORMAT(date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM impressionlog as impression " + filterQuery + " AND impression.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY DATE_FORMAT(impression.Date, '%Y-%m-%d %H:00:00')";
         }
         if(dataName.equals("totalUniques")){
-            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(DISTINCT click.id) AS data " +
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM clicklog as click " +
                     "JOIN impressionlog AS impression ON click.id = impression.id "  + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
         }
         if(dataName.equals("totalBounces")){
-            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM clicklog as click " +
                     "JOIN impressionlog AS impression ON click.id = impression.id JOIN serverlog AS server ON click.id = server.id "
                     + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > 3 OR server.pagesviewed > 1) GROUP BY date";
         }
         if(dataName.equals("totalConversions")){
-            query = "SELECT DATE_FORMAT(server.entryDate, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+            query = "SELECT DATE_FORMAT(server.entryDate, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY entryDate";
         }
         if(dataName.equals("totalCost")){
-            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, SUM(click.ClickCost) AS data " +
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, SUM(click.ClickCost) AS data " +
                     "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
         }
         return query;
