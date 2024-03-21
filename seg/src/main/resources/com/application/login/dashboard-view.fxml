@@ -96,7 +96,7 @@
                     <Insets top="10.0" />
                 </opaqueInsets>
             </Button>
-            <ComboBox fx:id="ComboBox">
+            <ComboBox fx:id="timeBox">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="hour" />
