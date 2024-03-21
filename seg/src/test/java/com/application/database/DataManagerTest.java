@@ -64,7 +64,6 @@ public class DataManagerTest {
         }
     }
 
-    // Note: The loadCSVintoDB method is modifying the database, so it might be better to test it separately or skip testing it.
 
     @Test
     public void testUniqueValues() {
