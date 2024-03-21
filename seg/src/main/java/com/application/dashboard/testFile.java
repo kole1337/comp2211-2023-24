@@ -1,17 +1,13 @@
 package com.application.dashboard;
 
-import java.io.*;
-import com.application.dashboard.ReadFile;
 import com.application.database.DataManager;
 import com.application.database.DbConnection;
-import com.application.database.MultiThreadedSQLInsertion;
-import com.application.database.Multithread_ClicksDb;
-import com.application.files.FileChooserWindow;
+import com.application.database.Multithread_ImpressionDb;
 import com.application.files.FilePathHandler;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 import static javafx.application.Application.launch;
 
@@ -23,22 +19,24 @@ public class testFile extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        DataManager dataman = new DataManager();
-        DbConnection dbconn = new DbConnection();
-        //dbconn.readFromFile("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
-        DashboardController dc = new DashboardController();
-
-        FilePathHandler fph = new FilePathHandler();
-        fph.setClickPath("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
-
-
-//        Multithread_ClicksDb multiclicks = new Multithread_ClicksDb(fph,dc, Thread.currentThread());
-//        multiclicks.run();
+//        DataManager dataman = new DataManager();
+//        DbConnection dbconn = new DbConnection();
+//        //dbconn.readFromFile("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
+//        DashboardController dc = new DashboardController();
 //
+//        FilePathHandler fph = new FilePathHandler();
+//        fph.setClickPath("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+//
+//
+////        Multithread_ClicksDb multiclicks = new Multithread_ClicksDb(fph,dc, Thread.currentThread());
+////        multiclicks.run();
+////
 //        System.out.println(dbconn.checkConn());
-        MultiThreadedSQLInsertion mbsq = new MultiThreadedSQLInsertion();
+        String test =  getClass().getClassLoader().getResource("darktheme.css").toExternalForm();
 
 
+//        Multithread_ImpressionDb mbsq = new Multithread_ImpressionDb();
+        System.out.println(test);
 
 
             //function to check file length

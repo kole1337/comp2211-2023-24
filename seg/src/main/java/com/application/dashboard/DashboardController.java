@@ -3,9 +3,7 @@ package com.application.dashboard;
 import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
-import com.application.login.LoginController;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -25,25 +23,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
-import javafx.util.Callback;
+import javafx.util.Duration;
 import org.jfree.chart.ChartFrame;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,6 +60,7 @@ public class DashboardController{
     public Label bounceRateLabel;
     public DatePicker fromDate;
     public DatePicker toDate;
+    public ImageView loadingGIF;
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -631,54 +622,63 @@ public class DashboardController{
     }
     public void loadSQL(){
 
-        Runnable servrun = new Multithread_ServerDB(fph,this,Thread.currentThread());
-        Thread servThread = new Thread(servrun);
-        Runnable imprun = new Multithread_ImpressionsDB(fph,this,Thread.currentThread());
-        Thread impresThread = new Thread(imprun);
-        Runnable clickrun = new Multithread_ClicksDb(fph,this,Thread.currentThread());
-        Thread clickTread = new Thread(clickrun);
-        Iterator<Map.Entry<Integer, Boolean>> it;
-        Map.Entry<Integer, Boolean> entry;
-        Map<Integer,Boolean> finished;
+//        Runnable servrun = new Multithread_ServerDB(fph,this,Thread.currentThread());
+//        Thread servThread = new Thread(servrun);
+        //Runnable imprun = new Multithread_ImpressionsDB(fph,this,Thread.currentThread());
+        //Thread impresThread = new Thread(imprun);
+
+        Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+        testClickThread tct = new testClickThread();
+        testServerThread tst = new testServerThread();
+
+//        Runnable clickrun = new Multithread_ClicksDb(fph,this,Thread.currentThread());
+//        Thread clickTread = new Thread(clickrun);
+//        Iterator<Map.Entry<Integer, Boolean>> it;
+//        Map.Entry<Integer, Boolean> entry;
+//        Map<Integer,Boolean> finished;
 
         try {
-            finished = new HashMap<>();
+
+            //finished = new HashMap<>();
             if(fph.getClickPath() != null) {
-                finished.put(1,false);
-                clickTread.start();
+                //finished.put(1,false);
+                //clickTread.start();
+                tct.main(fph.getClickPath());
             }
             if(fph.getImpressionPath()!= null) {
-                finished.put(2,false);
-                impresThread.start();
+                //finished.put(2,false);
+                //impresThread.start();
+                multiImpress.main(fph.getImpressionPath());
             }
             if(fph.getServerPath()!= null) {
-                finished.put(3,false);
-                servThread.start();
+                //finished.put(3,false);
+                //servThread.start();
+                tst.main(fph.getServerPath());
             }
 
-                while(!finished.isEmpty()) {
-
-                    it = finished.entrySet().iterator();
-                    while (it.hasNext()){
-                        entry = it.next();
-                        if(entry.getKey() == 1 && entry.getValue()){
-                            finished.remove(1);
-                            logger.log(Level.INFO,"notifying clicks thread");
-                            clickrun.notify();
-                        }
-                        else if(entry.getKey() == 2 && entry.getValue()){
-                            finished.remove(2);
-                            logger.log(Level.INFO,"notifying impressions thread");
-                            impresThread.notify();
-                        }
-                        else if(entry.getKey() == 3 && entry.getValue()){
-                            finished.remove(3);
-                            logger.log(Level.INFO,"notifying server thread");
-                            servThread.notify();
-                        }
-                    }
-                    wait();
-                }
+//                while(!finished.isEmpty()) {
+//
+//                    it = finished.entrySet().iterator();
+//                    while (it.hasNext()){
+//                        entry = it.next();
+//                        if(entry.getKey() == 1 && entry.getValue()){
+//                            finished.remove(1);
+//                            logger.log(Level.INFO,"notifying clicks thread");
+//                            clickrun.notify();
+//                        }
+//                        else if(entry.getKey() == 2 && entry.getValue()){
+//                            finished.remove(2);
+//                            logger.log(Level.INFO,"notifying impressions thread");
+//                            //impresThread.notify();
+//                        }
+//                        else if(entry.getKey() == 3 && entry.getValue()){
+//                            finished.remove(3);
+//                            logger.log(Level.INFO,"notifying server thread");
+//                            servThread.notify();
+//                        }
+//                    }
+//                    wait();
+//                }
 
 
         }catch (Exception e){
@@ -706,13 +706,6 @@ public class DashboardController{
     boolean dark = false;
     public void enableLightTheme(ActionEvent actionEvent) {
         if (!light) {
-//            String currentDirectory = System.getProperty("user.dir");
-//
-//            // Define the relative path to your stylesheet
-//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
-//            System.out.println(currentDirectory);
-//
-//            background.getStylesheets().setAll(stylesheetPath);
             light = true;
             dark = false;
             logger.log(Level.INFO,"Light theme displayed");
@@ -720,15 +713,18 @@ public class DashboardController{
         }
     }
 
-    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException {
+    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException, URISyntaxException {
         if(!dark){
             String currentDirectory = System.getProperty("user.dir");
 
             // Define the relative path to your stylesheet
-            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
+//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
+            File test = new File(DashboardController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+            String stylesheetPath = getClass().getClassLoader().getResource("darktheme.css").toExternalForm();;
             //System.out.println(currentDirectory);
 
-            background.getStylesheets().setAll(stylesheetPath);
+            background.getStylesheets().add(stylesheetPath);
             dark = true;
             light = false;
             logger.log(Level.INFO,"Dark theme displayed");
@@ -737,8 +733,6 @@ public class DashboardController{
     }
 
 
-    public void selectClickGraph(ActionEvent actionEvent) {
-    }
-
+    public void selectClickGraph(ActionEvent actionEvent) {}
 
 }

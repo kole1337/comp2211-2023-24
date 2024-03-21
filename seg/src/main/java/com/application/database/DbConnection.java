@@ -1,5 +1,6 @@
 package com.application.database;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.io.BufferedReader;
@@ -20,12 +21,17 @@ public class DbConnection {
 
 
     public DbConnection(){
-        readFromFile("seg/src/main/resources/user.txt");
+        readFromFile("user.txt");
 
         try {
             makeConn();
         }catch(Exception e){
             e.printStackTrace();
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("DATABASE ERROR");
+            a.setTitle("ERROR!");
+            a.setContentText("THE SERVER IS NOT RUNNING OR IS NOT CONNECTED! PLEASE, CONTACT YOUR ADMINISTRATOR!");
+            a.show();
         }
     }
 

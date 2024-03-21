@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -14,31 +13,32 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
 
-public class MultiThreadedSQLInsertion {
+public class Multithread_ImpressionDb {
     // Database credentials
     static final String JDBC_URL = DbConnection.getUrl();
     static final String DB_USER = DbConnection.getUser();
     static final String DB_PASSWORD = DbConnection.getPass();
 
-    private static Logger logger = Logger.getLogger(MultiThreadedSQLInsertion.class.getName());
+    private static Logger logger = Logger.getLogger(Multithread_ImpressionDb.class.getName());
     private static Connection conn;
 
     // Define the number of threads
-    static final int NUM_THREADS = 5000; // Adjust according to your requirements
+    static final int NUM_THREADS = 250; // Adjust according to your requirements
+    private HikariDataSource ds;
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String path) throws SQLException {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(JDBC_URL);
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);
-        config.setMaximumPoolSize(2500);
+        config.setMaximumPoolSize(250);
         config.setConnectionTimeout(300000);
         config.setIdleTimeout(120000);
         config.setLeakDetectionThreshold(300000);
 
         DataSource dataSource = new HikariDataSource(config);
         conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
-        String csvFilePath ="D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
+        String csvFilePath = path;
 //        String csvFilePath = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2month\\impression_log.csv";
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 

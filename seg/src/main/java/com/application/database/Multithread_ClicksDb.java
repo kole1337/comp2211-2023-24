@@ -22,8 +22,8 @@ public class Multithread_ClicksDb implements Runnable{
     public Multithread_ClicksDb(FilePathHandler fph,DashboardController dash,Thread main){
         this.fph = fph;
         this.dash = dash;
-        //this.dat = new DataManager();
-        //this.mainthread = main;
+        this.dat = new DataManager();
+        this.mainthread = main;
 
     }
     private void writeClicksDB() throws Exception {
