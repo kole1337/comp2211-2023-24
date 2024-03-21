@@ -330,7 +330,7 @@
     <Label fx:id="clicksLoadedLabel" layoutX="396.0" layoutY="34.0" text="clicks_log.csv: not loaded" />
     <Label fx:id="impressionLoadedLabel" layoutX="583.0" layoutY="34.0" text="impression_log.csv: not loaded" />
     <Label fx:id="serverLoadedLabel" layoutX="789.0" layoutY="34.0" text="server_log.csv: not loaded" />
-    <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL">
+    <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="false">
         <font>
             <Font name="System Bold" size="14.0" />
         </font>
