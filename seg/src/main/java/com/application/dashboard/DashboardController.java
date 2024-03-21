@@ -251,7 +251,7 @@ public class DashboardController implements Initializable {
 ////        TimeFrameControl tfc = new TimeFrameControl();
 ////        tfc.createTimeFrame();
 //        loadGraph(buttonId,time);
-       // uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
+        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
 //
 
@@ -262,7 +262,7 @@ public class DashboardController implements Initializable {
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
-//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+        //uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
 //        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
 //
 //        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
@@ -381,19 +381,19 @@ public class DashboardController implements Initializable {
 
                 toDate.setValue(LocalDate.of(year,month,day));
             }
-           if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
-                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
-                }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
-                }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
-                }else{
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
-                }
-            }else {
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
-            }
+//           if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
+//                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
+//                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
+//                }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+//                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
+//                }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+//                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
+//                }else{
+//                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
+//                }
+//            }else {
+//                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+//            }
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 

@@ -137,15 +137,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-<<<<<<< HEAD
-<<<<<<< HEAD
+
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.29</version>
         </dependency>
-=======
-=======
->>>>>>> import-view
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>4.0.3</version>
@@ -155,11 +152,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version> <!-- Use the appropriate version -->
         </dependency>
-<<<<<<< HEAD
-
->>>>>>> 67bc2920b715eb3a74db50072692ca2bfaa3c7f6
-=======
->>>>>>> import-view
     </dependencies>
 
     <build>
