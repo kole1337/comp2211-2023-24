@@ -1,8 +1,11 @@
 import com.application.dashboard.ReadFile;
+import com.application.database.DataManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.login.LoginApplication;
 import com.application.login.LoginController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.testng.AssertJUnit.*;
 import static org.testng.AssertJUnit.assertFalse;
 public class BasicTest {
@@ -47,7 +51,6 @@ public class BasicTest {
     public void readFile(){
         //test read file readCSV -only uniques will count
     }
-
 
 
 }
