@@ -62,7 +62,11 @@ public class UserManager {
         rs = statement.executeQuery("select username, password, role from users");
 
         while(rs.next()){
-            if (rs.getString("username").equals(user) && rs.getString("password").equals(pass) && rs.getString("role").equals("user")) return true;
+
+            if (rs.getString("username").equals(user) && rs.getString("password").equals(pass) && rs.getString("role").equals("user")){
+                logger.log(Level.INFO, "User exists.");
+                return true;
+            }
         }
         return false;
     }
@@ -72,8 +76,13 @@ public class UserManager {
         rs = statement.executeQuery("select username, password, role from users");
 
         while(rs.next()){
-            if (rs.getString("username").equals(user) && rs.getString("password").equals(pass)&& rs.getString("role").equals("admin")) return true;
+            if (rs.getString("username").equals(user) && rs.getString("password").equals(pass)&& rs.getString("role").equals("admin")){
+                logger.log(Level.INFO, "Admin exists.");
+                return true;
+            }
         }
+
+
         return false;
     }
 

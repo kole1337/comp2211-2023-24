@@ -1,5 +1,6 @@
 import com.application.dashboard.ReadFile;
 import com.application.database.DbConnection;
+import com.application.database.UserManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.login.LoginApplication;
@@ -21,13 +22,14 @@ public class BasicTest {
     ReadFile rc = new ReadFile();
 
     DbConnection dbConnection = new DbConnection();
+    UserManager um = new UserManager();
 
     @Test
     public void testLogin() throws SQLException {
-        assertTrue("Login successful.",lc.checkUser("user","0000"));
-        assertTrue("Login successful.",lc.checkAdmin("admin","0000"));
-        assertFalse("Login not successful.",lc.checkUser("gesh","1234"));
-        assertFalse("Login not successful.",lc.checkAdmin("baba","5555"));
+        assertTrue("Login successfull for user.",um.selectUser("gesh","1234"));
+        assertTrue("Login successfull for admin.",um.selectAdmin("gesh2","1234"));
+        assertFalse("Fakse user can't login.", um.selectUser("14sdfs","aesfsdfsd") );
+        assertFalse("Fakse user can't login.", um.selectAdmin("4433","dfggg") );
     }
 
     @Test
