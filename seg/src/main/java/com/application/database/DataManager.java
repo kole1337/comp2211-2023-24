@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +33,14 @@ public  class DataManager {
 //    public static void main(String[] args) throws SQLException {
 //    }
 
+    public static void deleteData(String tableName){
+        try{
+            pstmt = conn.prepareStatement("DELETE FROM " + tableName +";");
+
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Could not delete data from table: " + tableName);
+        }
+    }
 
     public static void getConn(){
         try {
@@ -246,7 +257,6 @@ public  class DataManager {
         }
         return totals;
     }
-
     public XYChart.Series<String, Number> getData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         if (rateData.contains(dataName)) {
@@ -427,5 +437,6 @@ public  class DataManager {
         String query = "WHERE impression.Gender " + gender + " AND impression.Age " + age + " AND impression.Income " + income + " AND impression.Context " + context;
         return query;
     }
+
 
 }

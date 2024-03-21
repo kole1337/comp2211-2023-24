@@ -1,5 +1,6 @@
 package com.application.database;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.io.BufferedReader;
@@ -15,14 +16,23 @@ public class DbConnection {
     private static String user;
     private static String pass;
 
+    private static  String url = "jdbc:mysql://localhost:3306/adda";
+
 
 
     public DbConnection(){
-        readFromFile("D:\\year2\\seg\\user.txt");
+
+        readFromFile("user.txt");
+
         try {
             makeConn();
         }catch(Exception e){
             e.printStackTrace();
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setHeaderText("DATABASE ERROR");
+            a.setTitle("ERROR!");
+            a.setContentText("THE SERVER IS NOT RUNNING OR IS NOT CONNECTED! PLEASE, CONTACT YOUR ADMINISTRATOR!");
+            a.show();
         }
     }
 
@@ -37,10 +47,11 @@ public class DbConnection {
         try {
             logger.log(Level.INFO, "establishing connection");
 
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda", "root" , "149162536496481Mkt!");
-
+            conn = DriverManager.getConnection(url,getUser() , getPass());
             DataManager.getConn();
             UserManager.getConn();
+
+
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Username or password are not valid");
             e.printStackTrace();
@@ -71,7 +82,7 @@ public class DbConnection {
     }
     public static void createPassFile(){
         try {
-            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\filename.txt");
+            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
                 System.out.println(myObj.getAbsolutePath());
@@ -92,6 +103,10 @@ public class DbConnection {
 
     public static String getPass() {
         return pass;
+    }
+
+    public static String getUrl(){
+        return url;
     }
 
     /**
