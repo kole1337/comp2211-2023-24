@@ -178,25 +178,29 @@ public class DashboardController{
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
 
-//        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-//                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-//                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-//                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
-//                errorAlert.setContentText("Only accept integers");
-//                errorAlert.showAndWait();
-//            }
-//        });
-//        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-//                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-//                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-//                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
-//                errorAlert.setContentText("Only accept integers");
-//                errorAlert.showAndWait();
-//            }
-//
-//        });
+
+    }
+
+    public void initialize(){
+        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+        });
+        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+        });
+        
     }
 
 
@@ -359,19 +363,7 @@ public class DashboardController{
 
 
 
-            if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
-                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
-                }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
-                }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
-                }else{
-                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
-                }
-            }else {
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
-            }
+
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -385,6 +377,24 @@ public class DashboardController{
 
         }
         dataChart.layout();
+        if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
+            System.out.println("Bouncing");
+            if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
+
+            }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
+            }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
+            }else{
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
+            }
+        }else {
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+        }
 
     }
         // Customize the graph based on the selected radio button
@@ -561,12 +571,6 @@ public class DashboardController{
 //        logger.log(Level.INFO, "Loading Total clicks within start and end time");
 //        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
-
-    public int totalBounces(){
-
-
-        return 1;
-    }
 
     //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(){
@@ -852,13 +856,23 @@ public void loadHistogramClickCost() {
 
     //Open dialogue box for opening files
     public void openCampaign(){
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+
         FileChooserWindow fileChooser = new FileChooserWindow();
 
         fph.fileTypeHandler(fileChooser.openFileBox());
         System.out.println(fph.getImpressionPath());
         System.out.println(fph.getClickPath());
         System.out.println(fph.getServerPath());
-        loadingBar();
+        a.setContentText("Inputting data...");
+        a.show();
+        //loadingBar();
+       // loadSQL();
+        a.hide();
+
+        a.setContentText("Ready.");
+        a.show();
+        //a.hide();
         System.out.println("Ready ^_^!");
     }
     public void setClicksLoaded(Boolean bool){
@@ -964,16 +978,10 @@ public void loadHistogramClickCost() {
     }
 
     public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException, URISyntaxException {
+        logger.log(Level.INFO, "Loading dark theme");
         if(!dark){
-            String currentDirectory = System.getProperty("user.dir");
-
-            // Define the relative path to your stylesheet
-//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
-            File test = new File(DashboardController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
             String stylesheetPath = getClass().getClassLoader().getResource("darktheme.css").toExternalForm();;
-            //System.out.println(currentDirectory);
-
             background.getStylesheets().add(stylesheetPath);
             dark = true;
             light = false;
