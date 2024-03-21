@@ -116,12 +116,12 @@
                 </HBox>
                 <HBox>
                     <ComboBox fx:id="genderFilter" prefWidth="150.0" />
-                    <Label text = " " />
+                    <Label text=" " />
                     <ComboBox fx:id="contextFilter" prefWidth="150.0" />
-                    <Label text = " " />
+                    <Label text=" " />
                     <ComboBox fx:id="ageFilter" prefWidth="150.0" />
-                    <Label text = " " />
-                    <ComboBox fx:id = "incomeFilter" prefWidth = "150.0" />
+                    <Label text=" " />
+                    <ComboBox fx:id="incomeFilter" prefWidth="150.0" />
                 </HBox>
 
                 <!-- DatePicker for selecting the end date -->
@@ -165,7 +165,7 @@
             <NumberAxis side="LEFT" />
         </yAxis>
     </StackedBarChart>
-    <TabPane fx:id="chartPane" layoutX="906.0" layoutY="78.0" prefHeight="445.0" prefWidth="455.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+    <TabPane fx:id="chartPane" layoutX="965.0" layoutY="78.0" prefHeight="445.0" prefWidth="455.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
         <tabs>
             <Tab text="Age Graph">
                 <content>
@@ -238,9 +238,9 @@
             </Tab>
         </tabs>
     </TabPane>
-    <ScrollPane layoutX="181.0" layoutY="78.0" prefHeight="741.0" prefWidth="717.0">
+    <ScrollPane layoutX="225.0" layoutY="78.0" prefHeight="741.0" prefWidth="717.0">
         <content>
-            <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="708.0">
+            <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="1208.0">
                 <xAxis>
                     <CategoryAxis side="BOTTOM" />
                 </xAxis>
@@ -260,7 +260,7 @@
             <Font size="18.0" />
         </font>
     </Label>
-    <Pane layoutX="907.0" layoutY="556.0" prefHeight="240.0" prefWidth="455.0" style="-fx-border-color: black;">
+    <Pane layoutX="965.0" layoutY="556.0" prefHeight="240.0" prefWidth="455.0" style="-fx-border-color: black;">
         <children>
             <Label fx:id="sumImpressionsLabel" layoutY="1.0" text="Total impressions:">
                 <font>
@@ -309,7 +309,7 @@
             </Label>
         </children>
     </Pane>
-    <Label layoutX="906.0" layoutY="529.0" text="Data:">
+    <Label layoutX="965.0" layoutY="529.0" text="Data:">
         <font>
             <Font size="18.0" />
         </font>
