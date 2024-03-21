@@ -61,15 +61,23 @@ public class DatasetCreator {
             return createCPADataset(time);
         } else if (graphName.equals("CPM")){
             return createCPMDataset(time);
-        } else if (graphName.equals("TotalBounces")){
-            return createBounceDataset(time);
-        } else if (graphName.equals("BounceRate")){
-            return createBounceRateDataset(time);
         }
         else {
             return null;
         }
     }
+    public Map<LocalDateTime, Double> createDataset(String graphName, String time, LocalDate startDate, LocalDate endDate, String timeSpentBounce, String pageViewedBounce) {
+        this.startTime = startDate.atStartOfDay();
+        this.endTime = endDate.atStartOfDay();
+        if(graphName.equals("TotalBounces")){
+            return createBounceDataset(time, timeSpentBounce, pageViewedBounce);
+        }else if (graphName.equals("BounceRate")){
+            return createBounceRateDataset(time, timeSpentBounce, pageViewedBounce);
+        }else{
+            return null;
+        }
+    }
+
     //function responsible to create click and impression datasets
     private Map<LocalDateTime, Double> createCountByTimeDataset(String csvFile, String time) {
         System.out.println(startTime);
@@ -283,7 +291,19 @@ public class DatasetCreator {
         return averageCPA;
     }
     //function responsible to create bounce dataset
-    private Map<LocalDateTime, Double> createBounceDataset(String time) {
+    private Map<LocalDateTime, Double> createBounceDataset(String time, String timeSpentBounce, String pageViewedBounce) {
+        int timeBounce ;
+        int pageBounce;
+        if (timeSpentBounce.equals("")){
+            timeBounce = 10;
+        }else{
+            timeBounce = Integer.valueOf(timeSpentBounce);
+        }
+        if(pageViewedBounce.equals("")){
+            pageBounce=1;
+        }else{
+            pageBounce = Integer.valueOf(pageViewedBounce);
+        }
         Map<LocalDateTime, Double> bounceCount = new TreeMap<>();
         try (CSVReader reader = new CSVReader(new FileReader(serverCsv))) {
             reader.readNext();
@@ -303,7 +323,7 @@ public class DatasetCreator {
                     String pages = record[3];
                     if(!leave.equals("n/a")){
                         LocalDateTime leaveTime = LocalDateTime.parse(leave, dateFormatter);
-                        if(Duration.between(enterTime,leaveTime).getSeconds() > 10 && Integer.parseInt(pages) > 1){
+                        if(Duration.between(enterTime,leaveTime).getSeconds() > timeBounce && Integer.parseInt(pages) > pageBounce){
                             LocalDateTime roundedDate;
                             if (time.equals("hour")) {
                                 roundedDate = enterTime.withMinute(0).withSecond(0);
@@ -325,10 +345,13 @@ public class DatasetCreator {
         }
         return bounceCount;
     }
+
+
     //function responsible to create bounce rate dataset
-    private Map<LocalDateTime, Double> createBounceRateDataset(String time) {
+    private Map<LocalDateTime, Double> createBounceRateDataset(String time, String timeSpentBounce, String pageViewedBounce) {
+
         Map<LocalDateTime, Double> totalClicks = createCountByTimeDataset(clicksCsv,time);
-        Map<LocalDateTime, Double> totalBounces = createBounceDataset(time);
+        Map<LocalDateTime, Double> totalBounces = createBounceDataset(time, timeSpentBounce, pageViewedBounce);
         Map<LocalDateTime, Double> bounceRate = new TreeMap<>();
         for (Map.Entry<LocalDateTime, Double> entry : totalClicks.entrySet()) {
             LocalDateTime dateTime = entry.getKey();
@@ -339,5 +362,6 @@ public class DatasetCreator {
         }
         return bounceRate;
     }
+
 
 }

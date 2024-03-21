@@ -1,12 +1,9 @@
 package com.application.dashboard;
 
-import com.application.database.DataManager;
-import com.application.database.DbConnection;
+import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
-import com.application.login.LoginController;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -22,31 +19,26 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Arc;
 import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import org.jfree.chart.ChartFrame;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,13 +53,22 @@ import java.util.logging.Logger;
  * it is doing and why
  * */
 
-public class DashboardController {
+public class DashboardController{
     public TabPane chartPane;
     public Label clicksLoadedLabel;
     public Label impressionLoadedLabel;
     public Label serverLoadedLabel;
     public Label totalBouncesLabel;
     public Label bounceRateLabel;
+
+    public DatePicker fromDate;
+    public DatePicker toDate;
+
+    public BarChart histogramClicks;
+
+    public ImageView loadingGIF;
+
+
     DataManager dataman = new DataManager();
 
     public ChartFrame chartCSV;
@@ -126,28 +127,32 @@ public class DashboardController {
     public Button BounceRate;
     public ComboBox ComboBox;
     @FXML
-    public VBox timeControlVBox = new VBox();
-    @FXML
-    public DatePicker startDate = new DatePicker();
+    public VBox timeControlVBox = new VBox ();
     @FXML
     public ComboBox<String> fromHour = new ComboBox<>();
     @FXML
     public ComboBox<String> fromMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
-    @FXML
-    public DatePicker endDate = new DatePicker();
+
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
     public ComboBox<String> toMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> toSecond = new ComboBox<>();
+    @FXML
+    public TextField timeSpentBounce ;
+
+    @FXML
+    public TextField pageViewedBounce;
+
     CategoryAxis xAxis = new CategoryAxis();
 
     boolean clicksLoaded = false;
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
+
 
     private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -168,17 +173,38 @@ public class DashboardController {
      *   2. Conversion graph
      * */
 
-    DbConnection dbConnection = new DbConnection();
-
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
-        dbConnection.makeConn("root", "jojo12345");
+        //dbConnection.makeConn("root", "jojo12345");
 
+
+    }
+
+    public void initialize(){
+        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+        });
+        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            }
+        });
+        
     }
 
 
     public void loadCSV(ActionEvent actionEvent) {
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "loadCSV button");
 //        Button clickedButton = (Button) actionEvent.getSource();
 //        String buttonId = clickedButton.getId();
@@ -196,7 +222,7 @@ public class DashboardController {
 ////        TimeFrameControl tfc = new TimeFrameControl();
 ////        tfc.createTimeFrame();
 //        loadGraph(buttonId,time);
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
+       // uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
 //
 
@@ -205,6 +231,16 @@ public class DashboardController {
         avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
+    }
+    public void loadCSVWithinDates(ActionEvent actionEvent){
+//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+//        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
+//
+//        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
+//        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClickWithinDates());
+//        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
+//        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
+//        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
     }
 
     public void loadDataGraphs(ActionEvent actionEvent) {
@@ -229,6 +265,27 @@ public class DashboardController {
         dataChart.layout();
 
     }
+    public void loadDataGraphsWithinRange(ActionEvent actionEvent){
+        dataChart.layout();
+        Button clickedButton = (Button) actionEvent.getSource();
+        String buttonId = clickedButton.getId();
+        String time = (String) ComboBox.getValue();
+
+        //to set hour as default time
+        if(time == null){
+            time = "hour";
+        }
+        //to set total clicks as default graph
+        if(buttonId.equals("loadCSVbutton3")){
+            buttonId = "TotalClicks";
+        }
+        loadingBar();
+        dc = new DatasetCreator(fph);
+//        TimeFrameControl tfc = new TimeFrameControl();
+//        tfc.createTimeFrame();
+        loadGraph(buttonId,time);
+        dataChart.layout();
+    }
 
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
@@ -237,23 +294,30 @@ public class DashboardController {
         loadIncomeGraph();
         loadContextOriginChart();
         loadConversionChart();
+//        loadHistogramChart();
+        loadHistogramClickCost();
         chartPane.layout();
 
     }
+    // add new load Graphs function handle the date range
 
     //Logout function for button.
     public void logoutButton(ActionEvent event) {
-        try {
-            root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-            logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.INFO, "Opening hello view.");
-        } catch (IOException e) {
-            logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+        Alert a = new Alert(Alert.AlertType.WARNING, "Signing out! All information will be lost!", ButtonType.OK, ButtonType.CANCEL);
+        Optional<ButtonType> result = a.showAndWait();
+        if(result.isPresent() && result.get()==ButtonType.OK) {
+            try {
+                root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.INFO, "Opening hello view.");
+            } catch (IOException e) {
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            }
         }
     }
 
@@ -269,18 +333,33 @@ public class DashboardController {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
+
+        dataChart.layout();
+
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
+
+
+
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
-            if (startDate.getValue() == null) {
-                startDate.setValue(LocalDate.of(1000, 1, 1));
+            if(fromDate.getValue() == null){
+                int day = dataman.getFirstDate("day","clicklog");
+                int month = dataman.getFirstDate("month","clicklog");
+                int year = dataman.getFirstDate("year","clicklog");
+
+                fromDate.setValue(LocalDate.of(year,month,day));
             }
             //to set end date way far in the future as dafault, so it reads every data
-            if (endDate.getValue() == null) {
-                endDate.setValue(LocalDate.of(3000, 1, 1));
+            if(toDate.getValue() == null){
+
+                int day = dataman.getLastDate("DAY","clicklog");
+                int month = dataman.getLastDate("MONTH","clicklog");
+                int year = dataman.getLastDate("YEAR","clicklog");
+
+
+                toDate.setValue(LocalDate.of(year,month,day));
             }
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, startDate.getValue(), endDate.getValue()), selectedButton));
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -291,27 +370,45 @@ public class DashboardController {
             dataChart.getXAxis().setAutoRanging(true);
 
             // Force a layout update
-            dataChart.layout();
+
         }
         dataChart.layout();
+        if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
+            System.out.println("Bouncing");
+            if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
+
+            }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
+            }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
+            }else{
+
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
+            }
+        }else {
+            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+        }
 
     }
     // Customize the graph based on the selected radio button
     //Function that would load the graph data inside the panel.
     //Not implemented.
 
-    public void createTimeFrame() {
-        startDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        endDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
-        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(startDate, fromHour, fromMinute, fromSecond, endDate, toHour, toMinute, toSecond));
+    public void createTimeFrame(){
+        fromDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toDate.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        fromSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toHour.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toMinute.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
+        toSecond.valueProperty().addListener((obs, oldVal, newVal) -> validateDateTime(fromDate,fromHour,fromMinute, fromSecond, toDate, toHour, toMinute,toSecond));
 
-        //  setupTimeComboBoxes(fromHour, fromMinute, fromSecond); // Setup method for time ComboBoxes
-        // setupTimeComboBoxes(toHour, toMinute, toSecond); // Setup method for time ComboBoxes
+       setupTimeComboBoxes(); // Setup method for time ComboBoxes
+       setupTimeComboBoxes(); // Setup method for time ComboBoxes
 
      /*  Button showRangeButton = new Button("Show");
         showRangeButton.setOnAction(e -> {
@@ -319,22 +416,49 @@ public class DashboardController {
             LocalDateTime toDateTime = LocalDateTime.of(endDate.getValue(), LocalTime.of(Integer.parseInt(toHour.getValue()), Integer.parseInt(toMinute.getValue()), Integer.parseInt(toSecond.getValue())));
         });*/
     }
+    public String getStartDateTimeAsString() {
+        LocalDate date = fromDate.getValue();
+        String hour = fromHour.getValue();
+        String minute = fromMinute.getValue();
+        String second = fromSecond.getValue();
 
+        if (date != null && hour != null && minute != null && second != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String dateString = date.format(formatter);
+            // Assuming hour, minute, and second are already in 'HH', 'mm', and 'ss' format
+            return dateString + " " + hour + ":" + minute + ":" + second;
+        } else {
+            // Handle case where some values are not selected
+            return null; // or some default value or throw an exception as per your requirement
+        }
+    }
+    public String getEndDateTimeAsString() {
+        LocalDate date = toDate.getValue();
+        String hour = toHour.getValue();
+        String minute = toMinute.getValue();
+        String second = toSecond.getValue();
+
+        if (date != null && hour != null && minute != null && second != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String dateString = date.format(formatter);
+            // Assuming hour, minute, and second are already in 'HH', 'mm', and 'ss' format
+            return dateString + " " + hour + ":" + minute + ":" + second;
+        } else {
+            // Handle case where some values are not selected
+            return null; // or some default value or throw an exception as per your requirement
+        }
+    }
     /**
      * this is a method to create appropriate comboboxes for user to select hour/minute/second
-     *
-     * @param hour
-     * @param minute
-     * @param second
      */
 
-    private void setupTimeComboBoxes(ComboBox<String> hour, ComboBox<String> minute, ComboBox<String> second) {
-        hour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
-        minute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
-        second.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
-        hour.getSelectionModel().select("00"); // Default value
-        minute.getSelectionModel().select("00"); // Default value
-        second.getSelectionModel().select("00"); // Default value
+    private void setupTimeComboBoxes() {
+        fromHour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
+        fromMinute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
+        fromSecond.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
+        toHour.getSelectionModel().select("00"); // Default value
+        toMinute.getSelectionModel().select("00"); // Default value
+        toSecond.getSelectionModel().select("00"); // Default value
     }
 
     /**
@@ -385,59 +509,83 @@ public class DashboardController {
 
 
     //Function to count the unique impressions
-    public int countUniqueImpressions() {
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
+    public int countUniqueImpressions(){
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
         return dataman.selectTotalData("impressionlog");
     }
+    // function to count the unique impressions within dates
+//    public int countUniqueImpressionsWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Unique visits within start and end time from impressions_log");
+//        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to count the zero cost clicks
-    public int countZeroCostClick() {
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
+    public int countZeroCostClick(){
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
         return dataman.selectZeroClickCost();
     }
+//    public int countZeroCostClickWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO,"Loading Zero Cost within start and end time Clicks");
+//        return dataman.selectZeroClickCostWithinRange(getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to find the average price per click
-    public double countAveragePricePerClick() {
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
+    public double countAveragePricePerClick(){
         logger.log(Level.INFO, "Loading Average Price per Click");
         return dataman.selectAvgData("clickCost", "clicklog");
     }
+//    public double countAverageProcePerClickWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Average Price per Click");
+//        return dataman.selectAvgDataWithinRange("clickCost", "clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
+
 
     //Function to find the total impressions
     public int countTotalImpressions() {
 
         return dataman.selectTotalData("impressionlog");
     }
+//    public int countTotalImpressionsWithinDates(){
+//        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to find the total clicks for the campaign
-    public int countTotalClicks() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+
+    public int countTotalClicks(){
+
         logger.log(Level.INFO, "Loading Total clicks");
 
         return dataman.selectTotalData("clicklog");
     }
-
-    public int totalBounces() {
-
-
-        return 1;
-    }
+//    public int countTotalClicksWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Total clicks within start and end time");
+//        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to find the total entries from adds - needs better explanation
-    public int countTotalEntries() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public int countTotalEntries(){
         logger.log(Level.ALL, "Loading total entries from ads.");
         return dataman.selectTotalData("serverlog");
     }
-
+//    public int countTotalEntriesWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.ALL, "Loading total entries from ads within start and end time.");
+//        return dataman.selectTotalDataWithinRange("severlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
     //Function to find the average number of pages
-    public double countAvgPageViewed() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public double countAvgPageViewed(){
         logger.log(Level.INFO, "Loading average pages viewed.");
         return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
     }
+//    public double countAvgPageViewedWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading average pages viewed.");
+//        return Math.round(dataman.selectAvgDataWithinRange("pagesViewed", "serverlog", getStartDateTimeAsString(),getEndDateTimeAsString()) * 100) / 100;
+//    }
 
     //loading bar function
     public void loadingBar() {
@@ -484,16 +632,83 @@ public class DashboardController {
         new Thread(task).start();
     }
 
-    public void loadHistogramClickCost() {
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getAverageClickCostPerDay("clicklog");
+//
+//        // Create a sorted TreeMap to ensure dates are in order
+//        TreeMap<String, Double> sortedDateAndClickCost = new TreeMap<>(dateAndClickCost);
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : sortedDateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//
+//    }
+public void loadHistogramClickCost() {
+    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
 
+    // Create data series for the histogram chart
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+
+    // Populate data series with dates and corresponding click costs
+    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
     }
+
+    // Add data series to the histogram chart
+    histogramClicks.getData().add(series);
+    histogramClicks.setTitle("Histogram");
+
+    // Adjust the width of the bars
+//    double barWidth = 100; // Adjust this value as needed
+//    for (XYChart.Data<String, Number> data : series.getData()) {
+//        Node bar = data.getNode();
+//        if (bar != null) {
+//            bar.setStyle("-fx-bar-width: " + barWidth + ";");
+//        }
+//    }
+}
+
+
+//    public void loadHistogramClickCost() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//
+//        // Create a new map to store aggregated click costs by day
+//        Map<String, Double> aggregatedClickCostsByDay = new HashMap<>();
+//
+//        // Aggregate click costs by day
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            String date = LocalDate.parse(entry.getKey(), DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
+//            double clickCost = entry.getValue();
+//            aggregatedClickCostsByDay.put(date, aggregatedClickCostsByDay.getOrDefault(date, 0.0) + clickCost);
+//        }
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding aggregated click costs by day
+//        for (Map.Entry<String, Double> entry : aggregatedClickCostsByDay.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramClicks.getData().add(series);
+//        histogramClicks.setTitle("Histogram");
+//    }
+
 
 
     //Function to find the gender separation.
-    public void loadGenders() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public void loadGenders(){
         logger.log(Level.ALL, "Loading genders.");
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
@@ -508,11 +723,12 @@ public class DashboardController {
         genderGraph.setData(pieChartData);
     }
 
+
     //function to load the age graph.
-    public void loadAgeGraph() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public void loadAgeGraph(){
+
         logger.log(Level.ALL, "Loading age graph.");
-        logger = Logger.getLogger(DashboardController.class.getName());
+
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
@@ -527,8 +743,7 @@ public class DashboardController {
     }
 
     //Load income graph
-    public void loadIncomeGraph() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public void loadIncomeGraph(){
         logger.log(Level.ALL, "Loading income graph.");
         int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog");
         String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
@@ -542,8 +757,8 @@ public class DashboardController {
         incomeGraph.setData(pieChartData);
     }
 
-    public void loadContextOriginChart() {
-        logger = Logger.getLogger(DashboardController.class.getName());
+    public void loadContextOriginChart(){
+
         logger.log(Level.ALL, "Loading income graph.");
 
         int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog");
@@ -574,6 +789,45 @@ public class DashboardController {
         conversionGraph.setData(pieChartData);
 
     }
+//    public void loadHistogramChart() {
+//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("serverlog");
+//
+//        // Create a category axis for the X-axis
+//        CategoryAxis xAxis = new CategoryAxis();
+//        xAxis.setLabel("Date");
+//
+//        // Create a number axis for the Y-axis
+//        NumberAxis yAxis = new NumberAxis();
+//        yAxis.setLabel("Click Cost");
+//
+//        // Create a histogram chart
+//        LineChart<String, Number> histogramChart = new LineChart<>(xAxis, yAxis);
+//
+//        // Set chart title
+//        histogramChart.setTitle("Click Costs Over Time");
+//
+//        // Create data series for the histogram chart
+//        XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//        // Populate data series with dates and corresponding click costs
+//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//        }
+//
+//        // Add data series to the histogram chart
+//        histogramChart.getData().add(series);
+//
+//        // Add the histogram chart to your layout
+//        // Replace 'yourPane' with the actual Pane or other layout container you want to add the chart to
+//        //histogramClicks.getChildren().add(histogramChart);
+//        histogramClicks.setLabelLineLength(20);
+//        histogramClicks.setLabelsVisible(true);
+//        histogramClicks.setData(histogramChart);
+//
+//    }
+
+
+
 
 
     //Display tutorial overlay
@@ -590,102 +844,100 @@ public class DashboardController {
     }
 
     //Open dialogue box for opening files
-    public void openCampaign() {
+
+    public void openCampaign(){
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
         FileChooserWindow fileChooser = new FileChooserWindow();
 
         fph.fileTypeHandler(fileChooser.openFileBox());
         System.out.println(fph.getImpressionPath());
         System.out.println(fph.getClickPath());
         System.out.println(fph.getServerPath());
-        loadingBar();
+        a.setContentText("Inputting data...");
+        a.show();
+        //loadingBar();
+       // loadSQL();
+        a.hide();
+
+        a.setContentText("Ready.");
+        a.show();
+        //a.hide();
         System.out.println("Ready ^_^!");
     }
+    public void setClicksLoaded(Boolean bool){
+        clicksLoaded = bool;
+    }
+    public void setimpressionsLoaded(Boolean bool){
+        impressionsLoaded = bool;
+    }
+    public void setserverLoaded(Boolean bool){
+        serverLoaded = bool;
+    }
+    public void loadSQL(){
 
-    public void loadSQL() {
+//        Runnable servrun = new Multithread_ServerDB(fph,this,Thread.currentThread());
+//        Thread servThread = new Thread(servrun);
+        //Runnable imprun = new Multithread_ImpressionsDB(fph,this,Thread.currentThread());
+        //Thread impresThread = new Thread(imprun);
+
+        Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+        testClickThread tct = new testClickThread();
+        testServerThread tst = new testServerThread();
+
+//        Runnable clickrun = new Multithread_ClicksDb(fph,this,Thread.currentThread());
+//        Thread clickTread = new Thread(clickrun);
+//        Iterator<Map.Entry<Integer, Boolean>> it;
+//        Map.Entry<Integer, Boolean> entry;
+//        Map<Integer,Boolean> finished;
+
         try {
 
-            if (fph.getClickPath() != null) {
-                writeClicksDB();
-                clicksLoadedLabel.setText("clicks_log.csv: loaded");
-                clicksLoaded = true;
+            //finished = new HashMap<>();
+            if(fph.getClickPath() != null) {
+                //finished.put(1,false);
+                //clickTread.start();
+                tct.main(fph.getClickPath());
             }
-            if (fph.getImpressionPath() != null) {
-                writeImpressionsDB();
-                impressionLoadedLabel.setText("impression_log.csv: loaded");
-                impressionsLoaded = true;
+            if(fph.getImpressionPath()!= null) {
+                //finished.put(2,false);
+                //impresThread.start();
+                multiImpress.main(fph.getImpressionPath());
             }
-            if (fph.getServerPath() != null) {
-                writeServerDB();
-                serverLoadedLabel.setText("server_log.csv: loaded");
-                serverLoaded = true;
+            if(fph.getServerPath()!= null) {
+                //finished.put(3,false);
+                //servThread.start();
+                tst.main(fph.getServerPath());
             }
 
-        } catch (Exception e) {
+//                while(!finished.isEmpty()) {
+//
+//                    it = finished.entrySet().iterator();
+//                    while (it.hasNext()){
+//                        entry = it.next();
+//                        if(entry.getKey() == 1 && entry.getValue()){
+//                            finished.remove(1);
+//                            logger.log(Level.INFO,"notifying clicks thread");
+//                            clickrun.notify();
+//                        }
+//                        else if(entry.getKey() == 2 && entry.getValue()){
+//                            finished.remove(2);
+//                            logger.log(Level.INFO,"notifying impressions thread");
+//                            //impresThread.notify();
+//                        }
+//                        else if(entry.getKey() == 3 && entry.getValue()){
+//                            finished.remove(3);
+//                            logger.log(Level.INFO,"notifying server thread");
+//                            servThread.notify();
+//                        }
+//                    }
+//                    wait();
+//                }
+
+
+        }catch (Exception e){
             e.printStackTrace();
         }
         System.out.println("Ready ^_^!");
-    }
-
-    void writeClicksDB() throws Exception {
-
-        FileReader clickReader = new FileReader(fph.getClickPath());
-        CSVReader clickCSVReader = new CSVReader(clickReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-        while ((nextRecord = clickCSVReader.readNext()) != null) {
-//            nextRecord = clickCSVReader.readNext();
-            dataman.addClickLog(nextRecord[0], nextRecord[1], Double.parseDouble(nextRecord[2]));
-
-        }
-
-    }
-
-    void writeImpressionsDB() throws Exception {
-
-        FileReader impressionReader = new FileReader(fph.getImpressionPath());
-        CSVReader clickCSVReader = new CSVReader(impressionReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-        while ((nextRecord = clickCSVReader.readNext()) != null) {
-            //nextRecord = clickCSVReader.readNext();
-            dataman.addImpressionLog(nextRecord[0], nextRecord[1],
-                    nextRecord[2], nextRecord[3], nextRecord[4],
-                    nextRecord[5], Double.parseDouble(nextRecord[6]));
-        }
-
-
-    }
-
-    void writeServerDB() throws Exception {
-
-        FileReader clickReader = new FileReader(fph.getServerPath());
-        CSVReader clickCSVReader = new CSVReader(clickReader);
-        System.out.println("readng");
-        String[] nextRecord;
-
-        nextRecord = clickCSVReader.readNext();
-
-
-        while ((nextRecord = clickCSVReader.readNext()) != null) {
-            //nextRecord = clickCSVReader.readNext();
-            if ("n/a".equals(nextRecord[2])) {
-                dataman.addServerLog(nextRecord[0], nextRecord[1], null,
-                        Integer.parseInt(nextRecord[3]), nextRecord[4]);
-            } else {
-                dataman.addServerLog(nextRecord[0], nextRecord[1], nextRecord[2],
-                        Integer.parseInt(nextRecord[3]), nextRecord[4]);
-            }
-        }
-
-
     }
 
     public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
@@ -705,38 +957,28 @@ public class DashboardController {
     boolean dark = false;
 
     public void enableLightTheme(ActionEvent actionEvent) {
-        if (light == false) {
-//            String currentDirectory = System.getProperty("user.dir");
-//
-//            // Define the relative path to your stylesheet
-//            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/lighttheme.css";
-//            System.out.println(currentDirectory);
-//
-//            background.getStylesheets().setAll(stylesheetPath);
+        if (!light) {
             light = true;
             dark = false;
-            System.out.println("light theme");
+            logger.log(Level.INFO,"Light theme displayed");
             background.getStylesheets().clear();
         }
     }
 
-    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException {
-        if (dark == false) {
-            String currentDirectory = System.getProperty("user.dir");
+    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException, URISyntaxException {
+        logger.log(Level.INFO, "Loading dark theme");
+        if(!dark){
 
-            // Define the relative path to your stylesheet
-            String stylesheetPath = "file:///" + currentDirectory.replace("\\", "/") + "/comp2211/seg/src/main/java/com/application/dashboard/darktheme.css";
-            //System.out.println(currentDirectory);
-
-            background.getStylesheets().setAll(stylesheetPath);
+            String stylesheetPath = getClass().getClassLoader().getResource("darktheme.css").toExternalForm();;
+            background.getStylesheets().add(stylesheetPath);
             dark = true;
             light = false;
-            System.out.println("dark theme");
+            logger.log(Level.INFO,"Dark theme displayed");
 
         }
     }
 
 
-    public void selectClickGraph(ActionEvent actionEvent) {
-    }
+    public void selectClickGraph(ActionEvent actionEvent) {}
+
 }

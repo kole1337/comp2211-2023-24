@@ -1,5 +1,6 @@
 package com.application.login;
 
+import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.files.FilePathHandler;
 import javafx.application.Application;
@@ -24,12 +25,13 @@ public class LoginApplication extends Application {
         stage.setMinHeight(scene.getRoot().minHeight(-1));
         stage.setMinWidth(scene.getRoot().minWidth(-1));
         stage.show();
+        DbConnection db = new DbConnection();
+
     }
 
     public static void main(String[] args) {
         Logger logger = Logger.getLogger(LoginApplication.class.getName());
         logger.log(Level.INFO, "Launching application.");
-
         launch();
     }
 }
