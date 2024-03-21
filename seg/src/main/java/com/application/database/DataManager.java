@@ -1,4 +1,5 @@
 package com.application.database;
+import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import org.jfree.data.xy.XYSeries;
 
@@ -15,11 +16,14 @@ public  class DataManager {
 
 
     private static Connection conn;
+    private static Connection conn1;
     private static Statement statement;
-    private static Statement statement2;
+    private static Statement statement1;
     private static PreparedStatement pstmt;
+    private static PreparedStatement pstmt1;
     private static ResultSet rs;
-    private static List<String> rateData = Arrays.asList("CPA", "CPC", "CPM", "bounceRate");
+    private static ResultSet rs1;
+    private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
@@ -30,8 +34,9 @@ public  class DataManager {
     public static void getConn(){
         try {
             conn = DbConnection.getConn();
+            conn1 = DbConnection.getConn();
             statement = conn.createStatement();
-            statement2 = conn.createStatement();
+            statement1 = conn1.createStatement();
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Could not create statement");
             e.printStackTrace();
@@ -44,6 +49,7 @@ public  class DataManager {
     public static void closeConnection()throws RuntimeException{
         try {
             conn.close();
+            conn1.close();
         }
         catch (Exception e){
             throw new RuntimeException("could not close connection");
@@ -241,22 +247,27 @@ public  class DataManager {
         return totals;
     }
 
-    public XYChart.Series<String, Number> getData(String dataName, String startDate, String endDate, String gender, String income, String context, String age ) {
+    public XYChart.Series<String, Number> getData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        if(rateData.contains(dataName)){
-            return getRateData(dataName, startDate, endDate,gender,income,context,age);
-        }
-        else{
-            String query = queryGenerator(dataName, startDate, endDate,gender,income,context,age);
+        if (rateData.contains(dataName)) {
+            return getRateData(dataName, startDate, endDate, gender, income, context, age);
+        } else {
+            String query = queryGenerator(dataName, startDate, endDate, gender, income, context, age);
             try {
                 System.out.println(dataName);
                 rs = statement.executeQuery(query);
                 System.out.println(rs);
-                while (rs.next()) {
-                    String xValue = rs.getString("date"); // Get value from column1
-                    Number yValue = rs.getInt("data"); // Get value from column2
-                    // Discard column3 by not using it
-                    series.getData().add(new XYChart.Data<>(xValue, yValue));
+
+                int pageSize = 1000; // Adjust this value based on your requirements
+                boolean hasMore = rs.next();
+
+                while (hasMore) {
+                    for (int i = 0; i < pageSize && hasMore; i++) {
+                        String xValue = rs.getString("date");
+                        Number yValue = rs.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                        hasMore = rs.next();
+                    }
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -266,43 +277,37 @@ public  class DataManager {
     }
 
     public XYChart.Series<String,Number> getRateData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
-        XYChart.Series<String, Number> series = null;
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
         ResultSet rs1 = null;
         ResultSet rs2 = null;
         String query1 = "";
         String query2 = "";
         if (dataName.equals("CTR")) {
-            XYChart.Series<String, Number> clicks = getData("totalClicks", startDate, endDate, gender, income, context, age);
-            XYChart.Series<String, Number> impressions = getData("totalImpressions", startDate, endDate, gender, income, context, age);
-            XYChart.Series<String, Number> clicksPerImpression = new XYChart.Series<>();
-            Iterator<XYChart.Data<String, Number>> clicksIterator = clicks.getData().iterator();
-            Iterator<XYChart.Data<String, Number>> impressionsIterator = impressions.getData().iterator();
-            while (clicksIterator.hasNext() && impressionsIterator.hasNext()) {
-                XYChart.Data<String, Number> clickData = clicksIterator.next();
-                XYChart.Data<String, Number> impressionData = impressionsIterator.next();
-
-                String xValue1 = clickData.getXValue();
-                String xValue2 = impressionData.getXValue();
-                Number clickValue = clickData.getYValue();
-                Number impressionValue = impressionData.getYValue();
-
-                if (xValue1 == xValue2 && impressionValue.doubleValue() != 0) {
-                    double ratio = clickValue.doubleValue() / impressionValue.doubleValue();
-                    clicksPerImpression.getData().add(new XYChart.Data<>(xValue1, ratio));
-                } else {
-                    // Handle division by zero case if needed
+            query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
+            try {
+                rs1 = statement.executeQuery(query1);
+                rs2 = statement1.executeQuery(query2);
+                while (rs1.next() && rs2.next()) {
+                    String xValue = rs1.getString("date");
+                    Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                    series.getData().add(new XYChart.Data<>(xValue, yValue));
                 }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
         }
-            if (dataName.equals("CPA")) {
+        if (dataName.equals("CPA")) {
                 query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalConversions", startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
-                    rs2 = statement2.executeQuery(query2);
+                    rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
                         String xValue = rs1.getString("date");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        System.out.println(xValue);
+                        System.out.println(yValue);
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
                 } catch (SQLException ex) {
@@ -310,27 +315,27 @@ public  class DataManager {
                 }
 
             }
-            if (dataName.equals("CPM")) {
+        if (dataName.equals("CPM")) {
                 query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
-                    rs2 = statement2.executeQuery(query2);
+                    rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
                         String xValue = rs1.getString("date");
-                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }
-            if (dataName.equals("CPC")) {
+        if (dataName.equals("CPC")) {
                 query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
-                    rs2 = statement2.executeQuery(query2);
+                    rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
                         String xValue = rs1.getString("date");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
@@ -341,14 +346,13 @@ public  class DataManager {
                 }
 
             }
-            if (dataName.equals("bounceRate")) {
+        if (dataName.equals("bounceRate")) {
                 query1 = queryGenerator("totalBounces", startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
                 try {
                     rs1 = statement.executeQuery(query1);
-                    rs2 = statement2.executeQuery(query2);
+                    rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
-                        System.out.println("EEEEEEEEEE");
                         String xValue = rs1.getString("date");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
@@ -370,8 +374,8 @@ public  class DataManager {
                     "FROM clicklog as click " +  "JOIN impressionlog AS impression ON click.id = impression.id "+ filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
         }
         if(dataName.equals("totalImpressions")){
-            query = "SELECT DATE_FORMAT(impression.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
-                    "FROM impressionlog as impression " + filterQuery + " AND impression.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+            query = "SELECT DATE_FORMAT(date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM impressionlog as impression " + filterQuery + " AND impression.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY DATE_FORMAT(impression.Date, '%Y-%m-%d %H:00:00')";
         }
         if(dataName.equals("totalUniques")){
             query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(DISTINCT click.id) AS data " +
@@ -385,20 +389,12 @@ public  class DataManager {
                     + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > 3 OR server.pagesviewed > 1) GROUP BY date";
         }
         if(dataName.equals("totalConversions")){
-            query = "SELECT DATE_FORMAT(server.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data WHERE server.conversion = 'Yes' " +
-                    "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+            query = "SELECT DATE_FORMAT(server.entryDate, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY entryDate";
         }
         if(dataName.equals("totalCost")){
             query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, SUM(click.ClickCost) AS data " +
                     "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
-        }
-        if(dataName.equals("CTR")){
-            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, " +
-                    "SUM(CASE WHEN click.id IS NOT NULL THEN 1 ELSE 0 END) AS clicks, " +
-                    "SUM(CASE WHEN impression.id IS NOT NULL THEN 1 ELSE 0 END) AS impressions, " +
-                    "SUM(CASE WHEN click.id IS NOT NULL THEN 1 ELSE 0 END) /SUM(CASE WHEN impression.id IS NOT NULL THEN 1 ELSE 0 END) AS data " +
-                    "FROM clicklog AS click " +
-                    "RIGHT JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" +startDate + "' AND '" + endDate + "' GROUP BY date";
         }
         return query;
     }
