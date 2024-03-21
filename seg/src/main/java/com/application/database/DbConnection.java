@@ -21,6 +21,7 @@ public class DbConnection {
 
 
     public DbConnection(){
+
         readFromFile("user.txt");
 
         try {
