@@ -1,4 +1,5 @@
 import com.application.dashboard.ReadFile;
+import com.application.database.DbConnection;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.login.LoginApplication;
@@ -18,6 +19,9 @@ public class BasicTest {
     FilePathHandler fph = new FilePathHandler();
     FileChooserWindow fc = new FileChooserWindow();
     ReadFile rc = new ReadFile();
+
+    DbConnection dbConnection = new DbConnection();
+
     @Test
     public void testLogin() throws SQLException {
         assertTrue("Login successful.",lc.checkUser("user","0000"));
@@ -27,25 +31,28 @@ public class BasicTest {
     }
 
     @Test
-    public void filePaths(){
-        String click = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
-        fph.setClickPath("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
-
-        String impression = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv";
-        fph.setImpressionPath("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
-
-        String server = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv";
-        fph.setServerPath("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
-
-        assertEquals(click, fph.getClickPath());
-        assertEquals(impression, fph.getImpressionPath());
-        assertEquals(server, fph.getServerPath());
-
+    public void testSQLConnection() throws Exception {
+        dbConnection.makeConn();
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
+        dbConnection.closeConnection();
+        assertFalse("Connection is close", dbConnection.checkConn());
+        assertFalse("Connection is close", dbConnection.checkConn());
+        assertFalse("Connection is close", dbConnection.checkConn());
+        assertFalse("Connection is close", dbConnection.checkConn());
+        assertFalse("Connection is close", dbConnection.checkConn());
+        dbConnection.makeConn();
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
+        assertTrue("Connection is established", dbConnection.checkConn());
     }
 
     @Test
     public void readFile(){
-        //test read file readCSV -only uniques will count
+
     }
 
 

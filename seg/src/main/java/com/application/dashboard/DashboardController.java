@@ -947,7 +947,7 @@ public class DashboardController implements Initializable {
         a.setContentText("Inputting data...");
         a.show();
         //loadingBar();
-       // loadSQL();
+        loadSQL();
         a.hide();
 
         a.setContentText("Ready.");
