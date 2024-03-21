@@ -226,7 +226,7 @@ public class DashboardController {
 //        loadGraph(buttonId,time);
         uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
         sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
-//
+
 
         totalClicksLabel.setText("Total clicks: " + countTotalClicks());
         zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClick());
