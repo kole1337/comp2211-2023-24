@@ -17,7 +17,7 @@ public class FilePathHandler {
 
     public void fileTypeHandler(List<File> files){
         try{
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < files.size(); i++) {
 
 
                 FileReader filereader = new FileReader(files.get(i));

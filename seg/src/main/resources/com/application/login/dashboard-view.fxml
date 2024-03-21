@@ -29,110 +29,88 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<?import javafx.scene.control.TextField?>
-<AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0"
-            styleClass="D:\year2\seg\comp2211\seg\src\main\resources\com\application\login\dashboard.css"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.application.dashboard.DashboardController">
-    <MenuBar layoutX="3.0" layoutY="2.0">
-        <Menu fx:id="File" mnemonicParsing="false" text="File">
-            <items>
-                <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign"/>
-            </items>
-        </Menu>
-        <!--          <Menu mnemonicParsing="false" text="Edit">-->
-        <!--            <items>-->
-        <!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
-        <!--            </items>-->
-        <!--          </Menu>-->
-        <Menu fx:id="Help" mnemonicParsing="false" text="Help">
-            <items>
-                <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial"/>
-                <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial"/>
-                <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation"/>
-            </items>
-        </Menu>
-        <Menu fx:id="Window" mnemonicParsing="false" text="Window">
-            <items>
-                <MenuItem mnemonicParsing="false" onAction="#loadTheme" text="Theme"/>
-            </items>
-        </Menu>
-        <Menu fx:id="Environment" mnemonicParsing="false" text="Environment">
-            <items>
-                <RadioMenuItem fx:id="lightTheme" mnemonicParsing="false" onAction="#enableLightTheme"
-                               text="Light theme">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="theme"/>
-                    </toggleGroup>
-                </RadioMenuItem>
-                <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#enableDarkTheme"
-                               text="Dark theme" toggleGroup="$theme"/>
-            </items>
-        </Menu>
-
-    </MenuBar>
-    <Button fx:id="logoutButton" layoutX="243.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton"
-            text="Logout"/>
-    <VBox fx:id="dataSelection" layoutX="82.0" layoutY="56.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="494.0"
-          prefWidth="178.0" spacing="10.0" style="-fx-background-color: white; -fx-border-insets: 50;">
-        <children>
-            <Label text="Data to view">
-                <opaqueInsets>
-                    <Insets left="15.0"/>
-                </opaqueInsets>
-            </Label>
-            <Button fx:id="TotalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="119.0" text="Clicks">
-                <VBox.margin>
-                    <Insets/>
-                </VBox.margin>
-            </Button>
-            <Button fx:id="TotalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="119.0" style="-fx-border-insets: 50;" text="Uniques"/>
-            <Button fx:id="TotalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="119.0" text="Bounces"/>
-            <Button fx:id="TotalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="119.0" text="Impressions"/>
-            <Button fx:id="TotalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="120.0" text="Conversion Rate"/>
-            <Button fx:id="TotalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="120.0" text="Total Cost"/>
-            <Button fx:id="CPA" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    text="Cost per acquisition"/>
-            <Button fx:id="CPC" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="25.0" prefWidth="121.0" text="Cost per clicks"/>
-            <Button fx:id="CTR" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    text="Cost per impression"/>
-            <Button fx:id="CPM" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    prefHeight="43.0" prefWidth="122.0" text="Cost per thousand impressions" wrapText="true"/>
-            <Button fx:id="BounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs"
-                    text="Bounce Rate">
-                <opaqueInsets>
-                    <Insets top="10.0"/>
-                </opaqueInsets>
-            </Button>
-            <ComboBox fx:id="ComboBox">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="hour"/>
-                        <String fx:value="day"/>
-                        <String fx:value="week"/>
-                    </FXCollections>
-                </items>
-            </ComboBox>
+<?import java.lang.Double?>
 
 
-            <VBox prefHeight="129.0" prefWidth="178.0">
-                <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" onAction="#createTimeFrame" prefHeight="25"
-                            prefWidth="200" promptText="Start Date"/>
-                <HBox fx:id="fromTimeHBox">
-                    <ComboBox fx:id="fromHour"/>
-                    <Label text=":"/>
-                    <ComboBox fx:id="fromMinute"/>
-                    <Label text=":"/>
-                    <ComboBox fx:id="fromSecond"/>
-                </HBox>
+<AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+    <children>
+        <MenuBar layoutX="3.0" layoutY="2.0">
+            <menus>
+                <Menu fx:id="File" mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openCampaign" text="Open campaign" />
+                    </items>
+                </Menu>
+                <!--          <Menu mnemonicParsing="false" text="Edit">-->
+                <!--            <items>-->
+                <!--              <MenuItem mnemonicParsing="false" text="Delete" />-->
+                <!--            </items>-->
+                <!--          </Menu>-->
+                <Menu fx:id="Help" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadTutorial" text="Show dashboard tutorial" />
+                        <MenuItem mnemonicParsing="false" onAction="#loadTutorial2" text="Show upload files tutorial" />
+                        <MenuItem mnemonicParsing="false" onAction="#openOnlineDocumentation" text="Documentation" />
+                    </items>
+                </Menu>
+                <Menu fx:id="Window" mnemonicParsing="false" text="Window">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadTheme" text="Theme" />
+                    </items>
+                </Menu>
+                <Menu fx:id="Environment" mnemonicParsing="false" text="Environment">
+                    <items>
+                  <RadioMenuItem fx:id="lightTheme" mnemonicParsing="false" onAction="#enableLightTheme" text="Light theme">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="theme" />
+                     </toggleGroup></RadioMenuItem>
+                  <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#enableDarkTheme" text="Dark theme" toggleGroup="$theme" />
+                    </items>
+                </Menu>
+
+            </menus>
+        </MenuBar>
+        <Button fx:id="logoutButton" layoutX="243.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
+        <VBox fx:id="dataSelection" layoutX="82.0" layoutY="56.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="494.0" prefWidth="178.0" spacing="10.0">
+            <children>
+                <Label text="Data to view">
+                    <opaqueInsets>
+                        <Insets left="15.0" />
+                    </opaqueInsets>
+                </Label>
+                <Button fx:id="TotalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="119.0" text="Clicks">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></Button>
+                <Button fx:id="TotalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="119.0" style="-fx-border-insets: 50;" text="Uniques" />
+                <Button fx:id="TotalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="119.0" text="Bounces" />
+                <Button fx:id="TotalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="119.0" text="Impressions" />
+                <Button fx:id="TotalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="120.0" text="Conversion Rate" />
+                <Button fx:id="TotalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="120.0" text="Total Cost" />
+                <Button fx:id="CPA" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" text="Cost per acquisition" />
+                <Button fx:id="CPC" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="121.0" text="Cost per clicks" />
+                <Button fx:id="CTR" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" text="Cost per impression" />
+                <Button fx:id="CPM" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="43.0" prefWidth="122.0" text="Cost per thousand impressions" wrapText="true" />
+                <Button fx:id="BounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" text="Bounce Rate">
+                    <opaqueInsets>
+                        <Insets top="10.0" />
+                    </opaqueInsets>
+                </Button>
+                <ComboBox fx:id="ComboBox">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="hour" />
+                            <String fx:value="day" />
+                            <String fx:value="week" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <VBox prefHeight="129.0" prefWidth="178.0">
+                    <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="Start Date" />
+                    <HBox fx:id="fromTimeHBox">
+                        <ComboBox fx:id="fromHour" /><Label text=":" /><ComboBox fx:id="fromMinute" /><Label text=":" /><ComboBox fx:id="fromSecond" />
+                    </HBox>
+
 
                 <!-- DatePicker for selecting the end date -->
                 <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25"
@@ -236,50 +214,72 @@
         <Tab text="Histogram">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                    <children>
-                        <BarChart fx:id="histogramClicks" layoutY="7.0" prefHeight="391.0" prefWidth="447.0">
-                            <xAxis>
-                                <CategoryAxis side="BOTTOM"/>
-                            </xAxis>
-                            <yAxis>
-                                <NumberAxis side="LEFT"/>
-                            </yAxis>
-                        </BarChart>
-                    </children>
-                </AnchorPane>
-            </content>
-        </Tab>
-        </tabs>
-    </TabPane>
-    <ScrollPane layoutX="260.0" layoutY="78.0" prefHeight="741.0" prefWidth="717.0">
-        <content>
-            <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="1176.0">
-                <xAxis>
-                    <CategoryAxis side="BOTTOM"/>
-                </xAxis>
-                <yAxis>
-                    <NumberAxis side="LEFT"/>
-                </yAxis>
-            </AreaChart>
-        </content>
-    </ScrollPane>
-    <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="776.0" mnemonicParsing="false" onAction="#loadCSV"
-            prefHeight="41.0" prefWidth="178.0" text="Load Data">
-        <font>
-            <Font name="System Bold" size="14.0"/>
-        </font>
-    </Button>
-    <Label fx:id="graphLabel" layoutX="260.0" layoutY="51.0" text="Graph:">
-        <font>
-          <Font size="18.0"/>
-        </font>
-    </Label>
-    <Pane layoutX="981.0" layoutY="556.0" prefHeight="240.0" prefWidth="439.0" style="-fx-border-color: black;">
-        <children>
-            <Label fx:id="sumImpressionsLabel" layoutY="1.0" text="Total impressions:">
-                <font>
-                    <Font size="18.0"/>
-                </font>
+                     <children>
+                         <BarChart fx:id="histogramClicks" layoutY="7.0" prefHeight="391.0" prefWidth="447.0" title="Conversion Graph" visible="true">
+                             <xAxis>
+                                 <CategoryAxis side="BOTTOM" />
+                             </xAxis>
+                             <yAxis>
+                                 <NumberAxis side="LEFT" />
+                             </yAxis>
+                             <!-- Set the width of bars -->
+                             <barGap>
+                                 <Double fx:value="0.0" />
+                             </barGap>
+                             <categoryGap>
+                                 <Double fx:value="10.0" /> <!-- Adjust this value as needed -->
+                             </categoryGap>
+                         </BarChart>
+
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            </tabs>
+        </TabPane>
+        <ScrollPane layoutX="260.0" layoutY="78.0" prefHeight="741.0" prefWidth="717.0">
+            <content>
+                <AreaChart fx:id="dataChart" prefHeight="703.0" prefWidth="1176.0">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT" />
+                    </yAxis>
+                </AreaChart>
+            </content></ScrollPane>
+        <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="776.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Button>
+      <Label fx:id="graphLabel" layoutX="260.0" layoutY="51.0" text="Graph:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Pane layoutX="981.0" layoutY="556.0" prefHeight="240.0" prefWidth="439.0" style="-fx-border-color: black;">
+         <children>
+              <Label fx:id="sumImpressionsLabel" layoutY="1.0" text="Total impressions:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+              <Label fx:id="uniqueImpressionLabel" layoutY="107.0" text="Unique impressions:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+              </Label>
+              <Label fx:id="zeroCostClickLabel" layoutY="82.0" text="Zero cost clicks:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+            </Label>
+              <Label fx:id="totalClicksLabel" layoutY="55.0" text="Total Clicks:">
+                  <font>
+                      <Font size="18.0" />
+                  </font>
+
             </Label>
             <Label fx:id="uniqueImpressionLabel" layoutY="107.0" text="Unique impressions:">
                 <font>
