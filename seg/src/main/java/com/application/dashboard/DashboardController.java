@@ -10,6 +10,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -53,7 +54,8 @@ import java.util.logging.Logger;
  * it is doing and why
  * */
 
-public class DashboardController{
+
+public class DashboardController implements Initializable {
     public TabPane chartPane;
     public Label clicksLoadedLabel;
     public Label impressionLoadedLabel;
@@ -95,7 +97,7 @@ public class DashboardController{
     public Label avgClickPriceLabel;
     public ImageView uploadPNG;
     public AnchorPane background;
-    private FilePathHandler fph = new FilePathHandler();
+    FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;
     private Stage stage;
@@ -134,7 +136,6 @@ public class DashboardController{
     public ComboBox<String> fromMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
-
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
@@ -146,26 +147,54 @@ public class DashboardController{
 
     @FXML
     public TextField pageViewedBounce;
+    public ComboBox genderFilter;
+    public ComboBox contextFilter;
+    public ComboBox ageFilter;
+    public ComboBox incomeFilter;
 
     CategoryAxis xAxis = new CategoryAxis();
 
     boolean clicksLoaded = false;
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Assuming you have defined the ComboBoxes in your controller class
+        ObservableList<String> hours = FXCollections.observableArrayList();
+        ObservableList<String> minutes = FXCollections.observableArrayList();
+        ObservableList<String> seconds = FXCollections.observableArrayList();
 
-
-    private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName(seriesName);
-        // Iterate over the entries of the map and add them to the series
-        for (Map.Entry<LocalDateTime, Double> entry : dataset.entrySet()) {
-            String xValue = entry.getKey().toString(); // Assuming LocalDateTime.toString() provides the desired format
-            Number yValue = entry.getValue();
-            series.getData().add(new XYChart.Data<>(xValue, yValue));
+        for (int i = 0; i <= 23; i++) {
+            hours.add(String.format("%02d", i));
         }
 
-        return series;
+        for (int i = 0; i <= 59; i++) {
+            minutes.add(String.format("%02d", i));
+        }
+
+        for (int i = 0; i <= 59; i++) {
+            seconds.add(String.format("%02d", i));
+        }
+
+
+// Set the previously populated hour, minute, and second lists to the ComboBoxes
+        fromHour.setItems(hours);
+        fromMinute.setItems(minutes);
+        fromSecond.setItems(seconds);
+        toHour.setItems(hours);
+        toMinute.setItems(minutes);
+        toSecond.setItems(seconds);
+        genderFilter.setItems(dataman.getGenders());
+        contextFilter.setItems(dataman.getContext());
+        ageFilter.setItems(dataman.getAge());
+        incomeFilter.setItems(dataman.getIncome());
+        genderFilter.setValue(" ");
+        contextFilter.setValue(" ");
+        ageFilter.setValue(" ");
+        incomeFilter.setValue(" ");
     }
+
+
 
     /*
      * @TODO:
@@ -254,8 +283,8 @@ public class DashboardController{
             time = "hour";
         }
         //to set total clicks as default graph
-        if (buttonId.equals("loadCSVbutton3")) {
-            buttonId = "TotalClicks";
+        if(buttonId.equals("loadCSVbutton3")){
+            buttonId = "totalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
@@ -277,7 +306,7 @@ public class DashboardController{
         }
         //to set total clicks as default graph
         if(buttonId.equals("loadCSVbutton3")){
-            buttonId = "TotalClicks";
+            buttonId = "totalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
@@ -295,7 +324,7 @@ public class DashboardController{
         loadContextOriginChart();
         loadConversionChart();
 //        loadHistogramChart();
-        loadHistogramClickCost();
+        //loadHistogramClickCost();
         chartPane.layout();
 
     }
@@ -333,25 +362,17 @@ public class DashboardController{
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
-
         dataChart.layout();
-
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
-
-
-
         if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
-            if(fromDate.getValue() == null){
-                int day = dataman.getFirstDate("day","clicklog");
-                int month = dataman.getFirstDate("month","clicklog");
-                int year = dataman.getFirstDate("year","clicklog");
-
-                fromDate.setValue(LocalDate.of(year,month,day));
+            String startDate = getFromDateTime();
+            String endDate = getToDateTime();
+            dataChart.getData().add(dataman.getData(selectedButton,startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
             }
             //to set end date way far in the future as dafault, so it reads every data
-            if(toDate.getValue() == null){
+        if(toDate.getValue() == null){
 
                 int day = dataman.getLastDate("DAY","clicklog");
                 int month = dataman.getLastDate("MONTH","clicklog");
@@ -371,27 +392,72 @@ public class DashboardController{
 
             // Force a layout update
 
-        }
         dataChart.layout();
-        if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
-            System.out.println("Bouncing");
-            if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
 
-            }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+    }
 
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
-            }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+    public String getToDateTime(){
+        if(toDate.getValue() == null){
+            int day = dataman.getLastDate("day","clicklog");
+            int month = dataman.getLastDate("month","clicklog");
+            int year = dataman.getLastDate("year","clicklog");
 
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
-            }else{
+            toDate.setValue(LocalDate.of(year,month,day));
+        }
+        if(toHour.getValue() == null){
+            int hour = dataman.getLastDate("hour","clicklog");
+            toHour.setValue(Integer.toString(hour));
+        }
+        if(toMinute.getValue() == null){
+            int minute = dataman.getLastDate("minute","clicklog");
+            toMinute.setValue(Integer.toString(minute));
+        }
+        if(toSecond.getValue() == null){
+            int second = dataman.getLastDate("second","clicklog");
+            toSecond.setValue(Integer.toString(second));
+        }
+        LocalDate selectedDate = toDate.getValue();
+        int hour = Integer.parseInt(toHour.getValue());
+        int minute = Integer.parseInt(toMinute.getValue());
+        int second = Integer.parseInt(toSecond.getValue());
 
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
-            }
-        }else {
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+        LocalDateTime dateTime = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute, second));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return dateTime.format(formatter);
+    }
+    public String getFromDateTime() {
+        if (fromDate.getValue() == null) {
+            int day = dataman.getFirstDate("day", "clicklog");
+            int month = dataman.getFirstDate("month", "clicklog");
+            int year = dataman.getFirstDate("year", "clicklog");
+
+            fromDate.setValue(LocalDate.of(year, month, day));
+        }
+        if (fromHour.getValue() == null) {
+            int hour = dataman.getFirstDate("hour", "clicklog");
+            fromHour.setValue(Integer.toString(hour));
+        }
+        if (fromMinute.getValue() == null) {
+            int minute = dataman.getFirstDate("minute", "clicklog");
+            fromMinute.setValue(Integer.toString(minute));
+        }
+        if (fromSecond.getValue() == null) {
+            int second = dataman.getFirstDate("second", "clicklog");
+            fromSecond.setValue(Integer.toString(second));
         }
 
+        LocalDate selectedDate = fromDate.getValue();
+        int hour = Integer.parseInt(fromHour.getValue());
+        int minute = Integer.parseInt(fromMinute.getValue());
+        int second = Integer.parseInt(fromSecond.getValue());
+
+        LocalDateTime dateTime = LocalDateTime.of(selectedDate, LocalTime.of(hour, minute, second));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return dateTime.format(formatter);
     }
     // Customize the graph based on the selected radio button
     //Function that would load the graph data inside the panel.
@@ -497,13 +563,15 @@ public class DashboardController{
                 errorAlert.setHeaderText("Invalid Date-Time Selection");
                 errorAlert.setContentText("The end date-time must be after the start date-time.");
                 errorAlert.showAndWait();
-
                 // Optionally, reset the "to" date-time selection to match the "from" date-time or to a valid state
                 toDate.setValue(fromDate.getValue());
                 toHour.setValue(fromHour.getValue());
                 toMinute.setValue(fromMinute.getValue());
                 toSecond.setValue(fromSecond.getValue());
             }
+            System.out.println("date changed");
+            fromDate.setValue(fromDate.getValue());
+            toDate.setValue(toDate.getValue());
         }
     }
 
@@ -651,20 +719,20 @@ public class DashboardController{
 //        histogramClicks.setTitle("Histogram");
 //
 //    }
-public void loadHistogramClickCost() {
-    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//public void loadHistogramClickCost() {
+   // Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
 
     // Create data series for the histogram chart
-    XYChart.Series<String, Number> series = new XYChart.Series<>();
+  //  XYChart.Series<String, Number> series = new XYChart.Series<>();
 
     // Populate data series with dates and corresponding click costs
-    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
-        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-    }
+   // for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+   //     series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+   // }
 
     // Add data series to the histogram chart
-    histogramClicks.getData().add(series);
-    histogramClicks.setTitle("Histogram");
+   // histogramClicks.getData().add(series);
+  //  histogramClicks.setTitle("Histogram");
 
     // Adjust the width of the bars
 //    double barWidth = 100; // Adjust this value as needed
@@ -674,7 +742,7 @@ public void loadHistogramClickCost() {
 //            bar.setStyle("-fx-bar-width: " + barWidth + ";");
 //        }
 //    }
-}
+//}
 
 
 //    public void loadHistogramClickCost() {
@@ -844,7 +912,6 @@ public void loadHistogramClickCost() {
     }
 
     //Open dialogue box for opening files
-
     public void openCampaign(){
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         FileChooserWindow fileChooser = new FileChooserWindow();
@@ -939,7 +1006,6 @@ public void loadHistogramClickCost() {
         }
         System.out.println("Ready ^_^!");
     }
-
     public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
         Desktop.getDesktop().browse(URI.create("https://nikolaparushev2003.wixsite.com/ecs-adda/documentation"));
     }
@@ -977,8 +1043,6 @@ public void loadHistogramClickCost() {
 
         }
     }
-
-
     public void selectClickGraph(ActionEvent actionEvent) {}
 
 }

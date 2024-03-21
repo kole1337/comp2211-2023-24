@@ -9,7 +9,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-
 import java.util.List;
 
 //import javafx.stage.FileChooser;
@@ -71,7 +70,6 @@ public class FileChooserWindow {
 
 
     }
-
     private static void openFileInExplorer(File file) {
         // Check if Desktop is supported
         if (Desktop.isDesktopSupported()) {

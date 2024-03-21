@@ -1,5 +1,4 @@
 package com.application.dashboard;
-
 import com.application.files.FileChooserWindow;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
@@ -32,21 +31,6 @@ public class ImportController {
     }
     public void openCampaign(){
         FileChooserWindow fileChooser = new FileChooserWindow();
-        //FilePathHandler pathHandler = new FilePathHandler();
-
-        //pathHandler.fileTypeHandler(fileChooser.openFileBox());
-        //String selectedFile;
-        //System.out.println(selectedFile);
-
-        //String [] paths = {"Click Log File", "Impression log file", "Server Log File"};
-//        for (int i = 0; i < 3; i++) {
-//            //paths[i] = fc.main();
-//            //fileChooser.setTitle(paths[i]);
-//            //fc.main();
-//            selectedFile = fc.main();
-//            paths[i] = selectedFile;
-////            System.out.println(selectedFile);
-//        }
 
         fph.fileTypeHandler(fileChooser.openFileBox());
         System.out.println(fph.getImpressionPath());

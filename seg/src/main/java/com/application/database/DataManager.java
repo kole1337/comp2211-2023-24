@@ -1,6 +1,16 @@
 package com.application.database;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
+import org.jfree.data.xy.XYSeries;
+
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,9 +21,14 @@ public  class DataManager {
 
 
     private static Connection conn;
+    private static Connection conn1;
     private static Statement statement;
+    private static Statement statement1;
     private static PreparedStatement pstmt;
+    private static PreparedStatement pstmt1;
     private static ResultSet rs;
+    private static ResultSet rs1;
+    private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
@@ -32,7 +47,9 @@ public  class DataManager {
     public static void getConn(){
         try {
             conn = DbConnection.getConn();
+            conn1 = DbConnection.getConn();
             statement = conn.createStatement();
+            statement1 = conn1.createStatement();
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Could not create statement");
             e.printStackTrace();
@@ -45,6 +62,7 @@ public  class DataManager {
     public static void closeConnection()throws RuntimeException{
         try {
             conn.close();
+            conn1.close();
         }
         catch (Exception e){
             throw new RuntimeException("could not close connection");
@@ -72,20 +90,23 @@ public  class DataManager {
         pstmt.executeUpdate();
         System.out.println("INSERTED!");
     }
-    public void addImpressionLog(String date, String id, String gender,
-                                 String age, String income, String context,
-                                 Double impressionCost) throws SQLException {
+    public void addImpressionLog(ArrayList<String[]> impressionLogs) throws SQLException {
         String inClickLog = "INSERT INTO impressionlog(date, id, gender, age, income, context, impression_cost) VALUES (?,?,?,?,?,?,?)";
-
-        pstmt = conn.prepareStatement(inClickLog);
-        pstmt.setString(1, date);
-        pstmt.setString(2, id);
-        pstmt.setString(3, gender);
-        pstmt.setString(4, age);
-        pstmt.setString(5, income);
-        pstmt.setString(6, context);
-        pstmt.setDouble(7, impressionCost);
-        pstmt.executeUpdate();
+        int i = 0;
+        while(i<impressionLogs.size()){
+            String[] impressionLog = impressionLogs.get(i);
+            pstmt = conn.prepareStatement(inClickLog);
+            pstmt.setString(1, impressionLog[0]);
+            pstmt.setString(2, impressionLog[1]);
+            pstmt.setString(3, impressionLog[2]);
+            pstmt.setString(4, impressionLog[3]);
+            pstmt.setString(5, impressionLog[4]);
+            pstmt.setString(6, impressionLog[5]);
+            pstmt.setDouble(7, Double.parseDouble(impressionLog[6]));
+            pstmt.addBatch();
+            System.out.println("INSERTED!");
+        }
+        pstmt.executeBatch();
         System.out.println("INSERTED!");
     }
     public void addServerLog(String entryDate, String id, String exitDate, int pages, String conversion) throws SQLException {
@@ -232,90 +253,242 @@ public  class DataManager {
         }
         return totals;
     }
-//    public Map<String, Double> getDateAndClickCost(String table) {
-//        Map<String, Double> dateAndClickCost = new HashMap<>();
-//
-//        try {
-//           // String query = "SELECT date, clickCost FROM "+table;
-//            ResultSet resultSet = statement.executeQuery("SELECT Date, clickCost FROM "+table);
-//
-//            while (resultSet.next()) {
-//                String date = resultSet.getString("Date");
-//                double clickCost = resultSet.getDouble("clickCost");
-//                dateAndClickCost.put(date, clickCost);
-//            }
-//            System.out.println(dateAndClickCost);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return dateAndClickCost;
-//    }
-//public Map<String, Double> getDateAndClickCost(String table) {
-//    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
-//
-//    try {
-//        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
-//        ResultSet resultSet = statement.executeQuery(query);
-//
-//        while (resultSet.next()) {
-//            String date = resultSet.getString("Date");
-//            double clickCost = resultSet.getDouble("clickCost");
-//            dateAndClickCost.put(date, clickCost);
-//            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
-//        }
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//    }
-//
-//    return dateAndClickCost;
-//}
-public Map<String, Double> getDateAndClickCost(String table) {
-    Map<String, Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+    public XYChart.Series<String, Number> getData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        if (rateData.contains(dataName)) {
+            return getRateData(dataName, startDate, endDate, gender, income, context, age);
+        } else {
+            String query = queryGenerator(dataName, startDate, endDate, gender, income, context, age);
+            try {
+                System.out.println(dataName);
+                rs = statement.executeQuery(query);
+                System.out.println(rs);
 
-    try {
-        String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
-        ResultSet resultSet = statement.executeQuery(query);
+                int pageSize = 1000; // Adjust this value based on your requirements
+                boolean hasMore = rs.next();
 
-        while (resultSet.next()) {
-            String date = resultSet.getString("Date");
-            double clickCost = resultSet.getDouble("clickCost");
-            if (clickCost != 0.0) {
-                dateAndClickCost.put(date, clickCost);
+                while (hasMore) {
+                    for (int i = 0; i < pageSize && hasMore; i++) {
+                        String xValue = rs.getString("date");
+                        Number yValue = rs.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                        hasMore = rs.next();
+                    }
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
-            System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+            return series;
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
 
-    return dateAndClickCost;
-}
+    public XYChart.Series<String,Number> getRateData(String dataName, String startDate, String endDate, String gender, String income, String context, String age) {
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        ResultSet rs1 = null;
+        ResultSet rs2 = null;
+        String query1 = "";
+        String query2 = "";
+        if (dataName.equals("CTR")) {
+            query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
+            try {
+                rs1 = statement.executeQuery(query1);
+                rs2 = statement1.executeQuery(query2);
+                while (rs1.next() && rs2.next()) {
+                    String xValue = rs1.getString("date");
+                    Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                    series.getData().add(new XYChart.Data<>(xValue, yValue));
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        if (dataName.equals("CPA")) {
+                query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalConversions", startDate, endDate, gender, income, context, age);
+                try {
+                    rs1 = statement.executeQuery(query1);
+                    rs2 = statement1.executeQuery(query2);
+                    while (rs1.next() && rs2.next()) {
+                        String xValue = rs1.getString("date");
+                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        System.out.println(xValue);
+                        System.out.println(yValue);
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
-    public Map<String, Double> getAverageClickCostPerDay(String table) {
-        Map<String, Double> averageClickCostPerDay = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+            }
+        if (dataName.equals("CPM")) {
+                query1 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalImpressions", startDate, endDate, gender, income, context, age);
+                try {
+                    rs1 = statement.executeQuery(query1);
+                    rs2 = statement1.executeQuery(query2);
+                    while (rs1.next() && rs2.next()) {
+                        String xValue = rs1.getString("date");
+                        Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        if (dataName.equals("CPC")) {
+                query1 = queryGenerator("totalCost", startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+                try {
+                    rs1 = statement.executeQuery(query1);
+                    rs2 = statement1.executeQuery(query2);
+                    while (rs1.next() && rs2.next()) {
+                        String xValue = rs1.getString("date");
+                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
-        try {
-            String query = "SELECT DATE(date) AS Date, AVG(clickCost) AS AvgClickCost FROM " + table + " GROUP BY DATE(date) ORDER BY Date";
-            ResultSet resultSet = statement.executeQuery(query);
+            }
+        if (dataName.equals("bounceRate")) {
+                query1 = queryGenerator("totalBounces", startDate, endDate, gender, income, context, age);
+                query2 = queryGenerator("totalClicks", startDate, endDate, gender, income, context, age);
+                try {
+                    rs1 = statement.executeQuery(query1);
+                    rs2 = statement1.executeQuery(query2);
+                    while (rs1.next() && rs2.next()) {
+                        String xValue = rs1.getString("date");
+                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
-            while (resultSet.next()) {
-                String date = resultSet.getString("Date");
-                double avgClickCost = resultSet.getDouble("AvgClickCost");
-                averageClickCostPerDay.put(date, avgClickCost);
-                System.out.println("Date: " + date + ", Avg Click Cost: " + avgClickCost);
+            }
+            return series;
+        }
+
+
+    private String queryGenerator(String dataName, String startDate, String endDate, String gender, String income, String context, String age){
+        String query = "";
+        String filterQuery = filterQueryHelper(gender,age,income,context);
+        if(dataName.equals("totalClicks")){
+            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM clicklog as click " +  "JOIN impressionlog AS impression ON click.id = impression.id "+ filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+        }
+        if(dataName.equals("totalImpressions")){
+            query = "SELECT DATE_FORMAT(date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM impressionlog as impression " + filterQuery + " AND impression.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY DATE_FORMAT(impression.Date, '%Y-%m-%d %H:00:00')";
+        }
+        if(dataName.equals("totalUniques")){
+            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(DISTINCT click.id) AS data " +
+                    "FROM clicklog as click " +
+                    "JOIN impressionlog AS impression ON click.id = impression.id "  + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+        }
+        if(dataName.equals("totalBounces")){
+            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM clicklog as click " +
+                    "JOIN impressionlog AS impression ON click.id = impression.id JOIN serverlog AS server ON click.id = server.id "
+                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > 3 OR server.pagesviewed > 1) GROUP BY date";
+        }
+        if(dataName.equals("totalConversions")){
+            query = "SELECT DATE_FORMAT(server.entryDate, '%Y-%m-%d %H:00:00') AS date, COUNT(*) AS data " +
+                    "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY entryDate";
+        }
+        if(dataName.equals("totalCost")){
+            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date, SUM(click.ClickCost) AS data " +
+                    "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+        }
+        return query;
+    }
+
+    private String filterQueryHelper(String gender, String age, String income, String context){
+        if(gender.equals(" ")){
+            gender = "IS NOT NULL";
+        }
+        else{
+            gender = "= '" + gender + "'";
+        }
+        if(age.equals(" ")){
+            age = "IS NOT NULL";
+        }
+        else{
+            age = "= '" + age + "'";
+        }
+        if(income.equals(" ")){
+            income = "IS NOT NULL";
+        }
+        else{
+            income = "= '" + income + "'";
+        }
+        if(context.equals(" ")){
+            context = "IS NOT NULL";
+        }
+        else{
+            context = "= '" + context + "'";
+        }
+        String query = "WHERE impression.Gender " + gender + " AND impression.Age " + age + " AND impression.Income " + income + " AND impression.Context " + context;
+        return query;
+    }
+    public ObservableList<String> getGenders(){
+        ObservableList<String> genders = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Gender FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                genders.add(rs.getString("gender"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        return averageClickCostPerDay;
+        genders.add(" ");
+        return genders;
     }
-
-
-
-
-
+    public ObservableList<String> getContext(){
+        ObservableList<String> context = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Context FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                context.add(rs.getString("context"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        context.add(" ");
+        return context;
+    }
+    public ObservableList<String> getAge(){
+        ObservableList<String> age = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Age FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                age.add(rs.getString("age"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        age.add(" ");
+        return age;
+    }
+    public ObservableList<String> getIncome(){
+        ObservableList<String> income= FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Income FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                income.add(rs.getString("income"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        income.add(" ");
+        return income;
+    }
 
 
 }

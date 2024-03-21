@@ -46,7 +46,8 @@ public class DbConnection {
 
         try {
             logger.log(Level.INFO, "establishing connection");
-            conn = DriverManager.getConnection(url,getUser() , getPass());
+
+            conn = DriverManager.getConnection(url,"root" , "149162536496481Mkt!");
             DataManager.getConn();
             UserManager.getConn();
 
