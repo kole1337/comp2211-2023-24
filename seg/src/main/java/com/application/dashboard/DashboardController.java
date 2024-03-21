@@ -381,6 +381,19 @@ public class DashboardController implements Initializable {
 
                 toDate.setValue(LocalDate.of(year,month,day));
             }
+           if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
+                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
+                }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
+                }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
+                }else{
+                    dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
+                }
+            }else {
+                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
+            }
             // Increase the spacing between tick labels
             xAxis.setTickLabelGap(10);
 
@@ -633,6 +646,17 @@ public class DashboardController implements Initializable {
 //        logger.log(Level.INFO, "Loading Total clicks within start and end time");
 //        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
+      public int countTotalBounces(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading Total Bounces");
+
+        return dataman.selectTotalBounces(timeSpentBounce.getText(), pageViewedBounce.getText());
+    }
+    public double countBounceRate(){
+        logger = Logger.getLogger(DashboardController.class.getName());
+        logger.log(Level.INFO, "Loading Bounce Rate");
+        return dataman.selectBounceRate(timeSpentBounce.getText(), pageViewedBounce.getText());
+    }
 
     //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(){
