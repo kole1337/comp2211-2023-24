@@ -29,9 +29,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <?import java.lang.Double?>
-<AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0" styleClass="D:\year2\seg\comp2211\seg\src\main\resources\com\application\login\dashboard.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+
+
+<AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
         <MenuBar layoutX="3.0" layoutY="2.0">
             <menus>
@@ -70,7 +71,7 @@
             </menus>
         </MenuBar>
         <Button fx:id="logoutButton" layoutX="243.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" text="Logout" />
-        <VBox fx:id="dataSelection" layoutX="82.0" layoutY="56.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="494.0" prefWidth="178.0" spacing="10.0" style="-fx-background-color: white; -fx-border-insets: 50;">
+        <VBox fx:id="dataSelection" layoutX="82.0" layoutY="56.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="494.0" prefWidth="178.0" spacing="10.0">
             <children>
                 <Label text="Data to view">
                     <opaqueInsets>

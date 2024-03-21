@@ -20,6 +20,14 @@ public  class DataManager {
 //    public static void main(String[] args) throws SQLException {
 //    }
 
+    public static void deleteData(String tableName){
+        try{
+            pstmt = conn.prepareStatement("DELETE FROM " + tableName +";");
+
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Could not delete data from table: " + tableName);
+        }
+    }
 
     public static void getConn(){
         try {
