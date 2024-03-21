@@ -29,7 +29,8 @@ public  class DataManager {
     private static ResultSet rs;
     private static ResultSet rs1;
     private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
-
+    public int bouncePages = 1;
+    public int bounceTimeMinute = 3;
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
 //    public static void main(String[] args) throws SQLException {
@@ -466,7 +467,7 @@ public  class DataManager {
             query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM clicklog as click " +
                     "JOIN impressionlog AS impression ON click.id = impression.id JOIN serverlog AS server ON click.id = server.id "
-                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > 3 OR server.pagesviewed > 1) GROUP BY date";
+                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > " + getBounceTimeMinte() + " OR server.pagesviewed > " + getBouncePages() + ") GROUP BY date";
         }
         if(dataName.equals("totalConversions")){
             query = "SELECT DATE_FORMAT(server.entryDate, " + timePeriod + " ) AS date, COUNT(*) AS data " +
@@ -563,6 +564,17 @@ public  class DataManager {
         income.add(" ");
         return income;
     }
-
+    public void setBounceTimeMinute(int newTime){
+        bounceTimeMinute = newTime;
+    }
+    public void setBouncePages(int pages){
+        bouncePages = pages;
+    }
+    public String getBounceTimeMinte(){
+        return Integer.toString(bounceTimeMinute);
+    }
+    public String getBouncePages(){
+        return Integer.toString(bouncePages);
+    }
 
 }

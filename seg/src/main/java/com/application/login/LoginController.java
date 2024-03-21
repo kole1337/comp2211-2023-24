@@ -59,7 +59,7 @@ public class LoginController {
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
                 logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
-                root = FXMLLoader.load(getClass().getResource("dashboard-view.fxml"));
+                root = FXMLLoader.load(getClass().getResource("import-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
                 stage.setScene(scene);

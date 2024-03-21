@@ -159,6 +159,42 @@ public class DashboardController implements Initializable {
     boolean serverLoaded = false;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            } else {
+                // Call the dataman.setBounce method with the new value
+                try {
+                    int timeValue = Integer.parseInt(newValue);
+                    dataman.setBounceTimeMinute(timeValue);
+                } catch (NumberFormatException e) {
+                    // Handle the case when the input is an empty string or invalid number
+                    // You can show an error message or take appropriate action
+                }
+            }
+        });
+        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+                errorAlert.setContentText("Only accept integers");
+                errorAlert.showAndWait();
+            } else {
+                // Call the dataman.setBounce method with the new value
+                try {
+                    int pageValue = Integer.parseInt(newValue);
+                    dataman.setBouncePages(pageValue);
+                } catch (NumberFormatException e) {
+                    // Handle the case when the input is an empty string or invalid number
+                    // You can show an error message or take appropriate action
+                }
+            }
+        });
         // Assuming you have defined the ComboBoxes in your controller class
         ObservableList<String> hours = FXCollections.observableArrayList();
         ObservableList<String> minutes = FXCollections.observableArrayList();
@@ -210,27 +246,6 @@ public class DashboardController implements Initializable {
 
     }
 
-    public void initialize(){
-        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
-                errorAlert.setContentText("Only accept integers");
-                errorAlert.showAndWait();
-            }
-        });
-        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
-                errorAlert.setContentText("Only accept integers");
-                errorAlert.showAndWait();
-            }
-        });
-        
-    }
 
 
     public void loadCSV(ActionEvent actionEvent) {
