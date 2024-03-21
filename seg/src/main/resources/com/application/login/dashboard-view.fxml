@@ -111,90 +111,108 @@
                         <ComboBox fx:id="fromHour" /><Label text=":" /><ComboBox fx:id="fromMinute" /><Label text=":" /><ComboBox fx:id="fromSecond" />
                     </HBox>
 
-                    <!-- DatePicker for selecting the end date -->
-                    <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="End Date" />
-                    <HBox fx:id="toTimeHBox">
-                        <ComboBox fx:id="toHour" /><Label text=":" /><ComboBox fx:id="toMinute" /><Label text=":" /><ComboBox fx:id="toSecond" />
-                    </HBox>
-                    <Button text="show" />
-                </VBox>
-            </children>
-            <opaqueInsets>
-                <Insets />
-            </opaqueInsets>
-        </VBox>
-        <Button fx:id="loadCSVbutton" layoutX="16.0" layoutY="706.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Clicks" visible="false">
-            <font>
-                <Font name="System Bold" size="14.0" />
-            </font>
-        </Button>
-        <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Impressions" visible="false">
-            <font>
-                <Font name="System Bold" size="14.0" />
-            </font>
-        </Button>
-        <Button fx:id="loadCSVbutton2" layoutX="16.0" layoutY="781.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="17.0" prefWidth="178.0" text="Load Server Log" visible="false">
-            <font>
-                <Font name="System Bold" size="14.0" />
-            </font>
-        </Button>
-        <StackedBarChart fx:id="genderBarChart" layoutX="1078.0" layoutY="403.0" prefHeight="400.0" prefWidth="277.0" title="Gender Graph" visible="false">
-            <xAxis>
-                <CategoryAxis side="BOTTOM" />
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT" />
-            </yAxis>
-        </StackedBarChart>
-        <TabPane fx:id="chartPane" layoutX="978.0" layoutY="78.0" prefHeight="445.0" prefWidth="455.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-                <Tab text="Age Graph">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <PieChart fx:id="ageGraph" layoutX="-1.0" prefHeight="413.0" prefWidth="455.0" title="Age Graph" visible="true" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Gender Graph">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                            <children>
-                                <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0" title="Gender Graph" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Income graph">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                            <children>
-                                <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0" prefWidth="439.0" title="Income Graph" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Context origin">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
-                            <children>
-                                <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0" prefWidth="439.0" title="Context Graph" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Conversion">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0" title="Conversion Graph" visible="true" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-            <Tab text="Histogram">
-              <content>
+
+                <!-- DatePicker for selecting the end date -->
+                <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25"
+                            prefWidth="200" promptText="End Date"/>
+                <HBox fx:id="toTimeHBox">
+                    <ComboBox fx:id="toHour"/>
+                    <Label text=":"/>
+                    <ComboBox fx:id="toMinute"/>
+                    <Label text=":"/>
+                    <ComboBox fx:id="toSecond"/>
+                </HBox>
+                <Button text="show" onAction="#loadCSVWithinDates"/>
+            </VBox>
+            <TextField fx:id="timeSpentBounce" promptText="time spent for a bounce" layoutX="100" layoutY="110"/>
+            <TextField fx:id="pageViewedBounce" promptText="page viewed for a bounce" layoutX="100" layoutY="113"/>
+        </children>
+        <opaqueInsets>
+            <Insets/>
+        </opaqueInsets>
+    </VBox>
+    <Button fx:id="loadCSVbutton" layoutX="16.0" layoutY="706.0" mnemonicParsing="false" onAction="#loadCSV"
+            prefHeight="17.0" prefWidth="178.0" text="Load Clicks" visible="false">
+        <font>
+            <Font name="System Bold" size="14.0"/>
+        </font>
+    </Button>
+    <Button fx:id="loadCSVbutton1" layoutX="16.0" layoutY="743.0" mnemonicParsing="false" onAction="#loadCSV"
+            prefHeight="17.0" prefWidth="178.0" text="Load Impressions" visible="false">
+        <font>
+            <Font name="System Bold" size="14.0"/>
+        </font>
+    </Button>
+    <Button fx:id="loadCSVbutton2" layoutX="16.0" layoutY="781.0" mnemonicParsing="false" onAction="#loadCSV"
+            prefHeight="17.0" prefWidth="178.0" text="Load Server Log" visible="false">
+        <font>
+            <Font name="System Bold" size="14.0"/>
+        </font>
+    </Button>
+    <StackedBarChart fx:id="genderBarChart" layoutX="1078.0" layoutY="403.0" prefHeight="400.0" prefWidth="277.0"
+                     title="Gender Graph" visible="false">
+        <xAxis>
+            <CategoryAxis side="BOTTOM"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis side="LEFT"/>
+        </yAxis>
+    </StackedBarChart>
+    <TabPane fx:id="chartPane" layoutX="978.0" layoutY="78.0" prefHeight="445.0" prefWidth="455.0"
+             style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+            <Tab text="Age Graph">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <children>
+                            <PieChart fx:id="ageGraph" layoutX="-1.0" prefHeight="413.0" prefWidth="455.0"
+                                      title="Age Graph" visible="true"/>
+                        </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Gender Graph">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                        <children>
+                            <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0"
+                                      title="Gender Graph"/>
+                        </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Income graph">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                        <children>
+                            <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0"
+                                      prefWidth="439.0" title="Income Graph"/>
+                        </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Context origin">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
+                        <children>
+                            <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0"
+                                      prefWidth="439.0" title="Context Graph"/>
+                        </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Conversion">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <children>
+                            <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0"
+                                      title="Conversion Graph" visible="true"/>
+                        </children>
+                    </AnchorPane>
+                </content>
+            </Tab>
+        <Tab text="Histogram">
+            <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                          <BarChart fx:id="histogramClicks" layoutY="7.0" prefHeight="391.0" prefWidth="447.0" title="Conversion Graph" visible="true">
@@ -261,67 +279,91 @@
                   <font>
                       <Font size="18.0" />
                   </font>
-            </Label>
-              <Label fx:id="avgClickPriceLabel" layoutX="1.0" layoutY="161.0" text="Average price per click:">
-                  <font>
-                      <Font size="18.0" />
-                  </font>
-            </Label>
-              <Label fx:id="totalEntriesLabel" layoutY="28.0" text="Total entries from ads:">
-                  <font>
-                      <Font size="18.0" />
-                  </font>
-              </Label>
-              <Label fx:id="avgPagesViewedLabel" layoutX="2.0" layoutY="134.0" text="Average pages viewed:">
-                  <font>
-                      <Font size="18.0" />
-                  </font>
-              </Label>
-            <Label fx:id="totalBouncesLabel" layoutX="2.0" layoutY="188.0" prefHeight="17.0" prefWidth="183.0" text="Total Bounces:">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Label fx:id="bounceRateLabel" layoutX="2.0" layoutY="213.0" prefHeight="17.0" prefWidth="183.0" text="Bounce rate:">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-      <Label layoutX="981.0" layoutY="529.0" text="Data:">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-        <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
-            <image>
 
-                <Image url="@../../../tutorial1.png" />
-            </image>
-        </ImageView>
-        <ImageView fx:id="uploadPNG" fitHeight="824.0" fitWidth="1410.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true" visible="false">
-            <image>
-                <Image url="@../../../tutorial2.png" />
-            </image>
-        </ImageView>
-        <Button fx:id="tutorialOFF" layoutX="1192.0" layoutY="721.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
-            <font>
-                <Font name="System Bold" size="15.0" />
-            </font>
-      </Button>
-      <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="727.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Button>
-      <Label fx:id="clicksLoadedLabel" layoutX="406.0" layoutY="56.0" text="clicks_log.csv: not loaded" />
-      <Label fx:id="impressionLoadedLabel" layoutX="585.0" layoutY="56.0" text="impression_log.csv: not loaded" />
-      <Label fx:id="serverLoadedLabel" layoutX="793.0" layoutY="56.0" text="server_log.csv: not loaded" />
-      <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Button>
-      <CheckBox layoutX="25.0" layoutY="128.0" mnemonicParsing="false" text="clicks" />
-      <CheckBox layoutX="25.0" layoutY="78.0" mnemonicParsing="false" onAction="#selectClickGraph" text="clicks" />
-    </children>
+            </Label>
+            <Label fx:id="uniqueImpressionLabel" layoutY="107.0" text="Unique impressions:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Label>
+            <Label fx:id="zeroCostClickLabel" layoutY="82.0" text="Zero cost clicks:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+          </Label>
+            <Label fx:id="totalClicksLabel" layoutY="55.0" text="Total Clicks:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+          </Label>
+            <Label fx:id="avgClickPriceLabel" layoutX="1.0" layoutY="161.0" text="Average price per click:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+          </Label>
+            <Label fx:id="totalEntriesLabel" layoutY="28.0" text="Total entries from ads:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Label>
+            <Label fx:id="avgPagesViewedLabel" layoutX="2.0" layoutY="134.0" text="Average pages viewed:">
+                <font>
+                    <Font size="18.0"/>
+                </font>
+            </Label>
+          <Label fx:id="totalBouncesLabel" layoutX="2.0" layoutY="188.0" prefHeight="17.0" prefWidth="183.0"
+                 text="Total Bounces:">
+              <font>
+                  <Font size="18.0"/>
+              </font>
+          </Label>
+          <Label fx:id="bounceRateLabel" layoutX="2.0" layoutY="213.0" prefHeight="17.0" prefWidth="183.0"
+                 text="Bounce rate:">
+              <font>
+                  <Font size="18.0"/>
+              </font>
+          </Label>
+        </children>
+    </Pane>
+    <Label layoutX="981.0" layoutY="529.0" text="Data:">
+        <font>
+          <Font size="18.0"/>
+        </font>
+    </Label>
+    <ImageView fx:id="tutPNG" fitHeight="820.0" fitWidth="1409.0" layoutX="3.0" layoutY="1.0" pickOnBounds="true"
+               preserveRatio="true" visible="false">
+        <image>
+
+            <Image url="@../../../tutorial1.png"/>
+        </image>
+    </ImageView>
+    <ImageView fx:id="uploadPNG" fitHeight="824.0" fitWidth="1410.0" layoutX="-1.0" pickOnBounds="true"
+               preserveRatio="true" visible="false">
+        <image>
+            <Image url="@../../../tutorial2.png"/>
+        </image>
+    </ImageView>
+    <Button fx:id="tutorialOFF" layoutX="1192.0" layoutY="721.0" mnemonicParsing="false" onAction="#disableTutPNG"
+            prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL" visible="false">
+        <font>
+            <Font name="System Bold" size="15.0"/>
+        </font>
+    </Button>
+    <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="727.0" mnemonicParsing="false" onAction="#loadGraphs"
+            prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+        <font>
+          <Font name="System Bold" size="14.0"/>
+        </font>
+    </Button>
+    <Label fx:id="clicksLoadedLabel" layoutX="406.0" layoutY="56.0" text="clicks_log.csv: not loaded"/>
+    <Label fx:id="impressionLoadedLabel" layoutX="585.0" layoutY="56.0" text="impression_log.csv: not loaded"/>
+    <Label fx:id="serverLoadedLabel" layoutX="793.0" layoutY="56.0" text="server_log.csv: not loaded"/>
+    <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0"
+            prefWidth="177.0" text="Load SQL">
+        <font>
+          <Font name="System Bold" size="14.0"/>
+        </font>
+    </Button>
+    <CheckBox layoutX="25.0" layoutY="128.0" mnemonicParsing="false" text="clicks"/>
+    <CheckBox layoutX="25.0" layoutY="78.0" mnemonicParsing="false" onAction="#selectClickGraph" text="clicks"/>
 </AnchorPane>
