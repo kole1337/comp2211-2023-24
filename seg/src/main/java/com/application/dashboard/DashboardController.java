@@ -128,16 +128,14 @@ public class DashboardController{
     public ComboBox ComboBox;
     @FXML
     public VBox timeControlVBox = new VBox ();
-    @FXML
-    public DatePicker fromDate = new DatePicker();
+
     @FXML
     public ComboBox<String> fromHour = new ComboBox<>();
     @FXML
     public ComboBox<String> fromMinute = new ComboBox<>();
     @FXML
     public ComboBox<String> fromSecond = new ComboBox<>();
-    @FXML
-    public DatePicker toDate = new DatePicker();
+
     @FXML
     public ComboBox<String> toHour = new ComboBox<>();
     @FXML
@@ -180,25 +178,25 @@ public class DashboardController{
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
 
-        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
-                errorAlert.setContentText("Only accept integers");
-                errorAlert.showAndWait();
-            }
-        });
-        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) { // Regular expression for digits only
-                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
-                errorAlert.setContentText("Only accept integers");
-                errorAlert.showAndWait();
-            }
-
-        });
+//        timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+//                timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+//                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+//                errorAlert.setHeaderText("Invalid Setting for Time Spent Bounce");
+//                errorAlert.setContentText("Only accept integers");
+//                errorAlert.showAndWait();
+//            }
+//        });
+//        pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue.matches("\\d*")) { // Regular expression for digits only
+//                pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
+//                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+//                errorAlert.setHeaderText("Invalid Setting for Page Viewed Bounce");
+//                errorAlert.setContentText("Only accept integers");
+//                errorAlert.showAndWait();
+//            }
+//
+//        });
     }
 
 
@@ -232,14 +230,14 @@ public class DashboardController{
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
-        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
-
-        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
-        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClickWithinDates());
-        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
-        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
-        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
+//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+//        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
+//
+//        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
+//        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClickWithinDates());
+//        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
+//        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
+//        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
     }
 
     public void loadDataGraphs(ActionEvent actionEvent){
@@ -513,33 +511,33 @@ public class DashboardController{
         return dataman.selectTotalData("impressionlog");
     }
     // function to count the unique impressions within dates
-    public int countUniqueImpressionsWithinDates(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO, "Loading Unique visits within start and end time from impressions_log");
-        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public int countUniqueImpressionsWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Unique visits within start and end time from impressions_log");
+//        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to count the zero cost clicks
     public int countZeroCostClick(){
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
         return dataman.selectZeroClickCost();
     }
-    public int countZeroCostClickWithinDates(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO,"Loading Zero Cost within start and end time Clicks");
-        return dataman.selectZeroClickCostWithinRange(getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public int countZeroCostClickWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO,"Loading Zero Cost within start and end time Clicks");
+//        return dataman.selectZeroClickCostWithinRange(getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to find the average price per click
     public double countAveragePricePerClick(){
         logger.log(Level.INFO, "Loading Average Price per Click");
         return dataman.selectAvgData("clickCost", "clicklog");
     }
-    public double countAverageProcePerClickWithinDates(){
-        Logger logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO, "Loading Average Price per Click");
-        return dataman.selectAvgDataWithinRange("clickCost", "clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public double countAverageProcePerClickWithinDates(){
+//        Logger logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Average Price per Click");
+//        return dataman.selectAvgDataWithinRange("clickCost", "clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
 
     //Function to find the total impressions
@@ -547,9 +545,9 @@ public class DashboardController{
 
         return dataman.selectTotalData("impressionlog");
     }
-    public int countTotalImpressionsWithinDates(){
-        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public int countTotalImpressionsWithinDates(){
+//        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     //Function to find the total clicks for the campaign
     public int countTotalClicks(){
@@ -558,11 +556,11 @@ public class DashboardController{
 
         return dataman.selectTotalData("clicklog");
     }
-    public int countTotalClicksWithinDates(){
-        logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO, "Loading Total clicks within start and end time");
-        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public int countTotalClicksWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading Total clicks within start and end time");
+//        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
 
     public int totalBounces(){
 
@@ -576,22 +574,22 @@ public class DashboardController{
         logger.log(Level.ALL, "Loading total entries from ads.");
         return dataman.selectTotalData("serverlog");
     }
-    public int countTotalEntriesWithinDates(){
-        logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.ALL, "Loading total entries from ads within start and end time.");
-        return dataman.selectTotalDataWithinRange("severlog", getStartDateTimeAsString(),getEndDateTimeAsString());
-    }
+//    public int countTotalEntriesWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.ALL, "Loading total entries from ads within start and end time.");
+//        return dataman.selectTotalDataWithinRange("severlog", getStartDateTimeAsString(),getEndDateTimeAsString());
+//    }
     //Function to find the average number of pages
     public double countAvgPageViewed(){
 
         logger.log(Level.INFO, "Loading average pages viewed.");
         return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
     }
-    public double countAvgPageViewedWithinDates(){
-        logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO, "Loading average pages viewed.");
-        return Math.round(dataman.selectAvgDataWithinRange("pagesViewed", "serverlog", getStartDateTimeAsString(),getEndDateTimeAsString()) * 100) / 100;
-    }
+//    public double countAvgPageViewedWithinDates(){
+//        logger = Logger.getLogger(DashboardController.class.getName());
+//        logger.log(Level.INFO, "Loading average pages viewed.");
+//        return Math.round(dataman.selectAvgDataWithinRange("pagesViewed", "serverlog", getStartDateTimeAsString(),getEndDateTimeAsString()) * 100) / 100;
+//    }
 
     //loading bar function
     public void loadingBar(){
