@@ -103,6 +103,89 @@ public  class DataManager {
         }
         return totals;
     }
+    public int selectTotalDataWithinRange(String table, String startDateTime, String endDateTime){
+       int totals = 0;
+       try{
+           String query = "SELECT COUNT(*) FROM " + table +
+                   " WHERE date_column >= '" + startDateTime +
+                   "' AND date_column <= '" + endDateTime + "'";
+
+            rs = statement.executeQuery(query);
+           if (rs.next()) {
+               totals = rs.getInt(1); // Retrieve the count from the result set
+           }
+       }catch(Exception e){
+           e.printStackTrace();
+       }
+       return totals;
+    }
+
+    /**
+     * This is for selecting data from serverlog to get the total bounces
+     * @param timeSpentBounce this is the String that user specifying which timespent will be counted as bounce
+     * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted as bounce
+     * @return total bounces which data type is int
+     */
+    public int selectTotalBounces(String timeSpentBounce, String pageViewedBounce){
+        int totals = 0;
+        String timeBounce ;
+        String pageBounce;
+        if (timeSpentBounce.equals("")){
+            timeBounce = "10";
+        }else{
+            timeBounce = timeSpentBounce;
+        }
+        if(pageViewedBounce.equals("")){
+            pageBounce= "1";
+        }else{
+            pageBounce = pageViewedBounce;
+        }
+        try {
+            String query = "SELECT COUNT(*) FROM serverlog " +
+                    "WHERE TIMESTAMPDIFF(SECOND, entry_date_time, exit_date_time) <= " + timeBounce +
+                    "OR page_viewed < " + pageBounce;
+
+            rs = statement.executeQuery(query);
+            if (rs.next()) {
+                totals = rs.getInt(1); // Retrieve the count from the result set
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return totals;
+    }
+
+    /**
+     * This is for selecting data from serverlog to get the bounce rate
+     * @param timeSpentBounce this is the String that user specifying which timespent will be counted bounce
+     * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted bounce
+     * @return bounce rate which data type is double
+     */
+    public double selectBounceRate(String timeSpentBounce, String pageViewedBounce) {
+        double bounceRate = 0.0;
+        int totalBounces = selectTotalBounces(timeSpentBounce, pageViewedBounce);
+        int totalSessions = 0;
+
+        try {
+            // Query to count the total number of sessions
+            String queryTotalSessions = "SELECT COUNT(*) FROM serverlog";
+
+            rs = statement.executeQuery(queryTotalSessions);
+            if (rs.next()) {
+                totalSessions = rs.getInt(1); // Retrieve the count from the result set
+            }
+
+            // Calculating the bounce rate as a percentage
+            if (totalSessions > 0) { // Avoid division by zero
+                bounceRate = (double) totalBounces / totalSessions * 100;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return bounceRate;
+    }
+
 
     public int selectZeroClickCost(){
         int totals = 0;
@@ -112,6 +195,22 @@ public  class DataManager {
                 totals = rs.getInt(1);
             }
         }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
+    public int selectZeroClickCostWithinRange(String startDateTime, String endDateTime){
+        int totals = 0;
+        try{
+            String query = "SELECT COUNT(*) FROM clicklog" +
+                    " WHERE date_column >= '" + startDateTime +
+                    "' AND date_column <= '" + endDateTime + "'";
+
+            rs = statement.executeQuery(query);
+            if(rs.next()) {
+                totals = rs.getInt(1);
+            }
+        }catch(Exception e){
             e.printStackTrace();
         }
         return totals;
@@ -129,8 +228,45 @@ public  class DataManager {
         }
         return totals;
     }
+    public int selectAvgDataWithinRange(String column, String table, String startDateTime, String endDateTime){
+        int totals = 0;
+        try{
+            String query = "SELECT AVG("+ column+ ") FROM " + table +
+                    " WHERE date_column >= '" + startDateTime +
+                    "' AND date_column <= '" + endDateTime + "'";
+            rs = statement.executeQuery(query);
+            if(rs.next()) {
+                totals = rs.getInt(1);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
 
     public int[] getUniqueAppearanceInt(String column, String table){
+        int uniqueVals = uniqueValues(column, table);
+        int totals[] = new int[uniqueVals];
+
+        try {
+            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" GROUP BY "+column);
+            int i = 0;
+            while(rs.next()){
+
+                totals[i] = rs.getInt("count");
+                ++i;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
+/*
+String query = "SELECT AVG("+ column+ ") FROM " + table +
+                    " WHERE date_column >= '" + startDateTime +
+                    "' AND date_column <= '" + endDateTime + "'";
+ */
+    public int[] getUniqueAppearanceIntWithinDates(String column, String table, String startDateTime, String endDateTime){
         int uniqueVals = uniqueValues(column, table);
         int totals[] = new int[uniqueVals];
 
@@ -165,6 +301,24 @@ public  class DataManager {
         }
         return totals;
     }
+    public String[] getUniqueAppearanceStringWithinDates(String column, String table, String startDateTime, String endDateTime){
+        int uniqueVals = uniqueValues(column, table);
+        String totals[] = new String[uniqueVals];
+
+        try {
+            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" GROUP BY "+column);
+            int i = 0;
+            while(rs.next()){
+
+                totals[i] = rs.getString(column);
+                ++i;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
+
 
     public void loadCSVintoDB(){
 
@@ -221,4 +375,5 @@ public  class DataManager {
         }
         return totals;
     }
+
 }
