@@ -114,8 +114,15 @@
                     <Label text=":" />
                     <ComboBox fx:id="fromSecond" />
                 </HBox>
->>>>>>> 67bc2920b715eb3a74db50072692ca2bfaa3c7f6
-
+                <HBox>
+                    <ComboBox fx:id="genderFilter" prefWidth="150.0" />
+                    <Label text = " " />
+                    <ComboBox fx:id="contextFilter" prefWidth="150.0" />
+                    <Label text = " " />
+                    <ComboBox fx:id="ageFilter" prefWidth="150.0" />
+                    <Label text = " " />
+                    <ComboBox fx:id = "incomeFilter" prefWidth = "150.0" />
+                </HBox>
 
                 <!-- DatePicker for selecting the end date -->
                 <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="End Date" />

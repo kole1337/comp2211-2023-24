@@ -147,6 +147,10 @@ public class DashboardController implements Initializable {
 
     @FXML
     public TextField pageViewedBounce;
+    public ComboBox genderFilter;
+    public ComboBox contextFilter;
+    public ComboBox ageFilter;
+    public ComboBox incomeFilter;
 
     CategoryAxis xAxis = new CategoryAxis();
 
@@ -172,6 +176,7 @@ public class DashboardController implements Initializable {
             seconds.add(String.format("%02d", i));
         }
 
+
 // Set the previously populated hour, minute, and second lists to the ComboBoxes
         fromHour.setItems(hours);
         fromMinute.setItems(minutes);
@@ -179,22 +184,17 @@ public class DashboardController implements Initializable {
         toHour.setItems(hours);
         toMinute.setItems(minutes);
         toSecond.setItems(seconds);
+        genderFilter.setItems(dataman.getGenders());
+        contextFilter.setItems(dataman.getContext());
+        ageFilter.setItems(dataman.getAge());
+        incomeFilter.setItems(dataman.getIncome());
+        genderFilter.setValue(" ");
+        contextFilter.setValue(" ");
+        ageFilter.setValue(" ");
+        incomeFilter.setValue(" ");
     }
 
 
-
-    private XYChart.Series<String, Number> convertMapToSeries(Map<LocalDateTime, Double> dataset, String seriesName) {
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName(seriesName);
-        // Iterate over the entries of the map and add them to the series
-        for (Map.Entry<LocalDateTime, Double> entry : dataset.entrySet()) {
-            String xValue = entry.getKey().toString(); // Assuming LocalDateTime.toString() provides the desired format
-            Number yValue = entry.getValue();
-            series.getData().add(new XYChart.Data<>(xValue, yValue));
-        }
-
-        return series;
-    }
 
     /*
      * @TODO:
@@ -284,7 +284,7 @@ public class DashboardController implements Initializable {
         }
         //to set total clicks as default graph
         if(buttonId.equals("loadCSVbutton3")){
-            buttonId = "TotalClicks";
+            buttonId = "totalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
@@ -306,7 +306,7 @@ public class DashboardController implements Initializable {
         }
         //to set total clicks as default graph
         if(buttonId.equals("loadCSVbutton3")){
-            buttonId = "TotalClicks";
+            buttonId = "totalClicks";
         }
         loadingBar();
         dc = new DatasetCreator(fph);
@@ -324,7 +324,7 @@ public class DashboardController implements Initializable {
         loadContextOriginChart();
         loadConversionChart();
 //        loadHistogramChart();
-        loadHistogramClickCost();
+        //loadHistogramClickCost();
         chartPane.layout();
 
     }
@@ -368,7 +368,7 @@ public class DashboardController implements Initializable {
             //to set start date way back in the past as default, so it reads every data
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
-            dataChart.getData().add(dataman.getData(selectedButton,startDate,endDate, "Male" , "" ,"", ""));
+            dataChart.getData().add(dataman.getData(selectedButton,startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
             }
             //to set end date way far in the future as dafault, so it reads every data
         if(toDate.getValue() == null){
@@ -393,24 +393,6 @@ public class DashboardController implements Initializable {
             // Force a layout update
 
         dataChart.layout();
-        if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
-            System.out.println("Bouncing");
-            if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),pageViewedBounce.getText()), selectedButton));
-
-            }else if(timeSpentBounce.getText()==null && pageViewedBounce.getText()!=null){
-
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",pageViewedBounce.getText()), selectedButton));
-            }else if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()==null){
-
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), timeSpentBounce.getText(),""), selectedButton));
-            }else{
-
-                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time,fromDate.getValue(),toDate.getValue(), "",""), selectedButton));
-            }
-        }else {
-            dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
-        }
 
     }
 
@@ -737,20 +719,20 @@ public class DashboardController implements Initializable {
 //        histogramClicks.setTitle("Histogram");
 //
 //    }
-public void loadHistogramClickCost() {
-    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//public void loadHistogramClickCost() {
+   // Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
 
     // Create data series for the histogram chart
-    XYChart.Series<String, Number> series = new XYChart.Series<>();
+  //  XYChart.Series<String, Number> series = new XYChart.Series<>();
 
     // Populate data series with dates and corresponding click costs
-    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
-        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-    }
+   // for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+   //     series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+   // }
 
     // Add data series to the histogram chart
-    histogramClicks.getData().add(series);
-    histogramClicks.setTitle("Histogram");
+   // histogramClicks.getData().add(series);
+  //  histogramClicks.setTitle("Histogram");
 
     // Adjust the width of the bars
 //    double barWidth = 100; // Adjust this value as needed
@@ -760,7 +742,7 @@ public void loadHistogramClickCost() {
 //            bar.setStyle("-fx-bar-width: " + barWidth + ";");
 //        }
 //    }
-}
+//}
 
 
 //    public void loadHistogramClickCost() {

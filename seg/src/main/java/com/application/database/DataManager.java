@@ -1,5 +1,7 @@
 package com.application.database;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import org.jfree.data.xy.XYSeries;
 
@@ -78,21 +80,15 @@ public  class DataManager {
         }
     }
 
-    public void addClickLog(ArrayList<String[]> clickLogs) throws SQLException {
+    public void addClickLog(String date, String id, double clickCost) throws SQLException {
         String inClickLog = "INSERT INTO clicklog(date, id, clickCost) VALUES (?,?,?)";
-        int i = 0;
-        while(i<clickLogs.size()){
-            String[] clickLog = clickLogs.get(i);
-            pstmt = conn.prepareStatement(inClickLog);
-            pstmt.setString(1, clickLog[0]);
-            pstmt.setString(2, clickLog[1]);
-            pstmt.setDouble(3, Double.parseDouble(clickLog[2]));
-            pstmt.addBatch();
-            System.out.println("INSERTED!");
-            i++;
-        }
-        pstmt.executeBatch();
-        System.out.println("Clicks INSERTED");
+
+        pstmt = conn.prepareStatement(inClickLog);
+        pstmt.setString(1, date);
+        pstmt.setString(2, id);
+        pstmt.setDouble(3, clickCost);
+        pstmt.executeUpdate();
+        System.out.println("INSERTED!");
     }
     public void addImpressionLog(ArrayList<String[]> impressionLogs) throws SQLException {
         String inClickLog = "INSERT INTO impressionlog(date, id, gender, age, income, context, impression_cost) VALUES (?,?,?,?,?,?,?)";
@@ -410,25 +406,25 @@ public  class DataManager {
     }
 
     private String filterQueryHelper(String gender, String age, String income, String context){
-        if(gender.equals("")){
+        if(gender.equals(" ")){
             gender = "IS NOT NULL";
         }
         else{
             gender = "= '" + gender + "'";
         }
-        if(age.equals("")){
+        if(age.equals(" ")){
             age = "IS NOT NULL";
         }
         else{
             age = "= '" + age + "'";
         }
-        if(income.equals("")){
+        if(income.equals(" ")){
             income = "IS NOT NULL";
         }
         else{
             income = "= '" + income + "'";
         }
-        if(context.equals("")){
+        if(context.equals(" ")){
             context = "IS NOT NULL";
         }
         else{
@@ -436,6 +432,62 @@ public  class DataManager {
         }
         String query = "WHERE impression.Gender " + gender + " AND impression.Age " + age + " AND impression.Income " + income + " AND impression.Context " + context;
         return query;
+    }
+    public ObservableList<String> getGenders(){
+        ObservableList<String> genders = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Gender FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                genders.add(rs.getString("gender"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        genders.add(" ");
+        return genders;
+    }
+    public ObservableList<String> getContext(){
+        ObservableList<String> context = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Context FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                context.add(rs.getString("context"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        context.add(" ");
+        return context;
+    }
+    public ObservableList<String> getAge(){
+        ObservableList<String> age = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Age FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                age.add(rs.getString("age"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        age.add(" ");
+        return age;
+    }
+    public ObservableList<String> getIncome(){
+        ObservableList<String> income= FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT Income FROM impressionlog";
+        try{
+            rs = statement.executeQuery(query);
+            while(rs.next()){
+                income.add(rs.getString("income"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        income.add(" ");
+        return income;
     }
 
 
