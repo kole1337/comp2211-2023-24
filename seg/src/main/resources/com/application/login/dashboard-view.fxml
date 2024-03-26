@@ -31,7 +31,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="background" prefHeight="822.0" prefWidth="1434.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<AnchorPane fx:id="background" prefHeight="872.0" prefWidth="1434.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <MenuBar layoutX="3.0" layoutY="2.0">
         <menus>
             <Menu fx:id="File" mnemonicParsing="false" text="File">
@@ -250,7 +250,7 @@
             </AreaChart>
         </content>
     </ScrollPane>
-    <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="776.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
+    <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="802.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
         <font>
             <Font name="System Bold" size="14.0" />
         </font>
@@ -330,7 +330,7 @@
             <Font name="System Bold" size="15.0" />
         </font>
     </Button>
-    <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="727.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+    <Button fx:id="loadGraphButton" layoutX="3.0" layoutY="753.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
         <font>
             <Font name="System Bold" size="14.0" />
         </font>
@@ -338,7 +338,7 @@
     <Label fx:id="clicksLoadedLabel" layoutX="396.0" layoutY="34.0" text="clicks_log.csv: not loaded" />
     <Label fx:id="impressionLoadedLabel" layoutX="583.0" layoutY="34.0" text="impression_log.csv: not loaded" />
     <Label fx:id="serverLoadedLabel" layoutX="789.0" layoutY="34.0" text="server_log.csv: not loaded" />
-    <Button layoutX="3.0" layoutY="676.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="false">
+    <Button layoutX="3.0" layoutY="701.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="true">
         <font>
             <Font name="System Bold" size="14.0" />
         </font>
