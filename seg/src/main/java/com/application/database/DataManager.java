@@ -25,9 +25,7 @@ public  class DataManager {
     private static Statement statement;
     private static Statement statement1;
     private static PreparedStatement pstmt;
-    private static PreparedStatement pstmt1;
     private static ResultSet rs;
-    private static ResultSet rs1;
     private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
     public int bouncePages = 1;
     public int bounceTimeMinute = 3;
@@ -160,7 +158,7 @@ public  class DataManager {
         try {
             String query = "SELECT COUNT(*) FROM serverlog " +
                     "WHERE TIMESTAMPDIFF(SECOND, entry_date_time, exit_date_time) <= " + timeBounce +
-                    "OR page_viewed < " + pageBounce;
+                    "OR page_viewed < " + pageBounce ;
 
             rs = statement.executeQuery(query);
             if (rs.next()) {
