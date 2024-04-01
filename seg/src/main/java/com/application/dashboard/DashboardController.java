@@ -276,6 +276,8 @@ public class DashboardController implements Initializable {
         avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
+        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
+        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
         //uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
@@ -662,12 +664,12 @@ public class DashboardController implements Initializable {
 //        logger.log(Level.INFO, "Loading Total clicks within start and end time");
 //        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
-      public int countTotalBounces(){
-        logger = Logger.getLogger(DashboardController.class.getName());
-        logger.log(Level.INFO, "Loading Total Bounces");
+public int countTotalBounces(){
+    logger = Logger.getLogger(DashboardController.class.getName());
+    logger.log(Level.INFO, "Loading Total Bounces");
 
-        return dataman.selectTotalBounces(timeSpentBounce.getText(), pageViewedBounce.getText());
-    }
+    return dataman.selectTotalBounces(timeSpentBounce.getText(), pageViewedBounce.getText());
+}
     public double countBounceRate(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Bounce Rate");

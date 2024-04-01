@@ -575,4 +575,20 @@ public  class DataManager {
         return Integer.toString(bouncePages);
     }
 
+    public int selectTotalDataWithinRange(String table, String startDateTime, String endDateTime){
+        int totals = 0;
+        try{
+            String query = "SELECT COUNT(*) FROM " + table +
+                    " WHERE date_column >= '" + startDateTime +
+                    "' AND date_column <= '" + endDateTime + "'";
+
+            rs = statement.executeQuery(query);
+            if (rs.next()) {
+                totals = rs.getInt(1); // Retrieve the count from the result set
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
 }

@@ -16,7 +16,7 @@ public class DbConnection {
     private static String user;
     private static String pass;
 
-    private static  String url = "jdbc:mysql://localhost:3306/adda";
+    private static String url = "jdbc:mysql://localhost:3306/adda";
 
 
 
