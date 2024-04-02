@@ -31,7 +31,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <HBox HBox.hgrow="ALWAYS" />
@@ -41,7 +40,7 @@
             <VBox HBox.hgrow="ALWAYS">
                <children>
                   <VBox VBox.vgrow="ALWAYS" />
-                  <AnchorPane fx:id="background" prefHeight="1046.0" prefWidth="1434.0" VBox.vgrow="ALWAYS">
+                  <AnchorPane fx:id="background" prefHeight="759.0" prefWidth="1434.0" VBox.vgrow="ALWAYS">
                       <MenuBar layoutX="3.0" layoutY="2.0">
                           <menus>
                               <Menu fx:id="File" mnemonicParsing="false" text="File">
@@ -85,7 +84,7 @@
                           </menus>
                       </MenuBar>
                       <Button fx:id="logoutButton" layoutX="181.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" prefHeight="25.0" prefWidth="93.0" text="Logout" />
-                     <ScrollPane layoutY="34.0" prefHeight="520.0" prefWidth="228.0">
+                     <ScrollPane layoutY="30.0" prefHeight="445.0" prefWidth="228.0">
                         <content>
                             <VBox fx:id="dataSelection" nodeOrientation="LEFT_TO_RIGHT" prefHeight="413.0" prefWidth="212.0" spacing="10.0">
                                 <children>
@@ -239,7 +238,7 @@
                               </AreaChart>
                           </content>
                       </ScrollPane>
-                      <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="773.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
+                      <Button fx:id="loadCSVbutton3" layoutX="3.0" layoutY="678.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
                           <font>
                               <Font name="System Bold" size="14.0" />
                           </font>
@@ -319,7 +318,7 @@
                               <Font name="System Bold" size="15.0" />
                           </font>
                       </Button>
-                      <Button fx:id="loadGraphButton" layoutX="572.0" layoutY="964.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+                      <Button fx:id="loadGraphButton" layoutX="4.0" layoutY="761.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
                           <font>
                               <Font name="System Bold" size="14.0" />
                           </font>
@@ -327,13 +326,13 @@
                       <Label fx:id="clicksLoadedLabel" layoutX="450.0" layoutY="48.0" text="clicks_log.csv: not loaded" />
                       <Label fx:id="impressionLoadedLabel" layoutX="646.0" layoutY="48.0" text="impression_log.csv: not loaded" />
                       <Label fx:id="serverLoadedLabel" layoutX="874.0" layoutY="48.0" text="server_log.csv: not loaded" />
-                      <Button layoutX="297.0" layoutY="923.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="true">
+                      <Button layoutX="4.0" layoutY="716.0" mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="true">
                           <font>
                               <Font name="System Bold" size="14.0" />
                           </font>
                       </Button>
                      <ChoiceBox fx:id="selectGraph" layoutX="286.0" layoutY="44.0" prefWidth="150.0" />
-                     <ScrollPane layoutX="3.0" layoutY="558.0" prefHeight="200.0" prefWidth="222.0">
+                     <ScrollPane layoutX="3.0" layoutY="478.0" prefHeight="200.0" prefWidth="222.0">
                        <content>
                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="203.0">
                               <children>

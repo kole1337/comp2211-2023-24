@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.menu.MenuController">
+   <children>
+      <BorderPane fx:id="mainMenu" prefHeight="720.0" prefWidth="1280.0">
+         <left>
+            <VBox alignment="CENTER" prefHeight="695.0" prefWidth="149.0" spacing="20.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label prefHeight="56.0" prefWidth="165.0" text="Hello, user!" />
+                  <Button mnemonicParsing="false" onAction="#openFile" prefHeight="25.0" prefWidth="481.0" text="Select file" />
+                  <Button mnemonicParsing="false" onAction="#openDashboard" prefHeight="25.0" prefWidth="404.0" text="Select dashboard" />
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="183.0" text="Admin panel" />
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="151.0" text="Settings" />
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="292.0" text="Tutorials" />
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="255.0" text="Logout" />
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </VBox>
+         </left>
+         <top>
+            <MenuBar prefHeight="0.0" prefWidth="1280.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+      </BorderPane>
+   </children>
+</AnchorPane>
