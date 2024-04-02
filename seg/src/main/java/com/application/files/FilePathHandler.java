@@ -12,6 +12,16 @@ public class FilePathHandler {
     private String clickPath;
     private String impressionPath;
     private String serverPath;
+
+    public File getFilesPath() {
+        return filesPath;
+    }
+
+    public void setFilesPath(File filesPath) {
+        this.filesPath = filesPath;
+    }
+
+    private File filesPath;
     private Logger logger = Logger.getLogger(getClass().getName());
 
 

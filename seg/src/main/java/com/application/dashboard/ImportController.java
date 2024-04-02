@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -17,6 +18,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ImportController {
+    public TextField folderPath;
+    public TextField serverPath;
+    public TextField impressionPath;
+    public TextField clicksPath;
     FilePathHandler fph = new FilePathHandler();
     private Parent root;
     private Scene scene;
@@ -26,18 +31,26 @@ public class ImportController {
     public Button importButton;
     @FXML
     public Button dashboardButton;
-    public void initialize(){
-        dashboardButton.setDisable(true);
-    }
-    public void openCampaign(){
-        FileChooserWindow fileChooser = new FileChooserWindow();
 
-        fph.fileTypeHandler(fileChooser.openFileBox());
-        System.out.println(fph.getImpressionPath());
-        System.out.println(fph.getClickPath());
-        System.out.println(fph.getServerPath());
-        System.out.println("Ready ^_^!");
-        dashboardButton.setDisable(false);
+    FileChooserWindow fileChooser = new FileChooserWindow();
+
+    public void initialize(){
+
+        //dashboardButton.setDisable(true);
+
+    }
+
+    String fileFolderPath = "";
+    public void openCampaign(){
+        fileFolderPath = fileChooser.selectFolderPath();
+
+        folderPath.setText(fileFolderPath);
+//        fph.fileTypeHandler(fileChooser.openFileBox());
+//        System.out.println(fph.getImpressionPath());
+//        System.out.println(fph.getClickPath());
+//        System.out.println(fph.getServerPath());
+//        System.out.println("Ready ^_^!");
+        //dashboardButton.setDisable(false);
     }
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
@@ -56,5 +69,26 @@ public class ImportController {
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
+    }
+
+    public void selectServerLog(ActionEvent actionEvent) {
+        String path = "";
+        path = fileChooser.openFileBox("Server Log").toString();
+        fph.setServerPath(path);
+        serverPath.setText(path);
+    }
+
+    public void selectImpressionLog(ActionEvent actionEvent) {
+        String path = "";
+        path = fileChooser.openFileBox("Impression Log").toString();
+        fph.setImpressionPath(path);
+        impressionPath.setText(path);
+    }
+
+    public void selectClickLog(ActionEvent actionEvent) {
+        String path = "";
+        path = fileChooser.openFileBox("Click Log").toString();
+        fph.setClickPath(path);
+        clicksPath.setText(path);
     }
 }

@@ -1,5 +1,6 @@
 package com.application.files;
 
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.*;
 
@@ -26,35 +27,11 @@ public class FileChooserWindow {
         }
     };
 
-    public static String[] main() { // Change return type to String[]
-        // Open file chooser dialog
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.addChoosableFileFilter(filter);
-        fileChooser.setDialogTitle("Select files"); // Updated for clarity
-        fileChooser.setMultiSelectionEnabled(true); // Enable multiple file selection
-
-        int returnValue = fileChooser.showOpenDialog(null);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File[] selectedFiles = fileChooser.getSelectedFiles(); // Get all selected files
-            String[] filePaths = new String[numberOfFiles];
-
-            // Iterate over selected files and print paths
-            for (int i = 0; i < 3; i++) {
-                System.out.println("Selected file: " + selectedFiles[i].getAbsolutePath());
-                filePaths[i] = selectedFiles[i].getAbsolutePath();
-            }
-
-            return filePaths; // Return the paths of selected files
-        } else {
-            System.out.println("No files selected.");
-        }
-        return null;
-    }
-
-    public List<File> openFileBox() {
+    public List<File> openFileBox(String filename) {
         // Open file chooser dialog
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open 1st file");
+        fileChooser.setTitle("Select "+ filename + " file");
+        fileChooser.setInitialDirectory(pathHandler.getFilesPath());
         ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
 
         fileChooser.getExtensionFilters().add(ex1);
@@ -67,9 +44,19 @@ public class FileChooserWindow {
         obj.fileTypeHandler(selectedFile);
         System.out.println(obj.getClickPath());
         return selectedFile;
-
-
     }
+
+    public String selectFolderPath(){
+        String path = "";
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+
+        File localPath = directoryChooser.showDialog(null);
+
+        pathHandler.setFilesPath(localPath);
+
+        return localPath.toString();
+    }
+
     private static void openFileInExplorer(File file) {
         // Check if Desktop is supported
         if (Desktop.isDesktopSupported()) {

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.ImportController">
-    <VBox alignment="CENTER" prefWidth="800" prefHeight="600">
-        <Button text="Import Campaign" fx:id ="importButton" onAction="#openCampaign"/>
-        <Button text="Go to Dashboard" fx:id="dashboardButton" onAction = "#openDashboard"/>
-    </VBox>
+<AnchorPane maxHeight="720.0" maxWidth="1280.0" minHeight="720.0" minWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.ImportController">
+     <Button fx:id="importButton" layoutX="719.0" layoutY="108.0" onAction="#openCampaign" prefHeight="37.0" prefWidth="179.0" text="Select campaign folder" />
+     <Button fx:id="dashboardButton" layoutX="581.0" layoutY="584.0" onAction="#openDashboard" text="Go to Dashboard" />
+   <TextField fx:id="folderPath" editable="false" layoutX="387.0" layoutY="114.0" prefHeight="25.0" prefWidth="228.0" />
+   <TextField fx:id="serverPath" editable="false" layoutX="388.0" layoutY="253.0" prefHeight="25.0" prefWidth="228.0" />
+   <TextField fx:id="impressionPath" editable="false" layoutX="388.0" layoutY="290.0" prefHeight="25.0" prefWidth="228.0" />
+   <TextField fx:id="clicksPath" editable="false" layoutX="388.0" layoutY="327.0" prefHeight="25.0" prefWidth="228.0" />
+   <Button fx:id="serverLogButton" layoutX="646.0" layoutY="253.0" mnemonicParsing="false" onAction="#selectServerLog" prefHeight="25.0" prefWidth="153.0" text="Select Server Log" />
+   <Button fx:id="buttonImpressionLog" layoutX="646.0" layoutY="290.0" mnemonicParsing="false" onAction="#selectImpressionLog" prefHeight="25.0" prefWidth="153.0" text="Select Impression Log" />
+   <Button fx:id="buttonClickLog" layoutX="646.0" layoutY="327.0" mnemonicParsing="false" onAction="#selectClickLog" prefHeight="25.0" prefWidth="153.0" text="Select Clicks Log" />
 </AnchorPane>

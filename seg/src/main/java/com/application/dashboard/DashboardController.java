@@ -69,6 +69,7 @@ public class DashboardController implements Initializable {
     public BarChart histogramClicks;
 
     public ImageView loadingGIF;
+    public ChoiceBox selectGraph;
 
 
     DataManager dataman = new DataManager();
@@ -159,6 +160,12 @@ public class DashboardController implements Initializable {
     boolean serverLoaded = false;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        String[] bounces = new String[]{"Clicks","Uniques","Bounces","Impressions","Conversion rate", "Total Cost", "Cost per acquisition",
+        "Cost per clicks", "Cost per impression", "Cost per thousands","Bounce rate"};
+
+        selectGraph.getItems().addAll(bounces);
+
         timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) { // Regular expression for digits only
                 timeSpentBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
@@ -958,7 +965,7 @@ public int countTotalBounces(){
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         FileChooserWindow fileChooser = new FileChooserWindow();
 
-        fph.fileTypeHandler(fileChooser.openFileBox());
+        fph.fileTypeHandler(fileChooser.openFileBox("all"));
         System.out.println(fph.getImpressionPath());
         System.out.println(fph.getClickPath());
         System.out.println(fph.getServerPath());
