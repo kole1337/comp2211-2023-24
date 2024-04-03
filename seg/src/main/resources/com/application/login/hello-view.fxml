@@ -44,6 +44,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Button>
+                        <Button layoutX="879.0" layoutY="564.0" mnemonicParsing="false" onAction="#darkLoader" text="Button" />
                      </children>
                   </AnchorPane>
                   <VBox VBox.vgrow="ALWAYS" />

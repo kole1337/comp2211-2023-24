@@ -165,5 +165,8 @@ public class LoginController {
         }
     }
 
+    public void darkLoader() {
+        enableDarkTheme();
+    }
 }
 

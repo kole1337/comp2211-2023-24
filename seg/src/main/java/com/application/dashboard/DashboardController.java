@@ -3,6 +3,7 @@ package com.application.dashboard;
 import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
+import com.application.styles.checkStyle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -156,11 +157,22 @@ public class DashboardController implements Initializable {
     boolean clicksLoaded = false;
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
+
+    checkStyle obj = new checkStyle();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         String[] bounces = new String[]{"Clicks","Uniques","Bounces","Impressions","Conversion rate", "Total Cost", "Cost per acquisition",
         "Cost per clicks", "Cost per impression", "Cost per thousands","Bounce rate"};
+
+        String theme = obj.checkStyle();
+
+        if(theme.equals("dark")){
+            enableDarkTheme();
+        }else{
+            enableLightTheme();
+        }
 
         selectGraph.getItems().addAll(bounces);
 
@@ -1069,16 +1081,18 @@ public int countTotalBounces(){
     boolean light = true;
     boolean dark = false;
 
-    public void enableLightTheme(ActionEvent actionEvent) {
+    public void enableLightTheme() {
         if (!light) {
             light = true;
             dark = false;
             logger.log(Level.INFO,"Light theme displayed");
             background.getStylesheets().clear();
+            obj.writeTheme("light");
+
         }
     }
 
-    public void enableDarkTheme(ActionEvent actionEvent) throws MalformedURLException, URISyntaxException {
+    public void enableDarkTheme(){
         logger.log(Level.INFO, "Loading dark theme");
         if(!dark){
 
@@ -1087,7 +1101,7 @@ public int countTotalBounces(){
             dark = true;
             light = false;
             logger.log(Level.INFO,"Dark theme displayed");
-
+            obj.writeTheme("dark");
         }
     }
     public void selectClickGraph(ActionEvent actionEvent) {}

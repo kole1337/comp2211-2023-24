@@ -27,7 +27,7 @@ public class testFile extends Application {
 
         checkStyle obj1 = new checkStyle();
 
-        System.out.println(obj1.checkStyle());
+        obj1.writeTheme("dark");
 
 
 

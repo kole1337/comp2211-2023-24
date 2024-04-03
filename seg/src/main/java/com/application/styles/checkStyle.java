@@ -2,6 +2,7 @@ package com.application.styles;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 public class checkStyle {
@@ -22,4 +23,16 @@ public class checkStyle {
         return theme;
     }
 
+    public void writeTheme(String theme){
+        try {
+            System.out.println("Writing theme");
+            FileWriter myWriter = new FileWriter("theme.txt");
+
+            myWriter.write(theme);
+            myWriter.close();
+            System.out.println("Written theme: " +theme);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }

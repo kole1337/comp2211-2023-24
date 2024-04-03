@@ -2,6 +2,7 @@ package com.application.dashboard;
 import com.application.files.FileChooserWindow;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
+import com.application.styles.checkStyle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -22,6 +24,7 @@ public class ImportController {
     public TextField serverPath;
     public TextField impressionPath;
     public TextField clicksPath;
+    public AnchorPane background;
     FilePathHandler fph = new FilePathHandler();
     private Parent root;
     private Scene scene;
@@ -34,9 +37,17 @@ public class ImportController {
 
     FileChooserWindow fileChooser = new FileChooserWindow();
 
+    private Boolean light = true;
+    private Boolean dark = false;
     public void initialize(){
+            checkStyle obj = new checkStyle();
+            String theme = obj.checkStyle();
 
-        //dashboardButton.setDisable(true);
+            if(theme.equals("dark")){
+                enableDarkTheme();
+            }else{
+                enableLightTheme();
+            }
 
     }
 
@@ -90,5 +101,28 @@ public class ImportController {
         path = fileChooser.openFileBox("Click Log").toString();
         fph.setClickPath(path);
         clicksPath.setText(path);
+    }
+
+    public void enableLightTheme() {
+        if (!light) {
+            light = true;
+            dark = false;
+            logger.log(Level.INFO,"Light theme displayed");
+            background.getStylesheets().clear();
+        }
+    }
+
+    public void enableDarkTheme(){
+        logger.log(Level.INFO, "Loading dark theme");
+        if(!dark){
+
+            String stylesheetPath = getClass().getClassLoader().getResource("uploadDarkTheme.css").toExternalForm();;
+            System.out.println(stylesheetPath);
+            background.getStylesheets().add(stylesheetPath);
+            dark = true;
+            light = false;
+            logger.log(Level.INFO,"Dark theme displayed");
+
+        }
     }
 }
