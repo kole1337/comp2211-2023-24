@@ -5,10 +5,13 @@ import com.application.database.DbConnection;
 import com.application.database.Multithread_ImpressionDb;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
+import com.application.logger.LogAction;
+import com.application.styles.checkStyle;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.time.Instant;
 
 import static javafx.application.Application.launch;
 
@@ -20,11 +23,13 @@ public class testFile extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FileChooserWindow fcw = new FileChooserWindow();
 
-        String path = fcw.selectFolderPath();
 
-        System.out.println(path);
+        checkStyle obj1 = new checkStyle();
+
+        System.out.println(obj1.checkStyle());
+
+
 
     }
 

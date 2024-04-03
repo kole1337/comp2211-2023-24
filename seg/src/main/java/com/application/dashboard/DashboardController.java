@@ -3,7 +3,6 @@ package com.application.dashboard;
 import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
-import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,7 +26,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javafx.util.Duration;
 import org.jfree.chart.ChartFrame;
 
 import java.awt.*;
@@ -1084,7 +1082,7 @@ public int countTotalBounces(){
         logger.log(Level.INFO, "Loading dark theme");
         if(!dark){
 
-            String stylesheetPath = getClass().getClassLoader().getResource("darktheme.css").toExternalForm();;
+            String stylesheetPath = getClass().getClassLoader().getResource("dashboardDarkTheme.css").toExternalForm();;
             background.getStylesheets().add(stylesheetPath);
             dark = true;
             light = false;

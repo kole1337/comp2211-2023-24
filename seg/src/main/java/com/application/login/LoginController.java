@@ -1,9 +1,9 @@
 package com.application.login;
 
-import com.application.admin.AdminController;
-import com.application.dashboard.DashboardController;
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
+import com.application.logger.LogAction;
+import com.application.styles.checkStyle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,21 +36,31 @@ public class LoginController {
     public Button loginButton;
     public PasswordField passwordField;
     public TextField usernameField;
+    public AnchorPane panel;
     //---
     private Stage stage;
     private Scene scene;
     private Parent root;
     private Logger logger = Logger.getLogger(getClass().getName());
     private FXMLLoader fxmlLoader;
-    ;
+    private Boolean light = true;
+    private Boolean dark = false;
 
+    public void initialize(){
+        checkStyle obj = new checkStyle();
+        String theme = obj.checkStyle();
+
+        if(theme.equals("dark")){
+            enableDarkTheme();
+        }else{
+            enableLightTheme();
+        }
+    }
 
 
         /**
      * Login function that checks if the user is
      * an Admin or User.
-     * Hardcoded for now, will implement
-     * User System later.
      */
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
@@ -58,15 +70,16 @@ public class LoginController {
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
+                LogAction la = new LogAction(usernameField.getText());
                 logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
                 root = FXMLLoader.load(getClass().getResource("import-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
-                logger = Logger.getLogger(getClass().getName());
+
+                la.logActionToFile("Logging as user. Opening dashboard");
             } catch (IOException e) {
-                logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
         }else {
@@ -92,6 +105,7 @@ public class LoginController {
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
             try {
+                LogAction la = new LogAction(usernameField.getText());
                 root = fxmlLoader.load(getClass().getResource("admin-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
@@ -104,6 +118,7 @@ public class LoginController {
                 stage.setMinHeight(720);
                 stage.setMinWidth(1280);
                 stage.show();
+                la.logActionToFile("Opening admin dashboard");
                 logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
@@ -125,6 +140,29 @@ public class LoginController {
     public Boolean checkAdmin(String username, String password) throws SQLException {
         logger.log(Level.SEVERE, "Checking admin credentials.");
         return userManager.selectAdmin(username, password);
+    }
+
+    public void enableLightTheme() {
+        if (!light) {
+            light = true;
+            dark = false;
+            logger.log(Level.INFO,"Light theme displayed");
+            panel.getStylesheets().clear();
+        }
+    }
+
+    public void enableDarkTheme(){
+        logger.log(Level.INFO, "Loading dark theme");
+        if(!dark){
+
+            String stylesheetPath = getClass().getClassLoader().getResource("loginDarkTheme.css").toExternalForm();;
+            System.out.println(stylesheetPath);
+            panel.getStylesheets().add(stylesheetPath);
+            dark = true;
+            light = false;
+            logger.log(Level.INFO,"Dark theme displayed");
+
+        }
     }
 
 }
