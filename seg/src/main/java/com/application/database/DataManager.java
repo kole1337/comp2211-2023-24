@@ -1,21 +1,21 @@
 package com.application.database;
-import javafx.application.Platform;
+import com.application.files.ScriptRunner;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import org.jfree.data.xy.XYSeries;
 
+import java.io.*;
 import java.sql.*;
-import java.text.SimpleDateFormat;
+
+import java.lang.Process.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.application.files.ScriptRunner;
 
 public  class DataManager {
 
@@ -27,8 +27,11 @@ public  class DataManager {
     private static PreparedStatement pstmt;
     private static ResultSet rs;
     private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
+    public static IntegerProperty history_position = new SimpleIntegerProperty();
+    public static String savename;
     public int bouncePages = 1;
     public int bounceTimeMinute = 3;
+
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
 //    public static void main(String[] args) throws SQLException {
@@ -562,6 +565,46 @@ public  class DataManager {
         income.add(" ");
         return income;
     }
+
+    private static void innit_history(File structure) throws Exception{
+        logger.log(Level.INFO,"Inserting history");
+        InputStreamReader br;
+        try {
+            br = new InputStreamReader(new FileInputStream(structure));
+            ScriptRunner runner = new ScriptRunner(DataManager.conn,false, false);
+            runner.runScript(br);
+            br.close();
+            logger.log(Level.INFO,"Successfully inserted history");
+        }catch (FileNotFoundException e){
+            logger.log(Level.WARNING,"History file not found, Loading blank history");
+            DataManager.innit_history();
+        }
+
+    }
+
+    private static void innit_history() throws Exception{
+        logger.log(Level.INFO, "clearing history");
+        statement.executeQuery("Alter TABLE history Drop COLUMN *");
+
+    }
+
+    public static void add_save(String savename) {
+        if(history_position.getValue()  > 1){
+            try {
+                ResultSet column_name = statement.executeQuery("SELECT COLUMN_NAME , DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS\n" +
+                        "    WHERE TABLE_NAME = 'history' AND ORDINAL_POSITION = '" + history_position.getValue().toString() +"'");
+                rs  = statement.executeQuery("SELECT " + column_name.getString(1) + " FROM history");
+                statement.executeQuery("Alter TABLE save ADD COLUMN " + savename + " " + column_name.getString(2));
+
+            }catch (SQLException e){
+                logger.log(Level.SEVERE,"Error with the history table" );
+            }
+        }
+    }
+
+
+
+
     public void setBounceTimeMinute(int newTime){
         bounceTimeMinute = newTime;
     }
