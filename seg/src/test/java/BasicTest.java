@@ -45,7 +45,7 @@ public class BasicTest {
         assertTrue("Connection is established", dbConnection.checkConn());
         assertTrue("Connection is established", dbConnection.checkConn());
         assertTrue("Connection is established", dbConnection.checkConn());
-        dbConnection.closeConnection();
+        dbConnection.closeConn();
         assertFalse("Connection is close", dbConnection.checkConn());
         assertFalse("Connection is close", dbConnection.checkConn());
         assertFalse("Connection is close", dbConnection.checkConn());

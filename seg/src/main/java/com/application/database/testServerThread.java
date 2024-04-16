@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -23,14 +26,14 @@ public class testServerThread {
     private static Connection conn;
 
     // Define the number of threads
-    static final int NUM_THREADS = 250; // Adjust according to your requirements
+    static final int NUM_THREADS = 150; // Adjust according to your requirements
 
-    public static void main(String path) throws SQLException {
+    public static void main(ArrayList<String> path) throws Exception {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(JDBC_URL);
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);
-        config.setMaximumPoolSize(2500);
+        config.setMaximumPoolSize(150);
         config.setConnectionTimeout(300000);
         config.setIdleTimeout(120000);
         config.setLeakDetectionThreshold(300000);
@@ -39,87 +42,121 @@ public class testServerThread {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
         DataSource dataSource = new HikariDataSource(config);
-        conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
-        String csvFilePath = path;
-//        String csvFilePath = "C:\\ProgramData\\MySQL\\MySQL Server 8.0\\Uploads\\2month\\impression_log.csv";
+//        String csvFilePath = path;
+//        String csvFilePath = path;
+        ArrayList<String> paths = new ArrayList<>();
+        paths = path;
+        //8_828_248
+        String csvFilePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv";
+        //486_104
+
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        int count = 0;
+//        for(String p : paths) {
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+                String line;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
-            String line;
+                List<String> batchLines = new ArrayList<>();
 
-            while ((line = br.readLine()) != null) {
-                // Submit tasks to the thread pool
-                executor.submit(new InsertTask(line, dataSource));
+                while ((line = br.readLine()) != null) {
+                    // Add line to batchLines
+                    batchLines.add(line);
+
+                    // If batchLines size reaches a certain threshold, submit task to the thread pool
+                    if (batchLines.size() >= 1_000) {
+                        executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource));
+                        // Clear batchLines after submitting task
+                        batchLines.clear();
+
+                        count++;
+                    }
+
+                }
+                // Submit the remaining lines as a final task
+                if (!batchLines.isEmpty()) {
+                    executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource));
+                    count++;
+                    System.out.println(batchLines.size());
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        }
 
         // Shutdown the executor after all tasks are completed
+        System.out.println("count: " + count);
         executor.shutdown();
 
     }
 
 
     static class InsertTask implements Runnable {
-        private final String dataLine;
+        private final List<String> batchLines;
         private final DataSource dataSource;
 
-        InsertTask(String dataLine, DataSource dataSource) {
-            this.dataLine = dataLine;
+        InsertTask(List<String> batchLines, DataSource dataSource) {
+            this.batchLines = batchLines;
             this.dataSource = dataSource;
         }
 
         @Override
         public void run() {
-            try(Connection conn = dataSource.getConnection()){
-//                String insertQuery = "INSERT INTO impressionlog(date, id, gender, age, income, context, impression_cost) VALUES (?,?,?,?,?,?,?)";
-//                String insertQuery = "INSERT INTO clicklog (date, id, clickcost) VALUES (?, ?, ?)";
+            try (Connection conn = dataSource.getConnection()) {
+
                 String insertQuery = "INSERT INTO serverlog(entryDate, id, exitDate, pagesViewed, conversion) VALUES (?,?,?,?,?)";
 
 
-
                 try (PreparedStatement preparedStatement = conn.prepareStatement(insertQuery)) {
-                    // Parse dataLine and set values for the prepared statement
-                    System.out.println("Inserting Server");
-                    String[] values = dataLine.split(","); // Assuming CSV data is comma-separated
-                    if("n/a".equals(values[0].toLowerCase())) {
-                        preparedStatement.setString(1, null);
-                        preparedStatement.setString(2, values[1]);
-                        preparedStatement.setString(3, values[2]);
-                        preparedStatement.setInt(4, Integer.parseInt(values[3]));
-                        preparedStatement.setString(5, values[4]);
-                        System.out.println("INSERTED SERVER!");
+//                    System.out.println("Inserting batch of " + batchLines.size() + " lines");
+
+                    for (String dataLine : batchLines) {
+                        String[] values = dataLine.split(",");
+//                        System.out.println(values[0]);
+                        if(      ((values[0].equals("Entry Date")
+                                && values[1].equals("ID")
+                                && values[2].equals("Exit Date")
+                                && values[3].equals("Pages Viewed"))
+                                && values[4].equals("Conversion")) ) {
+//                            System.out.println(values[0] + "<<<");
+
+                        }else{
+                            if ("n/a".equals(values[0].toLowerCase())) {
+                                preparedStatement.setNull(1, Types.NULL);
+                                preparedStatement.setString(2, values[1]);
+                                preparedStatement.setString(3, values[2]);
+                                preparedStatement.setInt(4, Integer.parseInt(values[3]));
+                                preparedStatement.setString(5, values[4]);
+                                System.out.println("inserting null at 1!");
 
 
-
-                    }else if("n/a".equals(values[2].toLowerCase())) {
-                        preparedStatement.setString(1, values[0]);
-                        preparedStatement.setString(2, values[1]);
-                        preparedStatement.setString(3, null);
-                        preparedStatement.setInt(4, Integer.parseInt(values[3]));
-                        preparedStatement.setString(5, values[4]);
-                        System.out.println("INSERTED SERVER!");
-
-
-                    }else{
-                        preparedStatement.setString(1, values[0]);
-                        preparedStatement.setString(2, values[1]);
-                        preparedStatement.setString(3, values[2]);
-                        preparedStatement.setInt(4, Integer.parseInt(values[3]));
-                        preparedStatement.setString(5, values[4]);
-                        System.out.println("INSERTED SERVER!");
+                            } else if ("n/a".equals(values[2].toLowerCase())) {
+                                preparedStatement.setString(1, values[0]);
+                                preparedStatement.setString(2, values[1]);
+                                preparedStatement.setNull(3, Types.NULL);
+                                preparedStatement.setInt(4, Integer.parseInt(values[3]));
+                                preparedStatement.setString(5, values[4]);
+                                System.out.println("inserting null at 2");
 
 
+                            } else {
+                                preparedStatement.setString(1, values[0]);
+                                preparedStatement.setString(2, values[1]);
+                                preparedStatement.setString(3, values[2]);
+                                preparedStatement.setInt(4, Integer.parseInt(values[3]));
+                                preparedStatement.setString(5, values[4]);
+//                                System.out.println("INSERTED SERVER!");
+
+                            }
+                            preparedStatement.addBatch();
+
+                        }
                     }
-                    preparedStatement.executeUpdate();
+                    preparedStatement.executeBatch();
                 }
-
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }

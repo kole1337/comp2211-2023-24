@@ -16,7 +16,7 @@ public class DbConnection {
     private static String user;
     private static String pass;
 
-    private static String url = "jdbc:mysql://localhost:3306/adda";
+    private static String url = "jdbc:mysql://localhost:3306/adda?rewriteBatchedStatements=true";
 
 
 
@@ -113,7 +113,7 @@ public class DbConnection {
      * Will close all connections to the sql server
      * @throws RuntimeException
      */
-    public static void closeConnection()throws RuntimeException{
+    public static void closeConn()throws RuntimeException{
         try {
             logger.log(Level.INFO , "Closing Main connection");
             conn.close();

@@ -2,6 +2,7 @@ package com.application.menu;
 
 import com.application.database.DbConnection;
 import com.application.login.LoginApplication;
+import com.application.login.LoginController;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +31,8 @@ public class MenuController extends Application {
 
     public Pane getPage(String fileName){
         try{
-            URL file = MenuController.class.getResource(fileName +".fxml");
+            URL file = LoginController.class.getResource("dashboard-view.fxml");
+            System.out.println(file);
             view = new FXMLLoader().load(file);
         }catch(Exception e){
             e.printStackTrace();
@@ -40,13 +42,13 @@ public class MenuController extends Application {
     }
 
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("mainmenu-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginController.class.getResource("mainmenu-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
         stage.setTitle("Ad dashboard");
 
         stage.setScene(scene);
-        stage.setMinHeight(800);
-        stage.setMinWidth(1300);
+        stage.setMinHeight(720);
+        stage.setMinWidth(1280);
         stage.show();
         DbConnection db = new DbConnection();
 
