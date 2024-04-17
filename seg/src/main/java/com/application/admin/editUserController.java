@@ -63,9 +63,16 @@ public class editUserController {
 
         if( !oldPassword.equals(passwordField.getText())){
             System.out.println("updating password via username");
-
+            
             um.updatePasswordWithUsername(passwordField.getText(), oldUsername);
             oldPassword = passwordField.getText();
+        }
+        
+        if( oldUserId != Integer.parseInt(userIdField.getText()) ){
+            System.out.println("updating user id");
+
+            um.updateUserId(oldUserId, Integer.parseInt(userIdField.getText()));
+            oldUserId = Integer.parseInt(userIdField.getText());
         }
     }
 

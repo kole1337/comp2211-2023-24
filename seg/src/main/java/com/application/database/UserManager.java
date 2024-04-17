@@ -157,7 +157,7 @@ public class UserManager {
     }
 
     public void updatePasswordWithUsername(String newPassword, String username){
-        logger.log(Level.INFO,"Update username");
+        logger.log(Level.INFO,"Update password with username");
         try{
             String updateUsername = "UPDATE users SET password = ? WHERE username =?";
             pstmt = conn.prepareStatement(updateUsername);
@@ -171,8 +171,23 @@ public class UserManager {
         }
     }
 
+    public void updateUserId(int oldId, int newId){
+        logger.log(Level.INFO,"Update user id");
+        try{
+            String updateUsername = "UPDATE users SET user_id = ? WHERE user_id =?";
+            pstmt = conn.prepareStatement(updateUsername);
+
+            pstmt.setInt(1, newId);
+            pstmt.setInt(2, oldId);
+
+            pstmt.execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void updatePasswordWithId(String newPassword, int id){
-        logger.log(Level.INFO,"Update username");
+        logger.log(Level.INFO,"Update password with id");
         try{
             String updateUsername = "UPDATE users SET password = ? WHERE user_id =?";
             pstmt = conn.prepareStatement(updateUsername);
