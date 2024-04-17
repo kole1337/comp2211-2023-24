@@ -11,8 +11,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -167,6 +169,19 @@ public class LoginController {
 
     public void darkLoader() {
         enableDarkTheme();
+    }
+
+    public void openChangePassword(MouseEvent mouseEvent) {
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource("changePassword.fxml"));
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
+            stage.show();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
 

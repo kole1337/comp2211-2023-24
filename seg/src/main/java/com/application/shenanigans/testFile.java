@@ -28,34 +28,15 @@ import static javafx.application.Application.launch;
 /**
  * This is a test file. It should be ignored.
  * */
-public class testFile extends Application{
+public class testFile{
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
 
+        Encryption enc = new Encryption();
+        String test = enc.encrypt("gesh");
+        String test2 = "gesh";
+        System.out.println(test.equals(enc.encrypt(test2)));
 
-        DbConnection db = new DbConnection();
-        testServerThread obj = new testServerThread();
-        testClickThread obj1 = new testClickThread();
-        Multithread_ImpressionDb obj2 = new Multithread_ImpressionDb();
-
-        obj.main(new ArrayList<>());
-        obj1.main(new ArrayList<>());
-        obj2.main(new ArrayList<>());
-
-        db.closeConn();
-        
-        launch();
     }
 
-    @Override
-    public void start(Stage stage) throws Exception {
-//        DbConnection db = new DbConnection();
-
-        TilePane r = new TilePane();
-        Scene sc = new Scene(r, 200, 200);
-
-        stage.setScene(sc);
-
-        stage.show();
-    }
 }

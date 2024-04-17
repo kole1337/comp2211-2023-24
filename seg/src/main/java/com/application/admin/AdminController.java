@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -108,21 +109,15 @@ public class AdminController {
     }
 
     public void createNewUser() {
-        logger.log(Level.INFO, "Creating new user.");
-        TextInputDialog tiDialog = new TextInputDialog();
-        tiDialog.setTitle("New user");
-        tiDialog.setHeaderText("Input the username and password");
-        tiDialog.setContentText("Username: ");
-//        tiDialog.setContentText("Password: ");
-
-        tiDialog.showAndWait();
-        String result = tiDialog.getResult().toString();
-        if(result.isEmpty()){
-            Alert a = new Alert(Alert.AlertType.WARNING, "Insert name!" ,ButtonType.OK, ButtonType.CANCEL);
-            a.showAndWait();
-            if(a.getResult() == ButtonType.OK){
-                createNewUser();
-            }
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource("createNewUser.fxml"));
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
+            stage.show();
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
