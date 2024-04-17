@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +42,9 @@ public class AdminController {
     public Label statusLabel;
     @FXML
     public Button checkConnectionDB;
+    public TextField passwordField;
+    public TextField userIdField;
+    public TextField usernameField;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -102,6 +106,14 @@ public class AdminController {
     ObservableList<User> UserList = FXCollections.observableArrayList();
     @FXML
     private void refreshTable() {
+        for ( int i = 0; i<showUsers.getItems().size(); i++) {
+            showUsers.getItems().clear();
+        }
+        System.out.println("Entering");
+        userName.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
+        password.setCellValueFactory(new PropertyValueFactory<User, String>("password"));
+        userId.setCellValueFactory(new PropertyValueFactory<User, Integer>("user_id"));
+
         try {
             UserList.clear();
             ResultSet rs = userManager.selectAll();
@@ -111,10 +123,10 @@ public class AdminController {
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getInt("user_id")));
-                showUsers.setItems(UserList);
+
 //                System.out.println(UserList.get(1));
             }
-
+            showUsers.setItems(UserList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -122,100 +134,39 @@ public class AdminController {
 
     }
 
+    @FXML
+    private void deleteSelected(){
+        TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
+
+        ObservableList<Integer> list = selectionModel.getSelectedIndices();
+        Integer[] selectedIndice = new Integer[list.size()];
+        selectedIndice = list.toArray(selectedIndice);
+        showUsers.getItems().remove(selectedIndice[0].intValue());
+        
+    }
+
+    @FXML
+    void editSelected(MouseEvent event) {
+        TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
+        User user = showUsers.getSelectionModel().getSelectedItem();
+
+        editUserController obj = new editUserController();
+
+        obj.openEditPanel(user.getUsername(),user.getPassword(), user.getUser_id());
+    }
+
     public void loadUsers(){
-        userName.setCellValueFactory(new PropertyValueFactory<>("username"));
-        password.setCellValueFactory(new PropertyValueFactory<>("password"));
-        userId.setCellValueFactory(cellData -> cellData.getValue().getUser_id().asObject());
-
-        Callback<TableColumn<User, String>, TableCell<User, String>> cellFoctory = (TableColumn<User, String> param) -> {
-            // make cell containing buttons
-            final TableCell<User, String> cell = new TableCell<User, String>() {
-                @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    //that cell created only on non-empty rows
-                    if (empty) {
-                        setGraphic(null);
-                        setText(null);
-
-                    } else {
-
-                        Button deleteIcon = new Button();
-                        Button editIcon = new Button();
-                        deleteIcon.setText("Delete");
-                        editIcon.setText("Edit");
-                        deleteIcon.setStyle(
-                                " -fx-cursor: hand ;"
-                                        + "-fx-background-color:#ff1744;"
-                        );
-                        editIcon.setStyle(
-                                " -fx-cursor: hand ;"
-                                        + "-fx-background-color:#00E676;"
-                        );
-
-
-                        deleteIcon.setOnMouseClicked((MouseEvent event) -> {
-
-                            try {
-                                User user = showUsers.getSelectionModel().getSelectedItem();
-                                System.out.println(user.getUser_id());
-
-                                String query = "DELETE FROM users WHERE id  =" +user.getUser_id();
-                                Connection connection = DbConnection.getConn();
-                                PreparedStatement preparedStatement = connection.prepareStatement(query);
-                                preparedStatement.execute();
-                                refreshTable();
-
-                            } catch (SQLException ex) {
-                                Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
-
-
-
-
-                        });
-                        editIcon.setOnMouseClicked((MouseEvent event) -> {
-
-                            user = showUsers.getSelectionModel().getSelectedItem();
-                            System.out.println(user.getUsername());
-                            try {
-                                Parent parent = FXMLLoader.load(getClass().getResource("createNewUser.fxml"));
-                                Scene scene = new Scene(parent);
-                                Stage stage = new Stage();
-                                stage.setScene(scene);
-                                stage.initStyle(StageStyle.UTILITY);
-                                stage.show();
-                            }catch(Exception e){
-                                e.printStackTrace();
-                            }
-
-                        });
-
-                        HBox managebtn = new HBox(editIcon, deleteIcon);
-                        managebtn.setStyle("-fx-alignment:center");
-                        HBox.setMargin(deleteIcon, new Insets(2, 2, 0, 3));
-                        HBox.setMargin(editIcon, new Insets(2, 3, 0, 2));
-
-                        setGraphic(managebtn);
-
-                        setText(null);
-
-                    }
-                }
-
-            };
-
-            return cell;
-        };
-
-        editCol.setCellFactory(cellFoctory);
-        showUsers.setItems(UserList);
+        populateTableView();
     }
 
     private void populateTableView() {
+        for ( int i = 0; i<showUsers.getItems().size(); i++) {
+            showUsers.getItems().clear();
+        }
         System.out.println("Entering");
-
+        userName.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
+        password.setCellValueFactory(new PropertyValueFactory<User, String>("password"));
+        userId.setCellValueFactory(new PropertyValueFactory<User, Integer>("user_id"));
         try {
 
             ResultSet rs = userManager.selectAll();

@@ -101,7 +101,7 @@ public class UserManager {
         }
     }
 
-    public static void updateUserPasswordUsername(String username, String newPassword){
+    public void updateUserPasswordUsername(String username, String newPassword){
         logger.log(Level.INFO, "Updating password.");
         try {
             String updatePass = "UPDATE users SET password = ? WHERE username = ?";
@@ -138,6 +138,51 @@ public class UserManager {
             e.printStackTrace();
             logger.log(Level.INFO, "Ooops! Error: " + e.getMessage());
 
+        }
+    }
+
+    public void updateUsername(String oldUsername, String newUsername){
+        logger.log(Level.INFO,"Update username");
+        try{
+            String updateUsername = "UPDATE users SET username = ? WHERE username =?";
+            pstmt = conn.prepareStatement(updateUsername);
+
+            pstmt.setString(1, newUsername);
+            pstmt.setString(2, oldUsername);
+
+            pstmt.execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePasswordWithUsername(String newPassword, String username){
+        logger.log(Level.INFO,"Update username");
+        try{
+            String updateUsername = "UPDATE users SET password = ? WHERE username =?";
+            pstmt = conn.prepareStatement(updateUsername);
+
+            pstmt.setString(1, encryption.encrypt(newPassword));
+            pstmt.setString(2, username);
+
+            pstmt.execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePasswordWithId(String newPassword, int id){
+        logger.log(Level.INFO,"Update username");
+        try{
+            String updateUsername = "UPDATE users SET password = ? WHERE user_id =?";
+            pstmt = conn.prepareStatement(updateUsername);
+
+            pstmt.setString(1, encryption.encrypt(newPassword));
+            pstmt.setInt(2, id);
+
+            pstmt.execute();
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 

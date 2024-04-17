@@ -9,13 +9,13 @@ public class User {
     //private final StringProperty firstName;
     private StringProperty password;
     private StringProperty username;
-    private IntegerProperty user_id;
-    public IntegerProperty getUser_id() {
+    private int user_id;
+    public int getUser_id() {
         return user_id;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id.set(user_id);
+        this.user_id =(user_id);
     }
 
 
@@ -23,7 +23,7 @@ public class User {
     public User( String user, String pass, int id) {
         this.username = new SimpleStringProperty(user);
         this.password = new SimpleStringProperty(pass);
-        this.user_id = new SimpleIntegerProperty(id);
+        this.user_id = id;
     }
 
 //    public String getFirstName() {
