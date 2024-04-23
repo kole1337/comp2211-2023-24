@@ -31,6 +31,9 @@ public  class DataManager {
     public static String savename;
     public int bouncePages = 1;
     public int bounceTimeMinute = 3;
+    private static ResultSet history;
+    private static ResultSet saved;
+    private static int saved_id = 0;
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
@@ -355,7 +358,7 @@ public  class DataManager {
         String query1 = "";
         String query2 = "";
         if (dataName.equals("CTR")) {
-            query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+            query1 =  queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
             query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
             try {
                 rs1 = statement.executeQuery(query1);
@@ -574,7 +577,13 @@ public  class DataManager {
             ScriptRunner runner = new ScriptRunner(DataManager.conn,false, false);
             runner.runScript(br);
             br.close();
+
             logger.log(Level.INFO,"Successfully inserted history");
+            history = statement.executeQuery("SELECT history_data, history_date FROM history");
+            ResultSet count =  statement.executeQuery("SELECT COUNT (*) AS count FROM history");
+            history.last();
+            history_position.setValue(count.getInt("count"));
+
         }catch (FileNotFoundException e){
             logger.log(Level.WARNING,"History file not found, Loading blank history");
             DataManager.innit_history();
@@ -585,24 +594,118 @@ public  class DataManager {
     private static void innit_history() throws Exception{
         logger.log(Level.INFO, "clearing history");
         statement.executeQuery("Alter TABLE history Drop COLUMN *");
+        history_position.setValue(0);
+
+    }
+    public static void move_saved(int pos){
+        logger.log(Level.INFO, "moving saved");
+        try {
+            if (!saved.absolute(pos)) {
+                logger.log(Level.WARNING, "cursor cannot be moved out of bounds!");
+            }
+        }catch (SQLException e){logger.log(Level.SEVERE, "error with sql server");}
 
     }
 
-    public static void add_save(String savename) {
-        if(history_position.getValue()  > 1){
+    public static void update(){
+        try {
+            history = statement.executeQuery("SELECT history_data, history_date FROM history");
+            saved = statement.executeQuery("SELECT saved_data, saved_date FROM history");
+        }catch(SQLException e){logger.log(Level.SEVERE, "error with sql server");}
+    }
+
+    public static void move_history(int pos){
+        try {
+            logger.log(Level.INFO, "moving history");
+            if (!history.absolute(pos)) {
+                logger.log(Level.WARNING, "cursor cannot be moved out of bounds!");
+            }
+        }catch (SQLException e){logger.log(Level.SEVERE, "error with sql server");}
+
+    }
+
+    public static void add_save()throws RuntimeException{
+            String data;
+            String date;
             try {
-                ResultSet column_name = statement.executeQuery("SELECT COLUMN_NAME , DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS\n" +
-                        "    WHERE TABLE_NAME = 'history' AND ORDINAL_POSITION = '" + history_position.getValue().toString() +"'");
-                rs  = statement.executeQuery("SELECT " + column_name.getString(1) + " FROM history");
-                statement.executeQuery("Alter TABLE save ADD COLUMN " + savename + " " + column_name.getString(2));
+                data = history.getString("history_data");
+                date = history.getString("history_date");
+                pstmt = conn.prepareStatement("INSERT INTO save(idsaved, saved_data, saved_date) VALUES (?,?,?)");
+                pstmt.setInt(1, saved_id);
+                saved_id++;
+                update();
+                pstmt.setString(2, data);
+                pstmt.setString(3, date);
+                pstmt.addBatch();
 
             }catch (SQLException e){
-                logger.log(Level.SEVERE,"Error with the history table" );
+                logger.log(Level.SEVERE,"Error with the save table" );
             }
+
+    }
+
+    public static void add_history(String data,String date)throws RuntimeException{
+        try{
+            ResultSet count = statement.executeQuery("SELECT COUNT (*) AS count FROM history");
+            if(history.isLast()) {
+
+                try {
+
+                    pstmt = conn.prepareStatement("INSERT INTO history(idhistory, history_data, history_date) VALUES (?,?,?)");
+                    pstmt.setInt(1, count.getInt("count"));
+                    pstmt.setString(2, data);
+                    pstmt.setString(3, date);
+                    pstmt.addBatch();
+                } catch (SQLException e) {
+                    logger.log(Level.SEVERE, "Error with the save table");
+                }
+            }
+            else{
+                //gonna drop the ending rows from history then update history
+                    statement.executeQuery("DELETE FROM history WHERE ID NOT IN ( SELECT ID FROM history LIMIT " + count.getInt("count")  + ")"  );
+                    //TODO: make history /saved update funcions
+                }
+
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+        }
+
+    }
+
+    public void historyUp(){
+        try{
+            if (history.next()){
+                hist_disp(history.getString("history_data"),history.getString("history_date"));
+                history_position.setValue(history_position.getValue() + 1);
+            }
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+        }
+    }
+    public void historyDown(){
+        try{
+            if (history.previous()){
+                hist_disp(history.getString("history_data"),history.getString("history_date"));
+            }
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
         }
     }
 
-
+    private void hist_disp(String query1, String query2 )throws RuntimeException{
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        try {
+            ResultSet rs1 = statement.executeQuery(query1);
+            ResultSet rs2 = statement1.executeQuery(query2);
+            while (rs1.next() && rs2.next()) {
+                String xValue = rs1.getString("date");
+                Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
+                series.getData().add(new XYChart.Data<>(xValue, yValue));
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
 
     public void setBounceTimeMinute(int newTime){

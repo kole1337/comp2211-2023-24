@@ -290,8 +290,8 @@ public class DashboardController implements Initializable {
 
     public void loadDataGraphs(ActionEvent actionEvent) {
         dataChart.layout();
-        Button clickedButton = (Button) actionEvent.getSource();
-        String buttonId = clickedButton.getId();
+
+        String buttonId = ((Button) actionEvent.getSource()).getId();
         String time = (String) timeBox.getValue();
 
         //to set hour as default time

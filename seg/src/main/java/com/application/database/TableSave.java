@@ -13,6 +13,7 @@ public class TableSave {
 
     private static Statement statement;
     private static ResultSet rs;
+    private static final String os = System.getProperty("os.name").toLowerCase();
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
@@ -48,14 +49,20 @@ public class TableSave {
 
 
     public static void savetable (String tablename,String filename){
-        File batFile = new File("src/main/resources/saved/temp.bat");
+        File batFile;
+        if (os.contains("windows")){
+             batFile = new File("src/main/resources/saved/temp.bat");
+        }else{
+             batFile = new File("src/main/resources/saved/temp.sh");
+        }
         try{
             //TODO: make this dynamic I guess, maybe ask for the user to input where they wanna save it ui people job
 
             BufferedWriter bw = new BufferedWriter(new FileWriter(batFile));
-            bw.write("cd " + batFile.getPath() + "\n");
+                bw.write("cd " + batFile.getPath() + "\n");
+
             bw.write("mysqldump -u " + DbConnection.getUser() + " -p"+ DbConnection.getPass() + " adda " + tablename + " > " + filename + ".sql");
-            ProcessBuilder prepare = new ProcessBuilder(filename + ".sql");
+            ProcessBuilder prepare = new ProcessBuilder(batFile.getName());
             Process p = prepare.start();
         }catch (Exception e ){
             logger.log(Level.SEVERE,"Error with the mysqldump table" );
