@@ -583,7 +583,7 @@ public  class DataManager {
             ResultSet count =  statement.executeQuery("SELECT COUNT (*) AS count FROM history");
             history.last();
             history_position.setValue(count.getInt("count"));
-
+            update();
         }catch (FileNotFoundException e){
             logger.log(Level.WARNING,"History file not found, Loading blank history");
             DataManager.innit_history();
@@ -595,8 +595,9 @@ public  class DataManager {
         logger.log(Level.INFO, "clearing history");
         statement.executeQuery("Alter TABLE history Drop COLUMN *");
         history_position.setValue(0);
-
+        update();
     }
+
     public static void move_saved(int pos){
         logger.log(Level.INFO, "moving saved");
         try {
@@ -633,14 +634,17 @@ public  class DataManager {
                 pstmt = conn.prepareStatement("INSERT INTO save(idsaved, saved_data, saved_date) VALUES (?,?,?)");
                 pstmt.setInt(1, saved_id);
                 saved_id++;
-                update();
                 pstmt.setString(2, data);
                 pstmt.setString(3, date);
                 pstmt.addBatch();
+                update();
 
             }catch (SQLException e){
                 logger.log(Level.SEVERE,"Error with the save table" );
             }
+    }
+
+    public static void delete_saved(){
 
     }
 
@@ -651,19 +655,18 @@ public  class DataManager {
 
                 try {
 
-                    pstmt = conn.prepareStatement("INSERT INTO history(idhistory, history_data, history_date) VALUES (?,?,?)");
-                    pstmt.setInt(1, count.getInt("count"));
-                    pstmt.setString(2, data);
-                    pstmt.setString(3, date);
+                    pstmt = conn.prepareStatement("INSERT INTO history(history_data, history_date) VALUES (?,?)");
+                    pstmt.setString(1, data);
+                    pstmt.setString(2, date);
                     pstmt.addBatch();
                 } catch (SQLException e) {
                     logger.log(Level.SEVERE, "Error with the save table");
                 }
             }
             else{
-                //gonna drop the ending rows from history then update history
-                    statement.executeQuery("DELETE FROM history WHERE ID NOT IN ( SELECT ID FROM history LIMIT " + count.getInt("count")  + ")"  );
-                    //TODO: make history /saved update funcions
+                //this drops the remaining rows of history
+                statement.executeQuery("WITH ToDelete AS (SELECT *,ROW_NUMBER() OVER (ORDER BY idhistory) AS rn FROM history) DELETE FROM history USING history JOIN ToDelete ON history.idhistory = ToDelete.idhistory WHERE ToDelete.rn > " +  count.getInt("count") + ";"  );
+                history_position.setValue(count.getInt("count"));
                 }
 
         }catch (SQLException e){
