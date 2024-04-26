@@ -8,9 +8,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class SetupApplication extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(SetupApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SetupApplication.class.getResource("setup.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
         stage.setTitle("Ad dashboard");
 
@@ -21,7 +22,7 @@ public class SetupApplication extends Application {
         DbConnection db = new DbConnection();
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         launch();
     }
 }

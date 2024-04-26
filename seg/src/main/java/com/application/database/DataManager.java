@@ -679,7 +679,7 @@ public  class DataManager {
         }
 
     }
-     public
+
 
     public XYChart.Series<String, Number> historyUp() throws SQLException{
         try{
