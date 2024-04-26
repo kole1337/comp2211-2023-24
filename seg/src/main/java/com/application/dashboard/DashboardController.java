@@ -962,7 +962,24 @@ public int countTotalBounces(){
         tutPNG.setVisible(true);
         tutorialOFF.setVisible(true);
     }
-
+    public void openCompareCampaign(ActionEvent event){
+        logger.log(Level.INFO,"pressed compare-campaign button");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/application/login/compare-campaign-view.fxml"));
+            root = fxmlLoader.load();
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            DashboardController dashboardController = fxmlLoader.getController();
+            dashboardController.fph = this.fph;
+            stage.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
+        } catch (IOException e) {
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+        }
+    }
     //Disable tutorial overlay
     public void disableTutPNG() {
         tutorialOFF.setVisible(false);

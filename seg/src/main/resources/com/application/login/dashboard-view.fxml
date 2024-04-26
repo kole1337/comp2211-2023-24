@@ -80,6 +80,12 @@
                                  </RadioMenuItem>
                                   </items>
                               </Menu>
+                              <Menu fx:id = "compare campaign" mnemonicParsing = "False" text = "Compare Campaign">
+                                  <items>
+                                      <MenuItem mnemonicParsing="false" onAction="#openCompareCampaign" text="Open campaign" />
+                                  </items>
+                              </Menu>
+
                   
                           </menus>
                       </MenuBar>
