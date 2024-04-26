@@ -1,21 +1,21 @@
 package com.application.database;
-import javafx.application.Platform;
+import com.application.files.ScriptRunner;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
-import org.jfree.data.xy.XYSeries;
 
+import java.io.*;
 import java.sql.*;
-import java.text.SimpleDateFormat;
+
+import java.lang.Process.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.application.files.ScriptRunner;
 
 public  class DataManager {
 
@@ -27,8 +27,14 @@ public  class DataManager {
     private static PreparedStatement pstmt;
     private static ResultSet rs;
     private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
+    public static IntegerProperty history_position = new SimpleIntegerProperty();
+    public static String savename;
     public int bouncePages = 1;
     public int bounceTimeMinute = 3;
+    private static ResultSet history;
+    private static ResultSet saved;
+    private static int saved_id = 0;
+
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
 //    public static void main(String[] args) throws SQLException {
@@ -322,11 +328,9 @@ public  class DataManager {
             return getRateData(dataName, timePeriod, startDate, endDate, gender, income, context, age);
         } else {
             String query = queryGenerator(dataName, timePeriod, startDate, endDate, gender, income, context, age);
-            try {
-                System.out.println(dataName);
-                rs = statement.executeQuery(query);
-                System.out.println(rs);
 
+            try {
+                rs = statement.executeQuery(query);
                 int pageSize = 1000; // Adjust this value based on your requirements
                 boolean hasMore = rs.next();
 
@@ -352,7 +356,7 @@ public  class DataManager {
         String query1 = "";
         String query2 = "";
         if (dataName.equals("CTR")) {
-            query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+            query1 =  queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
             query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
             try {
                 rs1 = statement.executeQuery(query1);
@@ -562,6 +566,193 @@ public  class DataManager {
         income.add(" ");
         return income;
     }
+
+    private static void innit_history(File structure) throws Exception{
+        logger.log(Level.INFO,"Inserting history");
+        InputStreamReader br;
+        try {
+            br = new InputStreamReader(new FileInputStream(structure));
+            ScriptRunner runner = new ScriptRunner(DataManager.conn,false, false);
+            runner.runScript(br);
+            br.close();
+
+            logger.log(Level.INFO,"Successfully inserted history");
+            history = statement.executeQuery("SELECT history_data, history_date FROM history");
+            ResultSet count =  statement.executeQuery("SELECT COUNT (*) AS count FROM history");
+            history.last();
+            history_position.setValue(count.getInt("count"));
+            update();
+        }catch (FileNotFoundException e){
+            logger.log(Level.WARNING,"History file not found, Loading blank history");
+            DataManager.innit_history();
+        }
+
+    }
+
+    private static void innit_history() throws Exception{
+        logger.log(Level.INFO, "clearing history");
+        statement.executeQuery("Alter TABLE history Drop COLUMN *");
+        history_position.setValue(0);
+        update();
+    }
+
+    public static void move_saved(int pos){
+        logger.log(Level.INFO, "moving saved");
+        try {
+            if (!saved.absolute(pos)) {
+                logger.log(Level.WARNING, "cursor cannot be moved out of bounds!");
+            }
+        }catch (SQLException e){logger.log(Level.SEVERE, "error with sql server");}
+
+    }
+
+    public static void update(){
+        try {
+            history = statement.executeQuery("SELECT history_data, history_date FROM history");
+            saved = statement.executeQuery("SELECT saved_data, saved_date FROM history");
+        }catch(SQLException e){logger.log(Level.SEVERE, "error with sql server");}
+    }
+
+    public static void move_history(int pos){
+        try {
+            logger.log(Level.INFO, "moving history");
+            if (!history.absolute(pos)) {
+                logger.log(Level.WARNING, "cursor cannot be moved out of bounds!");
+            }
+            else{
+                history_position.setValue(pos);
+            }
+        }catch (SQLException e){logger.log(Level.SEVERE, "error with sql server");}
+
+    }
+
+    public static void add_save()throws RuntimeException{
+            String data;
+            String date;
+            try {
+                data = history.getString("history_data");
+                date = history.getString("history_date");
+                pstmt = conn.prepareStatement("INSERT INTO save(idsaved, saved_data, saved_date) VALUES (?,?,?)");
+                pstmt.setInt(1, saved_id);
+                saved_id++;
+                pstmt.setString(2, data);
+                pstmt.setString(3, date);
+                pstmt.addBatch();
+                update();
+
+            }catch (SQLException e){
+                logger.log(Level.SEVERE,"Error with the save table" );
+            }
+    }
+
+    public static void delete_saved(){
+
+    }
+
+    public static void add_history(String data,String date)throws RuntimeException{
+        try{
+            ResultSet count = statement.executeQuery("SELECT COUNT (*) AS count FROM history");
+            if(history.isLast()) {
+
+                try {
+
+                    pstmt = conn.prepareStatement("INSERT INTO history(history_data, history_date) VALUES (?,?)");
+                    pstmt.setString(1, data);
+                    pstmt.setString(2, date);
+                    pstmt.addBatch();
+                    update();
+                    history.next();
+                    history_position.setValue(history_position.getValue() + 1);
+                } catch (SQLException e) {
+                    logger.log(Level.SEVERE, "Error with the save table");
+                }
+            }
+            else{
+                //this drops the remaining rows of history
+                statement.executeQuery("WITH ToDelete AS (SELECT *,ROW_NUMBER() OVER (ORDER BY idhistory) AS rn FROM history) DELETE FROM history USING history JOIN ToDelete ON history.idhistory = ToDelete.idhistory WHERE ToDelete.rn > " +  count.getInt("count") + ";"  );
+                history_position.setValue(count.getInt("count"));
+                }
+            update();
+
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+        }
+
+    }
+     public
+
+    public XYChart.Series<String, Number> historyUp() throws SQLException{
+        try{
+            if (history.next()){
+                history_position.setValue(history_position.getValue() + 1);
+                if(history.getString("history_rate_data") == null){
+                    return hist_disp(history.getString("history_data"));
+                }else{
+                    return hist_disp(history.getString("history_data"),history.getString("history_date"));
+                }
+            }
+            return null;
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+            throw new SQLException();
+        }
+    }
+
+    public XYChart.Series<String, Number> historyDown() throws SQLException{
+        try{
+            if (history.previous()){
+                history_position.setValue(history_position.getValue() -1);
+                if(history.getString("history_rate_data") == null){
+                    return hist_disp(history.getString("history_data"));
+                }else{
+                    return hist_disp(history.getString("history_data"),history.getString("history_date"));
+                }
+            }
+            return null;
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+            throw new SQLException();
+        }
+    }
+
+    private XYChart.Series<String, Number> hist_disp(String query1, String query2 )throws RuntimeException {
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        try {
+            ResultSet rs1 = statement.executeQuery(query1);
+            ResultSet rs2 = statement1.executeQuery(query2);
+            while (rs1.next() && rs2.next()) {
+                String xValue = rs1.getString("date");
+                Number yValue = rs1.getInt("data") / (rs2.getInt("data") * 1000);
+                series.getData().add(new XYChart.Data<>(xValue, yValue));
+            }
+            return series;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+        private XYChart.Series<String, Number> hist_disp(String query )throws RuntimeException{
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            try {
+                ResultSet rs = statement.executeQuery(query);
+                int pageSize = 1000;
+                boolean hasMore = rs.next();
+
+                while (hasMore) {
+                    for (int i = 0; i < pageSize && hasMore; i++) {
+                        String xValue = rs.getString("date");
+                        Number yValue = rs.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                        hasMore = rs.next();
+                    }
+                }
+                return series;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+    }
+
+
     public void setBounceTimeMinute(int newTime){
         bounceTimeMinute = newTime;
     }

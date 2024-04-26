@@ -1,7 +1,6 @@
 package com.application.database;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -67,7 +66,7 @@ public class DbConnection {
         try {
             File file = new File(filePath);
             if (!file.exists()) {
-                System.out.println("File does not exist.");
+                logger.log(Level.SEVERE,"FIle does not exist");
                 return;
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -82,7 +81,8 @@ public class DbConnection {
     }
     public static void createPassFile(){
         try {
-            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
+//            Path relativePath = Paths.get("seg\\src\\main\\resources\\user.txt");
+            File myObj = new File("src\\main\\resources\\user.txt");
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
                 System.out.println(myObj.getAbsolutePath());
