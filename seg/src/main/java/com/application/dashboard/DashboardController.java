@@ -293,8 +293,8 @@ public class DashboardController implements Initializable {
         avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
-        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
-        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
+//        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
+//        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
         //uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
@@ -1016,65 +1016,44 @@ public int countTotalBounces(){
     public void setserverLoaded(Boolean bool){
         serverLoaded = bool;
     }
+
+
     public void loadSQL(){
 
-//        Runnable servrun = new Multithread_ServerDB(fph,this,Thread.currentThread());
-//        Thread servThread = new Thread(servrun);
-        //Runnable imprun = new Multithread_ImpressionsDB(fph,this,Thread.currentThread());
-        //Thread impresThread = new Thread(imprun);
 
         Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
         testClickThread tct = new testClickThread();
         testServerThread tst = new testServerThread();
+        FileSplit splitFiles = new FileSplit();
+        fph.setClickPath("asdffa");
+        fph.setImpressionPath("asfdsdfa");
+        fph.setServerPath("dasdadas");
 
-//        Runnable clickrun = new Multithread_ClicksDb(fph,this,Thread.currentThread());
-//        Thread clickTread = new Thread(clickrun);
-//        Iterator<Map.Entry<Integer, Boolean>> it;
-//        Map.Entry<Integer, Boolean> entry;
-//        Map<Integer,Boolean> finished;
 
         try {
-
-            //finished = new HashMap<>();
             if(fph.getClickPath() != null) {
-                //finished.put(1,false);
-                //clickTread.start();
-                tct.main(fph.getClickPath());
+//              File file1 = fph.getImpressionPath();
+                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                tct.main(tempClicks);
+                System.out.println();
+                System.out.println("Importing");
             }
             if(fph.getImpressionPath()!= null) {
-                //finished.put(2,false);
-                //impresThread.start();
-                multiImpress.main(fph.getImpressionPath());
+//                File file1 = fph.getImpressionPath();
+                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
+
+                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                multiImpress.main(tempClicks);
             }
             if(fph.getServerPath()!= null) {
-                //finished.put(3,false);
-                //servThread.start();
-                tst.main(fph.getServerPath());
+//                File file1 = fph.getServerPath();
+                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
+
+                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                tst.main(tempClicks);
             }
 
-//                while(!finished.isEmpty()) {
-//
-//                    it = finished.entrySet().iterator();
-//                    while (it.hasNext()){
-//                        entry = it.next();
-//                        if(entry.getKey() == 1 && entry.getValue()){
-//                            finished.remove(1);
-//                            logger.log(Level.INFO,"notifying clicks thread");
-//                            clickrun.notify();
-//                        }
-//                        else if(entry.getKey() == 2 && entry.getValue()){
-//                            finished.remove(2);
-//                            logger.log(Level.INFO,"notifying impressions thread");
-//                            //impresThread.notify();
-//                        }
-//                        else if(entry.getKey() == 3 && entry.getValue()){
-//                            finished.remove(3);
-//                            logger.log(Level.INFO,"notifying server thread");
-//                            servThread.notify();
-//                        }
-//                    }
-//                    wait();
-//                }
 
 
         }catch (Exception e){

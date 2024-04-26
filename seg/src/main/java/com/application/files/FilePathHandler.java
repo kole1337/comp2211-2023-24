@@ -9,9 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FilePathHandler {
-    private String clickPath;
-    private String impressionPath;
-    private String serverPath;
+    private File clickPath;
+    private File impressionPath;
+    private File serverPath;
 
     public File getFilesPath() {
         return filesPath;
@@ -61,28 +61,28 @@ public class FilePathHandler {
 
     public void setClickPath(String csvPath) {
         logger.log(Level.INFO, "Setting click_log path.");
-        this.clickPath = csvPath;
+        this.clickPath = new File(csvPath);
     }
 
     public void setImpressionPath(String impressionPath) {
         logger.log(Level.INFO, "Setting impression_log path.");
-        this.impressionPath = impressionPath;
+        this.impressionPath = new File(impressionPath);
     }
 
     public void setServerPath(String serverPath) {
         logger.log(Level.INFO, "Setting server_log path.");
-        this.serverPath = serverPath;
+        this.serverPath = new File(serverPath);
     }
 
-    public String getClickPath() {
+    public File getClickPath() {
         return clickPath;
     }
 
-    public String getImpressionPath() {
+    public File getImpressionPath() {
         return impressionPath;
     }
 
-    public String getServerPath() {
+    public File getServerPath() {
         return serverPath;
     }
 }

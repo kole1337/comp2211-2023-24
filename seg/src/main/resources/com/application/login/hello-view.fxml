@@ -44,7 +44,11 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Button>
-                        <Button layoutX="879.0" layoutY="564.0" mnemonicParsing="false" onAction="#darkLoader" text="Button" />
+                        <Label layoutX="567.0" layoutY="433.0" onMouseClicked="#openChangePassword" prefHeight="17.0" prefWidth="149.0" style="-fx-alignment: center;" text="Forgot password" textFill="#0d21ff">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
                   <VBox VBox.vgrow="ALWAYS" />

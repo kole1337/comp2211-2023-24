@@ -33,9 +33,9 @@ public class DatasetCreator {
 //        this.impressionsCsv = "seg/src/main/resources/2_week_campaign_2/impression_log.csv";
 //        this.serverCsv = "seg/src/main/resources/2_week_campaign_2/server_log.csv";
         this.fph = fph;
-        this.clicksCsv = fph.getClickPath();
-        this.impressionsCsv = fph.getImpressionPath();
-        this.serverCsv = fph.getServerPath();
+        this.clicksCsv = fph.getClickPath().getAbsolutePath();
+        this.impressionsCsv = fph.getImpressionPath().getAbsolutePath();
+        this.serverCsv = fph.getServerPath().getAbsolutePath();
         System.out.println(clicksCsv);
 
     }

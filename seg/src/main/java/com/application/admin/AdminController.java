@@ -2,24 +2,37 @@ package com.application.admin;
 
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 
 public class AdminController {
     public TextField getDBname;
@@ -29,6 +42,9 @@ public class AdminController {
     public Label statusLabel;
     @FXML
     public Button checkConnectionDB;
+    public TextField passwordField;
+    public TextField userIdField;
+    public TextField usernameField;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -36,21 +52,26 @@ public class AdminController {
     DbConnection db = new DbConnection();
 
     UserManager userManager = new UserManager();
+    User user = null;
 
+    @FXML
+    private TableView<User> showUsers = new TableView<>();
     @FXML
     private TableColumn<User, String> fName;
 
     @FXML
     private TableColumn<User, String> password;
-
-    @FXML
-    private TableView<User> showUsers = new TableView<>();
-
     @FXML
     private TableColumn<User, String> surName;
 
     @FXML
     private TableColumn<User, String> userName;
+    @FXML
+    private TableColumn<User, Integer> userId;
+
+    @FXML
+    private TableColumn<User, String> editCol;
+
 
     public AdminController() throws Exception{
 
@@ -82,15 +103,70 @@ public class AdminController {
         }
     }
 
+    ObservableList<User> UserList = FXCollections.observableArrayList();
+    @FXML
+    private void refreshTable() {
+        for ( int i = 0; i<showUsers.getItems().size(); i++) {
+            showUsers.getItems().clear();
+        }
+        System.out.println("Entering");
+        userName.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
+        password.setCellValueFactory(new PropertyValueFactory<User, String>("password"));
+        userId.setCellValueFactory(new PropertyValueFactory<User, Integer>("user_id"));
+
+        try {
+            UserList.clear();
+            ResultSet rs = userManager.selectAll();
+            System.out.println("Populations");
+            while (rs.next()) {
+                UserList.add(new User(
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getInt("user_id")));
+
+//                System.out.println(UserList.get(1));
+            }
+            showUsers.setItems(UserList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @FXML
+    private void deleteSelected(){
+        TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
+
+        ObservableList<Integer> list = selectionModel.getSelectedIndices();
+        Integer[] selectedIndice = new Integer[list.size()];
+        selectedIndice = list.toArray(selectedIndice);
+        showUsers.getItems().remove(selectedIndice[0].intValue());
+        
+    }
+
+    @FXML
+    void editSelected(MouseEvent event) {
+        TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
+        User user = showUsers.getSelectionModel().getSelectedItem();
+
+        editUserController obj = new editUserController();
+
+        obj.openEditPanel(user.getUsername(),user.getPassword(), user.getUser_id());
+    }
+
     public void loadUsers(){
-        userName.setCellValueFactory(cellData -> cellData.getValue().usernameProperty());
-        password.setCellValueFactory(cellData -> cellData.getValue().passwordProperty());
         populateTableView();
     }
 
     private void populateTableView() {
+        for ( int i = 0; i<showUsers.getItems().size(); i++) {
+            showUsers.getItems().clear();
+        }
         System.out.println("Entering");
-
+        userName.setCellValueFactory(new PropertyValueFactory<User, String>("username"));
+        password.setCellValueFactory(new PropertyValueFactory<User, String>("password"));
+        userId.setCellValueFactory(new PropertyValueFactory<User, Integer>("user_id"));
         try {
 
             ResultSet rs = userManager.selectAll();
@@ -98,7 +174,8 @@ public class AdminController {
             while (rs.next()) {
                 String fName = rs.getString("username");
                 String surName = rs.getString("password");
-                showUsers.getItems().add(new User(fName, surName));
+                Integer userid = rs.getInt("user_id");
+                showUsers.getItems().add(new User(fName, surName,userid));
                 System.out.println(fName + ", " + surName);
             }
 
@@ -108,21 +185,15 @@ public class AdminController {
     }
 
     public void createNewUser() {
-        logger.log(Level.INFO, "Creating new user.");
-        TextInputDialog tiDialog = new TextInputDialog();
-        tiDialog.setTitle("New user");
-        tiDialog.setHeaderText("Input the username and password");
-        tiDialog.setContentText("Username: ");
-//        tiDialog.setContentText("Password: ");
-
-        tiDialog.showAndWait();
-        String result = tiDialog.getResult().toString();
-        if(result.isEmpty()){
-            Alert a = new Alert(Alert.AlertType.WARNING, "Insert name!" ,ButtonType.OK, ButtonType.CANCEL);
-            a.showAndWait();
-            if(a.getResult() == ButtonType.OK){
-                createNewUser();
-            }
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource("createNewUser.fxml"));
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
+            stage.show();
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
