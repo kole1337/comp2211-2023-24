@@ -328,11 +328,9 @@ public  class DataManager {
             return getRateData(dataName, timePeriod, startDate, endDate, gender, income, context, age);
         } else {
             String query = queryGenerator(dataName, timePeriod, startDate, endDate, gender, income, context, age);
-            try {
-                System.out.println(dataName);
-                rs = statement.executeQuery(query);
-                System.out.println(rs);
 
+            try {
+                rs = statement.executeQuery(query);
                 int pageSize = 1000; // Adjust this value based on your requirements
                 boolean hasMore = rs.next();
 
@@ -621,6 +619,9 @@ public  class DataManager {
             if (!history.absolute(pos)) {
                 logger.log(Level.WARNING, "cursor cannot be moved out of bounds!");
             }
+            else{
+                history_position.setValue(pos);
+            }
         }catch (SQLException e){logger.log(Level.SEVERE, "error with sql server");}
 
     }
@@ -659,6 +660,9 @@ public  class DataManager {
                     pstmt.setString(1, data);
                     pstmt.setString(2, date);
                     pstmt.addBatch();
+                    update();
+                    history.next();
+                    history_position.setValue(history_position.getValue() + 1);
                 } catch (SQLException e) {
                     logger.log(Level.SEVERE, "Error with the save table");
                 }
@@ -668,46 +672,84 @@ public  class DataManager {
                 statement.executeQuery("WITH ToDelete AS (SELECT *,ROW_NUMBER() OVER (ORDER BY idhistory) AS rn FROM history) DELETE FROM history USING history JOIN ToDelete ON history.idhistory = ToDelete.idhistory WHERE ToDelete.rn > " +  count.getInt("count") + ";"  );
                 history_position.setValue(count.getInt("count"));
                 }
+            update();
 
         }catch (SQLException e){
             logger.log(Level.SEVERE,"Error with the history table" );
         }
 
     }
+     public
 
-    public void historyUp(){
+    public XYChart.Series<String, Number> historyUp() throws SQLException{
         try{
             if (history.next()){
-                hist_disp(history.getString("history_data"),history.getString("history_date"));
                 history_position.setValue(history_position.getValue() + 1);
+                if(history.getString("history_rate_data") == null){
+                    return hist_disp(history.getString("history_data"));
+                }else{
+                    return hist_disp(history.getString("history_data"),history.getString("history_date"));
+                }
             }
+            return null;
         }catch (SQLException e){
             logger.log(Level.SEVERE,"Error with the history table" );
-        }
-    }
-    public void historyDown(){
-        try{
-            if (history.previous()){
-                hist_disp(history.getString("history_data"),history.getString("history_date"));
-            }
-        }catch (SQLException e){
-            logger.log(Level.SEVERE,"Error with the history table" );
+            throw new SQLException();
         }
     }
 
-    private void hist_disp(String query1, String query2 )throws RuntimeException{
+    public XYChart.Series<String, Number> historyDown() throws SQLException{
+        try{
+            if (history.previous()){
+                history_position.setValue(history_position.getValue() -1);
+                if(history.getString("history_rate_data") == null){
+                    return hist_disp(history.getString("history_data"));
+                }else{
+                    return hist_disp(history.getString("history_data"),history.getString("history_date"));
+                }
+            }
+            return null;
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,"Error with the history table" );
+            throw new SQLException();
+        }
+    }
+
+    private XYChart.Series<String, Number> hist_disp(String query1, String query2 )throws RuntimeException {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         try {
             ResultSet rs1 = statement.executeQuery(query1);
             ResultSet rs2 = statement1.executeQuery(query2);
             while (rs1.next() && rs2.next()) {
                 String xValue = rs1.getString("date");
-                Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
+                Number yValue = rs1.getInt("data") / (rs2.getInt("data") * 1000);
                 series.getData().add(new XYChart.Data<>(xValue, yValue));
             }
+            return series;
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+        private XYChart.Series<String, Number> hist_disp(String query )throws RuntimeException{
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            try {
+                ResultSet rs = statement.executeQuery(query);
+                int pageSize = 1000;
+                boolean hasMore = rs.next();
+
+                while (hasMore) {
+                    for (int i = 0; i < pageSize && hasMore; i++) {
+                        String xValue = rs.getString("date");
+                        Number yValue = rs.getInt("data");
+                        series.getData().add(new XYChart.Data<>(xValue, yValue));
+                        hasMore = rs.next();
+                    }
+                }
+                return series;
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
     }
 
 
