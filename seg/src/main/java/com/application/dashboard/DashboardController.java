@@ -4,6 +4,8 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -246,6 +248,14 @@ public class DashboardController implements Initializable {
         ageFilter.setValue(" ");
         incomeFilter.setValue(" ");
         timeBox.setValue("hour");
+
+        dataChart.setMaxHeight(Double.MAX_VALUE);
+        dataChart.setMaxWidth(Double.MAX_VALUE);
+        dataChart.widthProperty().addListener(new ChangeListener() {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                System.out.println(oldValue + "|" + newValue);
+            }
+        });
     }
 
 
@@ -259,8 +269,6 @@ public class DashboardController implements Initializable {
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
-
-
     }
 
 

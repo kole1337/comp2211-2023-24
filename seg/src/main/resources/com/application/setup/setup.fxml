@@ -49,7 +49,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar prefHeight="1.0" prefWidth="900.0" VBox.vgrow="NEVER">
       <menus>
@@ -90,9 +90,9 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.25000000000000006, 0.74925705794948" focusTraversable="true" prefHeight="293.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.19376391982182628, 0.5991091314031181" focusTraversable="true" prefHeight="293.0" prefWidth="900.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane>
+        <AnchorPane prefHeight="551.0" prefWidth="0.0">
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
               <font>
@@ -105,9 +105,9 @@
                   <Button fx:id="createTablesButton" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#createTables" text="Create tables" />
           </children>
         </AnchorPane>
-        <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
+        <ScrollPane prefHeight="551.0" prefWidth="273.0">
           <content>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="401.0">
               <children>
                 <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                         <TextField fx:id="dbUsernameLabel" layoutX="131.0" layoutY="172.0" promptText="Database username" />
@@ -118,7 +118,7 @@
             </AnchorPane>
           </content>
         </ScrollPane>
-        <AnchorPane>
+        <AnchorPane prefHeight="551.0" prefWidth="338.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <Button fx:id="testConnectionToDbButton" layoutX="85.0" layoutY="315.0" mnemonicParsing="false" onAction="#testConnectionToDB" text="Test connection" />
