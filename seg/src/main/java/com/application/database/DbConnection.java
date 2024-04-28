@@ -32,6 +32,7 @@ public class DbConnection {
             a.setTitle("ERROR!");
             a.setContentText("THE SERVER IS NOT RUNNING OR IS NOT CONNECTED! PLEASE, CONTACT YOUR ADMINISTRATOR!");
             a.show();
+            System.out.println("DB error");
         }
     }
 

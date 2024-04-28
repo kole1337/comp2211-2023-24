@@ -35,7 +35,10 @@ public class testFile{
         Encryption enc = new Encryption();
         String test = enc.encrypt("gesh");
         String test2 = "gesh";
-        System.out.println(test.equals(enc.encrypt(test2)));
+        DbConnection db = new DbConnection();
+        UserManager um = new UserManager();
+        um.insertUser("user","1234","user");
+        um.insertUser("admin","1234","admin");
 
     }
 
