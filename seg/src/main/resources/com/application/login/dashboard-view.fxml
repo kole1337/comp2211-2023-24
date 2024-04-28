@@ -75,7 +75,7 @@
         </MenuBar>
         <SplitPane dividerPositions="0.11418143899895725" prefHeight="1175.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <items>
-            <HBox>
+            <HBox SplitPane.resizableWithParent="false">
                <children>
                       <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-fit-to-width: true;" HBox.hgrow="ALWAYS">
                           <content>
@@ -270,7 +270,7 @@
                                                                       </Label>
                                                                   </children>
                                                               </VBox>
-                                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="54.0" prefWidth="483.0" VBox.vgrow="ALWAYS">
                                                    <children>
                                                                     <Button fx:id="loadCSVbutton3" layoutX="178.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
                                                                         <font>
@@ -282,7 +282,7 @@
                                                                             <Font name="System Bold" size="15.0" />
                                                                         </font>
                                                                     </Button>
-                                                                    <Button fx:id="loadGraphButton" layoutX="179.0" layoutY="47.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+                                                                    <Button fx:id="loadGraphButton" layoutX="268.0" layoutY="48.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
                                                                         <font>
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
