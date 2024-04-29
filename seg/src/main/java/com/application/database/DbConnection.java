@@ -21,7 +21,7 @@ public class DbConnection {
 
     public DbConnection(){
 
-        readFromFile("user.txt");
+        readFromFile("seg//user.txt");
 
         try {
             makeConn();
@@ -66,6 +66,7 @@ public class DbConnection {
     public static void readFromFile(String filePath) {
         try {
             File file = new File(filePath);
+            System.out.println(file.getParent());
             if (!file.exists()) {
                 logger.log(Level.SEVERE,"FIle does not exist");
                 return;
