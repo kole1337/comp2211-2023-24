@@ -157,6 +157,11 @@
             <artifactId>javafx-controls</artifactId>
             <version>21-ea+5</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version> <!-- Or the latest version -->
+        </dependency>
     </dependencies>
 
     <build>

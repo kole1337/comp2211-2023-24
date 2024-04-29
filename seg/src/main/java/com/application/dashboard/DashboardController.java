@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -22,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -350,6 +352,73 @@ public class DashboardController implements Initializable {
         loadGraph(buttonId,time);
         dataChart.layout();
     }
+    public void exportToPDF(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(dataChart); // Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+    public void exportToPDF2(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(genderGraph);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+    public void exportToPDF1(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(ageGraph);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+
+    public void printChart(){
+        Printer printerUtil = new Printer();
+        SnapshotParameters parameters = new SnapshotParameters();
+
+        // Create a writable image based on the chart dimensions
+        WritableImage writableImage = dataChart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(writableImage);
+        printerUtil.print(imageView, this.stage);
+    }
+    public void printPieChart(PieChart chart){
+        SnapshotParameters parameters = new SnapshotParameters();
+        WritableImage image = chart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(image);
+        Printer printerUtil = new Printer();
+        printerUtil.print(imageView, this.stage);
+    }
+    public void exportToPDF3(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(incomeGraph);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+    public void exportToPDF4(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(contextOriginGraph);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+    public void exportToPDF5(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(conversionGraph);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+    public void exportToPDF6(ActionEvent actionEvent) {
+        List<Chart> chartList = new ArrayList<>();
+        chartList.add(histogramClicks);// Assuming dataChart is an AreaChart<String, Number>
+
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartsToPDF(chartList);
+    }
+
 
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
@@ -443,6 +512,7 @@ public class DashboardController implements Initializable {
         dataChart.layout();
 
     }
+
 
     public String getToDateTime(){
         if(toDate.getValue() == null){
@@ -1016,7 +1086,7 @@ public int countTotalBounces(){
         try {
             if(fph.getClickPath() != null) {
 //              File file1 = fph.getImpressionPath();
-                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
                 ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
                 tct.main(tempClicks);
                 System.out.println();
