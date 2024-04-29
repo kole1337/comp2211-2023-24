@@ -217,6 +217,7 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                        <PieChart fx:id="ageGraph" layoutX="-1.0" layoutY="1.0" prefHeight="419.0" prefWidth="495.0" title="Age Graph" visible="true" />
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF1" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -226,6 +227,7 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0" title="Gender Graph" />
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF2" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -235,6 +237,7 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0" prefWidth="439.0" title="Income Graph" />
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF3" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -244,6 +247,7 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0" prefWidth="439.0" title="Context Graph" />
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF4" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -253,6 +257,7 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                        <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0" title="Conversion Graph" visible="true" />
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF5" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -276,8 +281,8 @@
                                                                <Double fx:value="10.0" /> <!-- Adjust this value as needed -->
                                                            </categoryGap>
                                                        </BarChart>
-                           
-                                                                                          </children>
+                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF6" text="Export to PDF" />
+                                                   </children>
                                                </AnchorPane>
                                            </content>
                                        </Tab>
@@ -286,23 +291,25 @@
                            </children>
                         </AnchorPane>
                      </center>
-                     <top>
-                        <AnchorPane prefHeight="27.0" prefWidth="530.0" BorderPane.alignment="CENTER">
-                           <children>
-                               <Label fx:id="graphLabel" text="Graph:">
-                                   <font>
-                                       <Font size="18.0" />
-                                   </font>
-                               </Label>
-                              <ChoiceBox fx:id="selectGraph" layoutX="53.0" layoutY="1.0" prefWidth="150.0" />
-                               <Label fx:id="clicksLoadedLabel" layoutX="258.0" layoutY="6.0" text="clicks_log.csv: not loaded" />
-                               <Label fx:id="impressionLoadedLabel" layoutX="487.0" layoutY="5.0" text="impression_log.csv: not loaded" />
-                               <Label fx:id="serverLoadedLabel" layoutX="721.0" layoutY="8.0" text="server_log.csv: not loaded" />
-                               <Button fx:id="logoutButton" layoutX="1166.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" prefHeight="25.0" prefWidth="93.0" text="Logout" />
-                           </children>
-                        </AnchorPane>
-                     </top>
-                     <left>
+                      <top>
+                          <AnchorPane prefHeight="27.0" prefWidth="530.0" BorderPane.alignment="CENTER">
+                              <children>
+                                  <Label fx:id="graphLabel" text="Graph:">
+                                      <font>
+                                          <Font size="18.0" />
+                                      </font>
+                                  </Label>
+                                  <ChoiceBox fx:id="selectGraph" layoutX="53.0" layoutY="1.0" prefWidth="150.0" />
+                                  <Label fx:id="clicksLoadedLabel" layoutX="258.0" layoutY="6.0" text="clicks_log.csv: not loaded" />
+                                  <Label fx:id="impressionLoadedLabel" layoutX="487.0" layoutY="5.0" text="impression_log.csv: not loaded" />
+                                  <Label fx:id="serverLoadedLabel" layoutX="721.0" layoutY="8.0" text="server_log.csv: not loaded" />
+                                  <Button fx:id="exportPDF" layoutX="1066.0" layoutY="2.0" mnemonicParsing="false" onAction="#exportToPDF" prefHeight="25.0" prefWidth="93.0" text="Export PDF" />
+                                  <Button fx:id="logoutButton" layoutX="1166.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" prefHeight="25.0" prefWidth="93.0" text="Logout" />
+                              </children>
+                          </AnchorPane>
+                      </top>
+
+                      <left>
                         <AnchorPane BorderPane.alignment="CENTER">
                            <children>
                               <ScrollPane layoutY="194.0" prefHeight="455.0" prefWidth="230.0">

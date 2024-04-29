@@ -19,45 +19,10 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+
 
 public class PDFExporter {
 
-    /*public void exportChartsToPDF(List<Chart> charts) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save PDF");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        File file = fileChooser.showSaveDialog(null);
-
-        if (file != null) {
-            try (PDDocument document = new PDDocument()) {
-                for (Chart chart : charts) {
-                    // Create a PDF page for the chart
-                    PDPage page = new PDPage();
-                    float width = (float) chart.getWidth();
-                    float height = (float) chart.getHeight();
-
-                    // Set the page size based on the dimensions of the chart
-                    page.setMediaBox(new PDRectangle(width, height));
-                    document.addPage(page);
-
-                    // Take a snapshot of the chart
-                    BufferedImage bufferedImage = chartToImage(chart);
-
-                    // Embed the chart image in the PDF
-                    try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                        PDImageXObject imageXObject = LosslessFactory.createFromImage(document, bufferedImage);
-                        contentStream.drawImage(imageXObject, 0, 0, width, height); // Adjust position and size as needed
-                    }
-                }
-
-                // Save the PDF document
-                document.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
     public void exportChartToPDF(Chart chart) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save PDF");
@@ -99,3 +64,8 @@ public class PDFExporter {
         return SwingFXUtils.fromFXImage(image, null);
     }
 }
+}
+
+
+
+

@@ -17,7 +17,9 @@ module com.example.seg {
     requires javafx.graphics;
     requires java.sql;
     requires com.zaxxer.hikari;
+    requires fontawesomefx;
     requires javafx.swing;
+    requires org.apache.pdfbox;
     requires pdfbox;
 
     opens com.application.login to javafx.fxml;
