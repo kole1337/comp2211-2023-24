@@ -1,21 +1,24 @@
 package com.application.dashboard;
-import com.application.files.FileChooserWindow;
+import com.application.database.UserManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +42,10 @@ public class ImportController {
 
     private Boolean light = true;
     private Boolean dark = false;
+    String currentUser=  "";
+
+
+
     public void initialize(){
             checkStyle obj = new checkStyle();
             String theme = obj.checkStyle();
@@ -48,9 +55,50 @@ public class ImportController {
             }else{
                 enableLightTheme();
             }
-
+//        Timer timer = new Timer();
+//
+//        timer.schedule(new UserExistenceTask(),0,3000);
     }
 
+
+    public void setCurrentUser(String username){
+        currentUser = username;
+    }
+
+    private class UserExistenceTask extends TimerTask {
+        UserManager um = new UserManager();
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+                if(um.checkUserExistence(currentUser)){
+                    System.out.println("Exists!");
+
+                }else{
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setHeaderText("Invalid Date-Time Selection");
+                    errorAlert.setContentText("The end date-time must be after the start date-time.");
+                    errorAlert.show();
+                    System.out.println("Gooner!");
+                    logoutSession(new ActionEvent());
+                }
+            });
+        }
+    }
+
+    public void logoutSession(ActionEvent event){
+        try {
+            root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.INFO, "Opening hello view.");
+        } catch (IOException e) {
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+        }
+    }
     String fileFolderPath = "";
     public void openCampaign(){
         fileFolderPath = fileChooser.selectFolderPath();
@@ -63,6 +111,9 @@ public class ImportController {
 //        System.out.println("Ready ^_^!");
         //dashboardButton.setDisable(false);
     }
+
+
+
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
         try {

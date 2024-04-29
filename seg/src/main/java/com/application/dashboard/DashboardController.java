@@ -4,6 +4,7 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -33,9 +34,7 @@ import org.jfree.chart.ChartFrame;
 
 import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -260,6 +259,8 @@ public class DashboardController implements Initializable {
 
 
 
+
+
     /*
      * @TODO:
      *   1. Context origin
@@ -269,7 +270,36 @@ public class DashboardController implements Initializable {
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
+//        Timer timer = new Timer();
+//        timer.schedule(new UserExistenceTask(),0,3000);
+        
     }
+    static String currentUser = "";
+    public static void setCurrentUser(String username){
+        currentUser = username;
+    }
+
+    private class UserExistenceTask extends TimerTask {
+        UserManager um = new UserManager();
+
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+                if (um.checkUserExistence(currentUser)) {
+                    System.out.println("Exists!");
+
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setHeaderText("Invalid Date-Time Selection");
+                    errorAlert.setContentText("The end date-time must be after the start date-time.");
+                    errorAlert.show();
+                    System.out.println("Gooner!");
+                    logoutButton(new ActionEvent());
+                }
+            });
+        }
+    }
+
 
 
 
@@ -342,7 +372,7 @@ public class DashboardController implements Initializable {
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) timeBox.getValue();
-
+        
         //to set hour as default time
         if(time == null){
             time = "hour";
