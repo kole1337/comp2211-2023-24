@@ -7,6 +7,7 @@ import com.application.styles.checkStyle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +32,9 @@ import javafx.stage.Stage;
 
 import org.jfree.chart.ChartFrame;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -153,6 +156,12 @@ public class DashboardController implements Initializable {
     public ComboBox contextFilter;
     public ComboBox ageFilter;
     public ComboBox incomeFilter;
+    @FXML public CheckBox chkSelectAll;
+    @FXML public CheckBox chkConversion;
+    @FXML public CheckBox chkContextOriginal;
+    @FXML public CheckBox chkIncome;
+    @FXML public CheckBox chkAge;
+    @FXML public CheckBox chkGender;
 
     CategoryAxis xAxis = new CategoryAxis();
 
@@ -352,30 +361,97 @@ public class DashboardController implements Initializable {
         loadGraph(buttonId,time);
         dataChart.layout();
     }
-    public void exportToPDF(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(dataChart); // Assuming dataChart is an AreaChart<String, Number>
 
+    public void exportChartToPDF(){
         PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
+        pdfExporter.exportChartToPDF(dataChart);
     }
-    public void exportToPDF2(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(genderGraph);// Assuming dataChart is an AreaChart<String, Number>
+    public void saveChartAsImage(){
 
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
-    }
-    public void exportToPDF1(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(ageGraph);// Assuming dataChart is an AreaChart<String, Number>
-
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
+        ImageExporter imageExporter = new ImageExporter();
+        imageExporter.exportChartToImage(dataChart);
     }
 
+    public void exportSinglePieChartToPDF(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        PDFExporter pdfExporter = new PDFExporter();
+        if(buttonId.equals("exportAgeGraphToPDF")){
+           pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToPDF")){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToPDF")){
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToPDF")){
+            pdfExporter.exportChartToPDF(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToPDF")){
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+
+    }
+    public void exportSinglePieChartToImage(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        ImageExporter imageExporter = new ImageExporter();
+        if(buttonId.equals("exportAgeGraphToImage")){
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToImage")){
+            imageExporter.exportChartToImage(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToImage")){
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToImage")){
+            imageExporter.exportChartToImage(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToImage")){
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+    }
+
+
+
+    /**
+     * print the pie chart
+     * @param chart the pie chart
+     */
+    public void printPieChart(PieChart chart){
+        SnapshotParameters parameters = new SnapshotParameters();
+        WritableImage image = chart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(image);
+        PrinterUtil printerUtil = new PrinterUtil();
+        printerUtil.print(imageView, this.stage);
+    }
+
+    public void printSelectedPieCharts(){
+
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            printPieChart(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            printPieChart(contextOriginGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            printPieChart(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            printPieChart(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            printPieChart(genderGraph);
+        }
+    }
+
+    /**
+     * print the data chart (main chart)
+     */
     public void printChart(){
-        Printer printerUtil = new Printer();
+        PrinterUtil printerUtil = new PrinterUtil();
         SnapshotParameters parameters = new SnapshotParameters();
 
         // Create a writable image based on the chart dimensions
@@ -383,41 +459,60 @@ public class DashboardController implements Initializable {
         ImageView imageView = new ImageView(writableImage);
         printerUtil.print(imageView, this.stage);
     }
-    public void printPieChart(PieChart chart){
-        SnapshotParameters parameters = new SnapshotParameters();
-        WritableImage image = chart.snapshot(parameters, null);
-        ImageView imageView = new ImageView(image);
-        Printer printerUtil = new Printer();
-        printerUtil.print(imageView, this.stage);
-    }
-    public void exportToPDF3(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(incomeGraph);// Assuming dataChart is an AreaChart<String, Number>
 
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
+    /**
+     * check whether the CheckBox is slected
+     */
+    public void handleSelectAllAction(){
+        boolean selected = chkSelectAll.isSelected();
+        chkConversion.setSelected(selected);
+        chkContextOriginal.setSelected(selected);
+        chkIncome.setSelected(selected);
+        chkAge.setSelected(selected);
+        chkGender.setSelected(selected);
     }
-    public void exportToPDF4(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(contextOriginGraph);// Assuming dataChart is an AreaChart<String, Number>
 
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
-    }
-    public void exportToPDF5(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(conversionGraph);// Assuming dataChart is an AreaChart<String, Number>
+    /**
+     * download selected pie charts in the selected directory
+     */
+    public void downloadSelectedCharts() {
 
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
+        ImageExporter imageExporter = new ImageExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            imageExporter.exportChartToImage(genderGraph);
+        }
     }
-    public void exportToPDF6(ActionEvent actionEvent) {
-        List<Chart> chartList = new ArrayList<>();
-        chartList.add(histogramClicks);// Assuming dataChart is an AreaChart<String, Number>
+    public void downloadSelectedPDFs(){
+        PDFExporter pdfExporter = new PDFExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+    }
 
-        PDFExporter pdfExporter = new PDFExporter();
-        pdfExporter.exportChartsToPDF(chartList);
-    }
 
 
     public void loadGraphs(ActionEvent actionEvent) {

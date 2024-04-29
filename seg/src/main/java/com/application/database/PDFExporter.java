@@ -64,7 +64,7 @@ public class PDFExporter {
         return SwingFXUtils.fromFXImage(image, null);
     }
 }
-}
+
 
 
 

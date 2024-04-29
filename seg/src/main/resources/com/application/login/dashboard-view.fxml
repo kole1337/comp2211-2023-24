@@ -32,6 +32,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.CheckBox?>
 <HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
    <children>
       <HBox style="-fx-background-color: gray;" HBox.hgrow="ALWAYS" />
@@ -195,6 +196,41 @@
                                        <Font name="System Bold" size="15.0" />
                                    </font>
                                </Button>
+
+                               <HBox layoutX="14" layoutY="380">
+                                   <CheckBox fx:id="chkConversion" text="Conversion">
+                                       <HBox.margin>
+                                           <Insets top="0" right="5" bottom="0" left="0" />
+                                       </HBox.margin>
+                                   </CheckBox>
+                                   <CheckBox fx:id="chkContextOriginal" text="Context Original">
+                                       <HBox.margin>
+                                           <Insets top="0" right="5" bottom="0" left="0" />
+                                       </HBox.margin>
+                                   </CheckBox>
+                                   <CheckBox fx:id="chkIncome" text="Income" >
+                                       <HBox.margin>
+                                           <Insets top="0" right="5" bottom="0" left="0" />
+                                       </HBox.margin>
+                                   </CheckBox>
+                                   <CheckBox fx:id="chkAge" text="Age" >
+                                       <HBox.margin>
+                                           <Insets top="0" right="5" bottom="0" left="0" />
+                                       </HBox.margin>
+                                   </CheckBox>
+                                   <CheckBox fx:id="chkGender" text="Gender" >
+                                       <HBox.margin>
+                                           <Insets top="0" right="5" bottom="0" left="0" />
+                                       </HBox.margin>
+                                   </CheckBox>
+                                   <CheckBox fx:id="chkSelectAll" text="Select All" onAction="#handleSelectAllAction"/>
+                               </HBox>
+                               <HBox layoutX="180" layoutY="400">
+                                   <Button fx:id="exportPieChartToImage" onAction="#downloadSelectedCharts" text="Export Image" />
+                                   <Button fx:id="exportPieChartToPDF" onAction="#downloadSelectedPDFs" text="Export PDF"/>
+                                   <Button fx:id="printPieChartButton" onAction="#printSelectedPieCharts" text="Print"/>
+                               </HBox>
+
                                <Button fx:id="loadCSVbutton3" layoutX="14.0" layoutY="422.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
                                    <font>
                                        <Font name="System Bold" size="14.0" />
@@ -217,7 +253,8 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                        <PieChart fx:id="ageGraph" layoutX="-1.0" layoutY="1.0" prefHeight="419.0" prefWidth="495.0" title="Age Graph" visible="true" />
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF1" text="Export to PDF" />
+                                                       <Button fx:id="exportAgeGraphToPDF" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" />
+                                                       <Button fx:id="exportAgeGraphToImage" layoutX="20.0" layoutY="40" mnemonicParsing="false" onAction="#exportSinglePieChartToImage"></Button>
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -227,7 +264,8 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="genderGraph" layoutX="-1.0" prefHeight="415.0" prefWidth="439.0" title="Gender Graph" />
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF2" text="Export to PDF" />
+                                                       <Button fx:id="exportGenderGraphToPDF" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" />
+                                                       <Button fx:id="exportGenderGraphToImage" layoutX="20.0" layoutY="40" mnemonicParsing="false" onAction="#exportSinglePieChartToImage"></Button>
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -237,7 +275,8 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="incomeGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="416.0" prefWidth="439.0" title="Income Graph" />
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF3" text="Export to PDF" />
+                                                       <Button fx:id="exportIncomeGraphToPDF" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" />
+                                                       <Button fx:id="exportIncomeGraphToImage" layoutX="20.0" layoutY="40" mnemonicParsing="false" onAction="#exportSinglePieChartToImage"></Button>
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -247,7 +286,8 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="356.0">
                                                    <children>
                                                        <PieChart fx:id="contextOriginGraph" layoutX="-4.0" layoutY="-3.0" prefHeight="418.0" prefWidth="439.0" title="Context Graph" />
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF4" text="Export to PDF" />
+                                                       <Button fx:id="exportCOGraphToPDF" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" />
+                                                       <Button fx:id="exportCOGraphToImage" layoutX="20.0" layoutY="40" mnemonicParsing="false" onAction="#exportSinglePieChartToImage"></Button>
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -257,7 +297,8 @@
                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
                                                        <PieChart fx:id="conversionGraph" layoutX="5.0" prefHeight="414.0" prefWidth="432.0" title="Conversion Graph" visible="true" />
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF5" text="Export to PDF" />
+                                                       <Button fx:id="exportConversionGraphToPDF" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" />
+                                                       <Button fx:id="exportConversionGraphToImage" layoutX="20.0" layoutY="40" mnemonicParsing="false" onAction="#exportSinglePieChartToImage"></Button>
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -281,7 +322,6 @@
                                                                <Double fx:value="10.0" /> <!-- Adjust this value as needed -->
                                                            </categoryGap>
                                                        </BarChart>
-                                                       <Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" onAction="#exportToPDF6" text="Export to PDF" />
                                                    </children>
                                                </AnchorPane>
                                            </content>
@@ -303,7 +343,9 @@
                                   <Label fx:id="clicksLoadedLabel" layoutX="258.0" layoutY="6.0" text="clicks_log.csv: not loaded" />
                                   <Label fx:id="impressionLoadedLabel" layoutX="487.0" layoutY="5.0" text="impression_log.csv: not loaded" />
                                   <Label fx:id="serverLoadedLabel" layoutX="721.0" layoutY="8.0" text="server_log.csv: not loaded" />
-                                  <Button fx:id="exportPDF" layoutX="1066.0" layoutY="2.0" mnemonicParsing="false" onAction="#exportToPDF" prefHeight="25.0" prefWidth="93.0" text="Export PDF" />
+                                  <Button fx:id="printButton" layoutX="866" layoutY="2" mnemonicParsing="false" onAction="#printChart"/>
+                                  <Button fx:id="exportImage" layoutX="966" layoutY="2" mnemonicParsing="false" onAction="#saveChartAsImage" text="Export Image" />
+                                  <Button fx:id="exportPDF" layoutX="1066.0" layoutY="2.0" mnemonicParsing="false" onAction="#exportChartToPDF" prefHeight="25.0" prefWidth="93.0" text="Export PDF" />
                                   <Button fx:id="logoutButton" layoutX="1166.0" layoutY="2.0" mnemonicParsing="false" onAction="#logoutButton" prefHeight="25.0" prefWidth="93.0" text="Logout" />
                               </children>
                           </AnchorPane>
