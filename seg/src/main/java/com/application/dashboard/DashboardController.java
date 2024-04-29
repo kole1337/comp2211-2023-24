@@ -255,6 +255,7 @@ public class DashboardController implements Initializable {
                 System.out.println(oldValue + "|" + newValue);
             }
         });
+//        checkUserExistsTask();
     }
 
 
@@ -272,7 +273,13 @@ public class DashboardController implements Initializable {
         //dbConnection.makeConn("root", "jojo12345");
 //        Timer timer = new Timer();
 //        timer.schedule(new UserExistenceTask(),0,3000);
-        
+
+    }
+
+    private void checkUserExistsTask(){
+        Timer timer = new Timer();
+
+        timer.schedule(new UserExistenceTask(),0,3000);
     }
     static String currentUser = "";
     public static void setCurrentUser(String username){

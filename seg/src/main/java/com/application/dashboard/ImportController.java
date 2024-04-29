@@ -1,4 +1,5 @@
 package com.application.dashboard;
+import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
@@ -42,10 +43,12 @@ public class ImportController {
 
     private Boolean light = true;
     private Boolean dark = false;
-    String currentUser=  "";
+    static String currentUser=  "";
 
+    Timer timer = new Timer();
 
-
+    DbConnection db = new DbConnection();
+    static UserManager um = new UserManager();
     public void initialize(){
             checkStyle obj = new checkStyle();
             String theme = obj.checkStyle();
@@ -55,33 +58,37 @@ public class ImportController {
             }else{
                 enableLightTheme();
             }
-//        Timer timer = new Timer();
-//
-//        timer.schedule(new UserExistenceTask(),0,3000);
+//        checkUserExistsTask();
     }
 
 
+    public void stopTimer(){
+        System.out.println("Stopping timer hopefully");
+        timer.cancel();
+        timer.purge();
+    }
+
+    private void checkUserExistsTask(){
+
+        timer.schedule(new UserExistenceTask(),0,3000);
+
+    }
     public void setCurrentUser(String username){
         currentUser = username;
     }
 
-    private class UserExistenceTask extends TimerTask {
-        UserManager um = new UserManager();
+    private static class UserExistenceTask extends TimerTask {
         @Override
         public void run() {
-            Platform.runLater(() -> {
-                if(um.checkUserExistence(currentUser)){
-                    System.out.println("Exists!");
-
-                }else{
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setHeaderText("Invalid Date-Time Selection");
-                    errorAlert.setContentText("The end date-time must be after the start date-time.");
-                    errorAlert.show();
-                    System.out.println("Gooner!");
-                    logoutSession(new ActionEvent());
-                }
-            });
+            if (!um.checkUserExistence(currentUser)) {
+                // User does not exist, perform actions accordingly
+                System.out.println("User does not exist!");
+                // Update UI or take necessary actions
+                new ImportController().logoutSession(new ActionEvent());
+            } else {
+                // User exists
+                System.out.println("User exists!");
+            }
         }
     }
 
@@ -98,6 +105,7 @@ public class ImportController {
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
+        stopTimer();
     }
     String fileFolderPath = "";
     public void openCampaign(){
