@@ -273,7 +273,7 @@
                                                                       </Label>
                                                                   </children>
                                                               </VBox>
-                                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="54.0" prefWidth="483.0" VBox.vgrow="ALWAYS">
+                                                <AnchorPane fx:id="freeAnchor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="54.0" prefWidth="483.0" VBox.vgrow="ALWAYS">
                                                    <children>
                                                                     <Button fx:id="loadCSVbutton3" layoutX="178.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
                                                                         <font>
