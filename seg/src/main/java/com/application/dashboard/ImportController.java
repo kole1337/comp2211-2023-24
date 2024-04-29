@@ -1,21 +1,25 @@
 package com.application.dashboard;
-import com.application.files.FileChooserWindow;
+import com.application.database.DbConnection;
+import com.application.database.UserManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +43,12 @@ public class ImportController {
 
     private Boolean light = true;
     private Boolean dark = false;
+    static String currentUser=  "";
+
+    Timer timer = new Timer();
+
+    DbConnection db = new DbConnection();
+    static UserManager um = new UserManager();
     public void initialize(){
             checkStyle obj = new checkStyle();
             String theme = obj.checkStyle();
@@ -48,9 +58,55 @@ public class ImportController {
             }else{
                 enableLightTheme();
             }
-
+//        checkUserExistsTask();
     }
 
+
+    public void stopTimer(){
+        System.out.println("Stopping timer hopefully");
+        timer.cancel();
+        timer.purge();
+    }
+
+    private void checkUserExistsTask(){
+
+        timer.schedule(new UserExistenceTask(),0,3000);
+
+    }
+    public void setCurrentUser(String username){
+        currentUser = username;
+    }
+
+    private static class UserExistenceTask extends TimerTask {
+        @Override
+        public void run() {
+            if (!um.checkUserExistence(currentUser)) {
+                // User does not exist, perform actions accordingly
+                System.out.println("User does not exist!");
+                // Update UI or take necessary actions
+                new ImportController().logoutSession(new ActionEvent());
+            } else {
+                // User exists
+                System.out.println("User exists!");
+            }
+        }
+    }
+
+    public void logoutSession(ActionEvent event){
+        try {
+            root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.INFO, "Opening hello view.");
+        } catch (IOException e) {
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+        }
+        stopTimer();
+    }
     String fileFolderPath = "";
     public void openCampaign(){
         fileFolderPath = fileChooser.selectFolderPath();
@@ -63,6 +119,9 @@ public class ImportController {
 //        System.out.println("Ready ^_^!");
         //dashboardButton.setDisable(false);
     }
+
+
+
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
         try {

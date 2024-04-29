@@ -201,5 +201,40 @@ public class UserManager {
         }
     }
 
+    public static Boolean checkUserExistence(String username) {
+        try {
+            String query = "SELECT COUNT(*) FROM users WHERE username = ?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                if (count == 0) {
+                    // User does not exist, perform actions accordingly
+                    return false;
+                    // Update UI or take necessary actions
+                } else {
+                    // User exists
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return null;
+    }
+//        finally {
+//            try {
+//                if (rs != null) rs.close();
+//                if ( pstmt != null)  pstmt.close();
+//                if (conn != null) conn.close();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
 }

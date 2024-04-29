@@ -16,4 +16,5 @@
    <Button fx:id="buttonImpressionLog" layoutX="392.0" layoutY="296.0" mnemonicParsing="false" onAction="#selectImpressionLog" prefHeight="25.0" prefWidth="153.0" text="Select Impression Log" />
    <Button fx:id="buttonClickLog" layoutX="392.0" layoutY="340.0" mnemonicParsing="false" onAction="#selectClickLog" prefHeight="25.0" prefWidth="153.0" text="Select Clicks Log" />
    <ChoiceBox layoutX="891.0" layoutY="241.0" prefWidth="150.0" />
+   <Button fx:id="logoutButton" layoutX="1002.0" layoutY="572.0" mnemonicParsing="false" onAction="#logoutSession" text="Logout" />
 </AnchorPane>

@@ -4,6 +4,9 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -30,15 +33,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import org.jfree.chart.ChartFrame;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -257,7 +259,18 @@ public class DashboardController implements Initializable {
         ageFilter.setValue(" ");
         incomeFilter.setValue(" ");
         timeBox.setValue("hour");
+
+        dataChart.setMaxHeight(Double.MAX_VALUE);
+        dataChart.setMaxWidth(Double.MAX_VALUE);
+        dataChart.widthProperty().addListener(new ChangeListener() {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                System.out.println(oldValue + "|" + newValue);
+            }
+        });
+//        checkUserExistsTask();
     }
+
+
 
 
 
@@ -270,9 +283,42 @@ public class DashboardController implements Initializable {
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
-
+//        Timer timer = new Timer();
+//        timer.schedule(new UserExistenceTask(),0,3000);
 
     }
+
+    private void checkUserExistsTask(){
+        Timer timer = new Timer();
+
+        timer.schedule(new UserExistenceTask(),0,3000);
+    }
+    static String currentUser = "";
+    public static void setCurrentUser(String username){
+        currentUser = username;
+    }
+
+    private class UserExistenceTask extends TimerTask {
+        UserManager um = new UserManager();
+
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+                if (um.checkUserExistence(currentUser)) {
+                    System.out.println("Exists!");
+
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setHeaderText("Invalid Date-Time Selection");
+                    errorAlert.setContentText("The end date-time must be after the start date-time.");
+                    errorAlert.show();
+                    System.out.println("Gooner!");
+                    logoutButton(new ActionEvent());
+                }
+            });
+        }
+    }
+
 
 
 
@@ -308,7 +354,7 @@ public class DashboardController implements Initializable {
 //        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
-        //uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
 //        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
 //
 //        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
@@ -316,12 +362,14 @@ public class DashboardController implements Initializable {
 //        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
 //        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
 //        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
+
+
     }
 
     public void loadDataGraphs(ActionEvent actionEvent) {
         dataChart.layout();
-        Button clickedButton = (Button) actionEvent.getSource();
-        String buttonId = clickedButton.getId();
+
+        String buttonId = ((Button) actionEvent.getSource()).getId();
         String time = (String) timeBox.getValue();
 
         //to set hour as default time
@@ -333,19 +381,21 @@ public class DashboardController implements Initializable {
             buttonId = "totalClicks";
         }
         loadingBar();
-        dc = new DatasetCreator(fph);
+//        dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         loadGraph(buttonId, time);
         dataChart.layout();
 
     }
+
+
     public void loadDataGraphsWithinRange(ActionEvent actionEvent){
         dataChart.layout();
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) timeBox.getValue();
-
+        
         //to set hour as default time
         if(time == null){
             time = "hour";
@@ -523,7 +573,7 @@ public class DashboardController implements Initializable {
         loadContextOriginChart();
         loadConversionChart();
 //        loadHistogramChart();
-        //loadHistogramClickCost();
+//        loadHistogramClickCost();
         chartPane.layout();
 
     }
@@ -562,6 +612,7 @@ public class DashboardController implements Initializable {
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
         dataChart.layout();
+
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         if (selectedButton != null) {
@@ -1002,14 +1053,35 @@ public int countTotalBounces(){
         logger.log(Level.ALL, "Loading genders.");
 
         logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null){
+            if(toDate.getValue() != null){
+                int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog",fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
-        genderGraph.setTitle("Gender Graph");
+
+
+        genderGraph.setTitle("Gender Graph (totals)");
         genderGraph.setLabelLineLength(20);
         genderGraph.setLabelsVisible(true);
         genderGraph.setData(pieChartData);
@@ -1022,12 +1094,31 @@ public int countTotalBounces(){
         logger.log(Level.ALL, "Loading age graph.");
 
         logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
         ageGraph.setLabelLineLength(20);
         ageGraph.setLabelsVisible(true);
@@ -1036,13 +1127,31 @@ public int countTotalBounces(){
 
     //Load income graph
     public void loadIncomeGraph(){
-        logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
         incomeGraph.setLabelLineLength(20);
         incomeGraph.setLabelsVisible(true);
@@ -1053,12 +1162,31 @@ public int countTotalBounces(){
 
         logger.log(Level.ALL, "Loading income graph.");
 
-        int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
 
         contextOriginGraph.setLabelLineLength(20);
@@ -1067,13 +1195,31 @@ public int countTotalBounces(){
     }
 
     public void loadConversionChart() {
-        int[] vals = dataman.getUniqueAppearanceInt("conversion", "serverlog");
-        String[] names = dataman.getUniqueAppearanceString("conversion", "serverlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
-            //System.out.println(vals[i]);
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("conversion", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("conversion", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("conversion", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("conversion", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("conversion", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("conversion", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
 
         conversionGraph.setLabelLineLength(20);
@@ -1124,8 +1270,9 @@ public int countTotalBounces(){
 
     //Display tutorial overlay
     public void loadTutorial() {
-        tutPNG.setVisible(true);
-        tutorialOFF.setVisible(true);
+//        tutPNG.setVisible(true);
+//        tutorialOFF.setVisible(true);
+
     }
 
     //Disable tutorial overlay

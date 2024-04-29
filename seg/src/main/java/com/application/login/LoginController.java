@@ -1,5 +1,6 @@
 package com.application.login;
 
+import com.application.dashboard.ImportController;
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.logger.LogAction;
@@ -74,9 +75,13 @@ public class LoginController {
             try {
                 LogAction la = new LogAction(usernameField.getText());
                 logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
-                root = FXMLLoader.load(getClass().getResource("import-view.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("import-view.fxml"));
+                root = loader.load();
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
+                ImportController ic = loader.getController();
+                ic.setCurrentUser(usernameField.getText());
+                System.out.println(usernameField.getText());
                 stage.setScene(scene);
                 stage.show();
 
