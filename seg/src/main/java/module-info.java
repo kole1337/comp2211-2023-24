@@ -19,7 +19,8 @@ module com.example.seg {
     requires com.zaxxer.hikari;
 
     requires javafx.swing;
-    requires pdfbox;
+//    requires pdfbox;
+    requires org.apache.pdfbox;
 
     opens com.application.login to javafx.fxml;
     exports com.application.login;
