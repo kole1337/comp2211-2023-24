@@ -1,2 +1,0 @@
-Starting session: user at Sun Apr 28 22:06:30 BST 2024
-Logging as user. Opening dashboard
