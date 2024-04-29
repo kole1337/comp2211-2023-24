@@ -17,6 +17,7 @@ public class TableSave {
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
+
     public static void save_default(){
         try{
             ResultSet info  = statement.executeQuery("SELECT  COLUMN_NAME FROM INFORMATION_SCHEME.COLUMNS\n" +

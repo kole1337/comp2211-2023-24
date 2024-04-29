@@ -21,7 +21,7 @@ public class DbConnection {
 
     public DbConnection(){
 
-        readFromFile("seg//user.txt");
+        readFromFile("user.txt");
 
         try {
             makeConn();

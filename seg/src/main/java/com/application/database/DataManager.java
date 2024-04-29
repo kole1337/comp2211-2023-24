@@ -231,12 +231,12 @@ public  class DataManager {
         return totals;
     }
 
-    public int[] getUniqueAppearanceInt(String column, String table){
+    public int[] getUniqueAppearanceInt(String column, String table, String fromDate, String toDate){
         int uniqueVals = uniqueValues(column, table);
         int totals[] = new int[uniqueVals];
 
         try {
-            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" GROUP BY "+column);
+            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" WHERE date BETWEEN '"+fromDate +"' " + " AND '" +toDate +"' GROUP BY "+column);
             int i = 0;
             while(rs.next()){
 
@@ -247,6 +247,28 @@ public  class DataManager {
             e.printStackTrace();
         }
         return totals;
+    }
+
+    public String getMaxDateFromTable(String table){
+        String endDate = "";
+        try {
+            rs = statement.executeQuery("SELECT MAX(date) FROM "+table);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return endDate;
+    }
+
+    public String getMinDateFromTable(String table){
+        String endDate = "";
+        try {
+            rs = statement.executeQuery("SELECT MIN(date) FROM "+table);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return endDate;
     }
 
     public String[] getUniqueAppearanceString(String column, String table){
@@ -373,6 +395,7 @@ public  class DataManager {
         if (dataName.equals("CPA")) {
                 query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalConversions", timePeriod,  startDate, endDate, gender, income, context, age);
+
                 try {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
@@ -476,6 +499,10 @@ public  class DataManager {
                     "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY entryDate";
         }
         if(dataName.equals("totalCost")){
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, SUM(click.ClickCost) AS data " +
+                    "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+        }
+        if(dataName.equals("genderGraph")){
             query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, SUM(click.ClickCost) AS data " +
                     "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
         }
@@ -596,6 +623,7 @@ public  class DataManager {
         update();
     }
 
+    //update the selected save
     public static void move_saved(int pos){
         logger.log(Level.INFO, "moving saved");
         try {
@@ -613,6 +641,7 @@ public  class DataManager {
         }catch(SQLException e){logger.log(Level.SEVERE, "error with sql server");}
     }
 
+    //
     public static void move_history(int pos){
         try {
             logger.log(Level.INFO, "moving history");

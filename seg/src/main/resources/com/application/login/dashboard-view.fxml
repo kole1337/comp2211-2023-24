@@ -24,12 +24,14 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
         <MenuBar prefHeight="25.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <menus>
@@ -71,7 +73,7 @@
                     </items>
                 </Menu>
 
-            </menus>
+                  </menus>
         </MenuBar>
         <SplitPane dividerPositions="0.11418143899895725" prefHeight="1175.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <items>
@@ -145,7 +147,7 @@
                                                       <ComboBox fx:id="incomeFilter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="150.0" HBox.hgrow="ALWAYS" />
                                                   </HBox>
       
-                                                  <!-- DatePicker for selecting the end date -->
+                                                        <!-- DatePicker for selecting the end date -->
                                                   <DatePicker fx:id="toDate" layoutX="100" layoutY="100" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#createTimeFrame" promptText="End Date" VBox.vgrow="ALWAYS" />
                                                   <HBox fx:id="toTimeHBox" VBox.vgrow="ALWAYS">
                                                       <ComboBox fx:id="toHour" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="71.0" HBox.hgrow="ALWAYS" />
@@ -211,6 +213,9 @@
                                           </HBox>
                                                         <Button fx:id="logoutButton" accessibleHelp="Logs out of the application" alignment="CENTER" contentDisplay="RIGHT" layoutX="1536.0" mnemonicParsing="false" onAction="#logoutButton" prefHeight="40.0" prefWidth="144.0" text="Logout" />
                                        </children>
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding>
                                     </AnchorPane>
                                     <HBox spacing="30.0" VBox.vgrow="ALWAYS">
                                        <children>
@@ -277,12 +282,12 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Button>
-                                                                    <Button fx:id="tutorialOFF" layoutY="41.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="52.0" prefWidth="178.0" text="TURN OFF TUTORIAL">
+                                                                    <Button fx:id="tutorialOFF" layoutY="41.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="43.0" prefWidth="178.0" text="TURN OFF TUTORIAL">
                                                                         <font>
                                                                             <Font name="System Bold" size="15.0" />
                                                                         </font>
                                                                     </Button>
-                                                                    <Button fx:id="loadGraphButton" layoutX="268.0" layoutY="48.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
+                                                                    <Button fx:id="loadGraphButton" layoutX="178.0" layoutY="44.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
                                                                         <font>
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
@@ -292,6 +297,12 @@
                                                                             <Font name="System Bold" size="14.0" />
                                                                         </font>
                                                                     </Button>
+                                                      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="-11.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../../images/pyramid.png" />
+                                                         </image></ImageView>
+
+
                                                    </children>
                                                 </AnchorPane>
                                              </children>
@@ -362,7 +373,7 @@
                                                               </BarChart>
                                        </children>
                                        <padding>
-                                          <Insets left="10.0" right="10.0" />
+                                          <Insets bottom="15.0" left="10.0" right="10.0" />
                                        </padding>
                                     </HBox>
                                             </children>
