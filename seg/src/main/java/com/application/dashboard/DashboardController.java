@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -25,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -33,7 +36,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.jfree.chart.ChartFrame;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -153,6 +158,12 @@ public class DashboardController implements Initializable {
     public ComboBox contextFilter;
     public ComboBox ageFilter;
     public ComboBox incomeFilter;
+    @FXML public CheckBox chkSelectAll;
+    @FXML public CheckBox chkConversion;
+    @FXML public CheckBox chkContextOriginal;
+    @FXML public CheckBox chkIncome;
+    @FXML public CheckBox chkAge;
+    @FXML public CheckBox chkGender;
 
     CategoryAxis xAxis = new CategoryAxis();
 
@@ -401,6 +412,159 @@ public class DashboardController implements Initializable {
         dataChart.layout();
     }
 
+    public void exportChartToPDF(){
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartToPDF(dataChart);
+    }
+    public void saveChartAsImage(){
+
+        ImageExporter imageExporter = new ImageExporter();
+        imageExporter.exportChartToImage(dataChart);
+    }
+
+    public void exportSinglePieChartToPDF(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        PDFExporter pdfExporter = new PDFExporter();
+        if(buttonId.equals("exportAgeGraphToPDF")){
+           pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToPDF")){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToPDF")){
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToPDF")){
+            pdfExporter.exportChartToPDF(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToPDF")){
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+
+    }
+    public void exportSinglePieChartToImage(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        ImageExporter imageExporter = new ImageExporter();
+        if(buttonId.equals("exportAgeGraphToImage")){
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToImage")){
+            imageExporter.exportChartToImage(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToImage")){
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToImage")){
+            imageExporter.exportChartToImage(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToImage")){
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+    }
+
+
+
+    /**
+     * print the pie chart
+     * @param chart the pie chart
+     */
+    public void printPieChart(PieChart chart){
+        SnapshotParameters parameters = new SnapshotParameters();
+        WritableImage image = chart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(image);
+        PrinterUtil printerUtil = new PrinterUtil();
+        printerUtil.print(imageView, this.stage);
+    }
+
+    public void printSelectedPieCharts(){
+
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            printPieChart(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            printPieChart(contextOriginGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            printPieChart(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            printPieChart(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            printPieChart(genderGraph);
+        }
+    }
+
+    /**
+     * print the data chart (main chart)
+     */
+    public void printChart(){
+        PrinterUtil printerUtil = new PrinterUtil();
+        SnapshotParameters parameters = new SnapshotParameters();
+
+        // Create a writable image based on the chart dimensions
+        WritableImage writableImage = dataChart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(writableImage);
+        printerUtil.print(imageView, this.stage);
+    }
+
+    /**
+     * check whether the CheckBox is slected
+     */
+    public void handleSelectAllAction(){
+        boolean selected = chkSelectAll.isSelected();
+        chkConversion.setSelected(selected);
+        chkContextOriginal.setSelected(selected);
+        chkIncome.setSelected(selected);
+        chkAge.setSelected(selected);
+        chkGender.setSelected(selected);
+    }
+
+    /**
+     * download selected pie charts in the selected directory
+     */
+    public void downloadSelectedCharts() {
+
+        ImageExporter imageExporter = new ImageExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            imageExporter.exportChartToImage(genderGraph);
+        }
+    }
+    public void downloadSelectedPDFs(){
+        PDFExporter pdfExporter = new PDFExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+    }
+
+
+
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
         loadGenders();
@@ -494,6 +658,7 @@ public class DashboardController implements Initializable {
         dataChart.layout();
 
     }
+
 
     public String getToDateTime(){
         if(toDate.getValue() == null){
@@ -1163,7 +1328,7 @@ public int countTotalBounces(){
         try {
             if(fph.getClickPath() != null) {
 //              File file1 = fph.getImpressionPath();
-                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
                 ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
                 tct.main(tempClicks);
                 System.out.println();

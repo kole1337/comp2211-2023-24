@@ -163,7 +163,7 @@ public  class DataManager {
         }
         try {
             String query = "SELECT COUNT(*) FROM serverlog " +
-                    "WHERE TIMESTAMPDIFF(SECOND, entry_date_time, exit_date_time) <= " + timeBounce +
+                    "WHERE TIMESTAMPDIFF(SECOND, entrydate, exitdate) <= " + timeBounce +
                     "OR page_viewed < " + pageBounce ;
 
             rs = statement.executeQuery(query);
