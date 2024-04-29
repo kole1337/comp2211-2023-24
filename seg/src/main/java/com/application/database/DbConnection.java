@@ -21,7 +21,7 @@ public class DbConnection {
 
     public DbConnection(){
 
-        readFromFile("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\user.txt");
+        readFromFile("user.txt");
 
         try {
             makeConn();
