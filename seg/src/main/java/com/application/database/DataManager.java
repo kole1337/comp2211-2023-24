@@ -351,7 +351,7 @@ public  class DataManager {
         ResultSet rs2 = null;
         String query1 = "";
         String query2 = "";
-        if (dataName.equals("CTR")) {
+        if (dataName.equals("costPerImpres")) {
             query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
             query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
             try {
@@ -366,7 +366,7 @@ public  class DataManager {
                 throw new RuntimeException(ex);
             }
         }
-        if (dataName.equals("CPA")) {
+        if (dataName.equals("costPerAcq")) {
                 query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalConversions", timePeriod,  startDate, endDate, gender, income, context, age);
                 try {
@@ -384,7 +384,7 @@ public  class DataManager {
                 }
 
             }
-        if (dataName.equals("CPM")) {
+        if (dataName.equals("costPerThousandImpres")) {
                 query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalImpressions",timePeriod, startDate, endDate, gender, income, context, age);
                 try {
@@ -399,7 +399,7 @@ public  class DataManager {
                     throw new RuntimeException(ex);
                 }
             }
-        if (dataName.equals("CPC")) {
+        if (dataName.equals("costPerClicks")) {
                 query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
                 query2 = queryGenerator("totalClicks", timePeriod,  startDate, endDate, gender, income, context, age);
                 try {

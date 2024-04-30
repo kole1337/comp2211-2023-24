@@ -119,7 +119,7 @@ public class DashboardController implements Initializable {
     @FXML
     public CheckBox totalConversions;
     @FXML
-    public CheckBox clicksPerAcq;
+    public CheckBox costPerAcq;
     @FXML
     public CheckBox costPerClicks;
     @FXML
@@ -241,7 +241,7 @@ public class DashboardController implements Initializable {
             List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
             loadDataGraphs(selectedCheckBoxes);
         });
-        clicksPerAcq.selectedProperty().addListener((observable,oldValue,newValue)->{
+        costPerAcq.selectedProperty().addListener((observable,oldValue,newValue)->{
             List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
             loadDataGraphs(selectedCheckBoxes);
         });
@@ -359,7 +359,7 @@ public class DashboardController implements Initializable {
     public void loadDataGraphs(List<CheckBox> selectedCheckBoxes) {
         List<String> selectedAttributes = new ArrayList<>();
         for(CheckBox i:selectedCheckBoxes){
-            selectedAttributes.add(i.getText());
+            selectedAttributes.add(i.getId());
         }
         String time = (String) timeBox.getValue();
 
@@ -371,6 +371,7 @@ public class DashboardController implements Initializable {
         dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
+        System.out.println("selected attributes are " + selectedAttributes.get(0));
         loadGraph(selectedAttributes, time);
         dataChart.requestLayout();
 
@@ -416,8 +417,8 @@ public class DashboardController implements Initializable {
         if (totalConversions.isSelected()) {
             selectedCheckboxes.add(totalConversions);
         }
-        if (clicksPerAcq.isSelected()) {
-            selectedCheckboxes.add(clicksPerAcq);
+        if (costPerAcq.isSelected()) {
+            selectedCheckboxes.add(costPerAcq);
         }
         if (costPerClicks.isSelected()) {
             selectedCheckboxes.add(costPerClicks);
@@ -431,6 +432,7 @@ public class DashboardController implements Initializable {
         if (bounceRate.isSelected()) {
             selectedCheckboxes.add(bounceRate);
         }
+        System.out.println(selectedCheckboxes.get(0));
         return selectedCheckboxes;
     }
     public void loadGraphs(ActionEvent actionEvent) {
@@ -487,7 +489,10 @@ public class DashboardController implements Initializable {
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
             for (String selectedButton:selectedButtons){
-                dataChart.getData().add(dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
+                XYChart.Series<String,Number> data = new XYChart.Series<>();
+                data = dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString());
+                data.setName(selectedButton);
+                dataChart.getData().add(data);
             }
             }
             //to set end date way far in the future as dafault, so it reads every data

@@ -315,17 +315,17 @@
                                                      <Insets left="15.0" />
                                                  </opaqueInsets>
                                              </Label>
-                                             <CheckBox fx:id="totalClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="256.0" text="Clicks" VBox.vgrow="ALWAYS"/>
-                                             <CheckBox fx:id="totalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" style="-fx-border-insets: 50;" text="Uniques" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="355.0" text="Bounces" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="374.0" text="Impressions" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="315.0" text="Conversion Rate" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="332.0" text="Total Cost" />
-                                             <CheckBox fx:id="clicksPerAcq" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" text="Cost per acquisition" />
-                                             <CheckBox fx:id="costPerClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="350.0" text="Cost per clicks" />
-                                             <CheckBox fx:id="costPerImpres" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="348.0" text="Cost per impression" />
-                                             <CheckBox fx:id="costPerThousandImpres" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="350.0" text="Cost per thousand impressions" wrapText="true" />
-                                             <CheckBox fx:id="bounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="445.0" text="Bounce Rate">
+                                             <CheckBox fx:id="totalClicks" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="256.0" text="Clicks" VBox.vgrow="ALWAYS"/>
+                                             <CheckBox fx:id="totalUniques" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="308.0" style="-fx-border-insets: 50;" text="Uniques" VBox.vgrow="ALWAYS" />
+                                             <CheckBox fx:id="totalBounces" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="355.0" text="Bounces" VBox.vgrow="ALWAYS" />
+                                             <CheckBox fx:id="totalImpressions" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="374.0" text="Impressions" VBox.vgrow="ALWAYS" />
+                                             <CheckBox fx:id="totalConversions" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="315.0" text="Conversion Rate" VBox.vgrow="ALWAYS" />
+                                             <CheckBox fx:id="totalCost" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="332.0" text="Total Cost" />
+                                             <CheckBox fx:id="costPerAcq" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="308.0" text="Cost per acquisition" />
+                                             <CheckBox fx:id="costPerClicks" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="350.0" text="Cost per clicks" />
+                                             <CheckBox fx:id="costPerImpres" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="348.0" text="Cost per impression" />
+                                             <CheckBox fx:id="costPerThousandImpres" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="350.0" text="Cost per thousand impressions" wrapText="true" />
+                                             <CheckBox fx:id="bounceRate" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="445.0" text="Bounce Rate">
                                                  <opaqueInsets>
                                                      <Insets top="10.0" />
                                                  </opaqueInsets>
@@ -353,30 +353,33 @@
                                        <VBox prefHeight="227.0" prefWidth="197.0">
                                        <Label text="Filters" />
                                            <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="Start Date" />
-                                           <HBox fx:id="fromTimeHBox">
+                                           <VBox fx:id="fromTimeHBox">
+                                               <Label text = "Hour: " />
                                                <ComboBox fx:id="fromHour" />
-                                               <Label text=":" />
+                                               <Label text="Minute:" />
                                                <ComboBox fx:id="fromMinute" />
-                                               <Label text=":" />
+                                               <Label text="Second:" />
                                                <ComboBox fx:id="fromSecond" />
-                                           </HBox>
-                                           <HBox>
+                                           </VBox>
+                                           <VBox>
+                                               <Label text = "Gender: " />
                                                <ComboBox fx:id="genderFilter" prefWidth="150.0" />
-                                               <Label text=" " />
+                                               <Label text="Context: " />
                                                <ComboBox fx:id="contextFilter" prefWidth="150.0" />
-                                               <Label text=" " />
+                                               <Label text="Age: " />
                                                <ComboBox fx:id="ageFilter" prefWidth="150.0" />
-                                               <Label text=" " />
+                                               <Label text="Income: " />
                                                <ComboBox fx:id="incomeFilter" prefWidth="150.0" />
-                                           </HBox>
+                                           </VBox>
                            
                                                                                                  <!-- DatePicker for selecting the end date -->
                                            <DatePicker fx:id="toDate" layoutX="100" layoutY="100" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="End Date" />
                                            <HBox fx:id="toTimeHBox">
+                                               <Label text = "Hour: " />
                                                <ComboBox fx:id="toHour" />
-                                               <Label text=":" />
+                                               <Label text="Minute: " />
                                                <ComboBox fx:id="toMinute" />
-                                               <Label text=":" />
+                                               <Label text="Second: " />
                                                <ComboBox fx:id="toSecond" />
                                            </HBox>
                                            <Button onAction="#loadCSVWithinDates" text="show" />
