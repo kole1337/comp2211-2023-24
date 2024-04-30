@@ -103,7 +103,7 @@ public class DashboardController implements Initializable {
     public Label totalClicksLabel;
     public Label avgClickPriceLabel;
     public ImageView uploadPNG;
-    public AnchorPane background;
+    public VBox background;
     FilePathHandler fph = new FilePathHandler();
     public ImageView tutPNG;
     public Button tutorialOFF;

@@ -5,6 +5,11 @@
     -fx-background-color: RGB(50, 50, 50);
 }
 
+.scroll-pane{
+    -fx-background-color: RGB(211, 211, 211);
+
+}
+
 
 .label{
     -fx-text-fill: white;
