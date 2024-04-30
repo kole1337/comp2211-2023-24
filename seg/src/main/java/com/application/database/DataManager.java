@@ -10,9 +10,7 @@ import java.io.*;
 import java.sql.*;
 
 import java.lang.Process.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.application.files.ScriptRunner;
@@ -814,5 +812,26 @@ public  class DataManager {
             e.printStackTrace();
         }
         return totals;
+    }
+    public Map<String, Double> getDateAndClickCost(java.lang.String table) {
+        java.util.Map<java.lang.String, java.lang.Double> dateAndClickCost = new LinkedHashMap<>(); // Use LinkedHashMap to maintain insertion order
+
+        try {
+            java.lang.String query = "SELECT DATE(date) AS Date, clickCost FROM " + table + " ORDER BY Date";
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                java.lang.String date = resultSet.getString("Date");
+                double clickCost = resultSet.getDouble("clickCost");
+                if (clickCost != 0.0) {
+                    dateAndClickCost.put(date, clickCost);
+                }
+                System.out.println("Date: " + date + ", Click Cost: " + clickCost);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return dateAndClickCost;
     }
 }
