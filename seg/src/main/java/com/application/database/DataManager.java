@@ -253,7 +253,9 @@ public  class DataManager {
         String endDate = "";
         try {
             rs = statement.executeQuery("SELECT MAX(date) FROM "+table);
-
+            while(rs.next()) {
+                endDate = rs.getString(1);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -264,7 +266,9 @@ public  class DataManager {
         String endDate = "";
         try {
             rs = statement.executeQuery("SELECT MIN(date) FROM "+table);
-
+            while(rs.next()) {
+                endDate = rs.getString(1);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
