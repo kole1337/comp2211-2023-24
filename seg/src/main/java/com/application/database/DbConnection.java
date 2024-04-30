@@ -1,7 +1,6 @@
 package com.application.database;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,35 +18,36 @@ public class DbConnection {
     private static String url = "jdbc:mysql://localhost:3306/adda?rewriteBatchedStatements=true";
 
 
-
-    public DbConnection(){
+    public DbConnection() {
 
         readFromFile("user.txt");
 
         try {
             makeConn();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setHeaderText("DATABASE ERROR");
             a.setTitle("ERROR!");
             a.setContentText("THE SERVER IS NOT RUNNING OR IS NOT CONNECTED! PLEASE, CONTACT YOUR ADMINISTRATOR!");
             a.show();
+            System.out.println("DB error");
         }
     }
 
     /**
      * establishes a connection to the SQL databaase, pushes the connection onto other database modifying classes
+     *
      * @param user username for database access
      * @param pass password for database access
      * @throws Exception if the username/password are invalid will throw an SQL exception, if no connection can be established a runtime error will be thrown
      */
-    public static void makeConn()throws Exception{
+    public static void makeConn() throws Exception {
 
         try {
             logger.log(Level.INFO, "establishing connection");
 
-            conn = DriverManager.getConnection(url, "root" , "149162536496481Mkt!");
+            conn = DriverManager.getConnection(url, "root", "149162536496481Mkt!");
             DataManager.getConn();
             UserManager.getConn();
 
@@ -56,9 +56,8 @@ public class DbConnection {
             logger.log(Level.WARNING, "Username or password are not valid");
             e.printStackTrace();
             throw e;
-        }
-        catch (Exception e){
-            logger.log(Level.SEVERE , "Could not establish connection with SQL database");
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Could not establish connection with SQL database");
             throw new RuntimeException();
         }
     }
@@ -66,8 +65,9 @@ public class DbConnection {
     public static void readFromFile(String filePath) {
         try {
             File file = new File(filePath);
+            System.out.println(file.getParent());
             if (!file.exists()) {
-                System.out.println("File does not exist.");
+                logger.log(Level.SEVERE, "FIle does not exist");
                 return;
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -80,9 +80,11 @@ public class DbConnection {
             System.out.println("An error occurred: " + e.getMessage());
         }
     }
-    public static void createPassFile(){
+
+    public static void createPassFile() {
         try {
-            File myObj = new File("seg\\comp2211\\seg\\src\\main\\resources\\user.txt");
+//            Path relativePath = Paths.get("seg\\src\\main\\resources\\user.txt");
+            File myObj = new File("src\\main\\resources\\user.txt");
             if (myObj.createNewFile()) {
                 System.out.println("File created: " + myObj.getName());
                 System.out.println(myObj.getAbsolutePath());
@@ -105,30 +107,30 @@ public class DbConnection {
         return pass;
     }
 
-    public static String getUrl(){
+    public static String getUrl() {
         return url;
     }
 
     /**
      * Will close all connections to the sql server
+     *
      * @throws RuntimeException
      */
-    public static void closeConn()throws RuntimeException{
+    public static void closeConn() throws RuntimeException {
         try {
-            logger.log(Level.INFO , "Closing Main connection");
+            logger.log(Level.INFO, "Closing Main connection");
             conn.close();
-        }
-        catch (Exception e){
-            logger.log(Level.SEVERE,"Could not close connection to SQL server" );
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Could not close connection to SQL server");
             throw new RuntimeException("could not close connection");
         }
 
-        try{
-            logger.log(Level.INFO , "Closing DataManager connection");
+        try {
+            logger.log(Level.INFO, "Closing DataManager connection");
             DataManager.closeConnection();
-            logger.log(Level.INFO , "Closing UserManager connection");
+            logger.log(Level.INFO, "Closing UserManager connection");
             UserManager.closeConnection();
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to close connection to SQL server");
             throw new RuntimeException("could not close connection");
         }
@@ -139,13 +141,13 @@ public class DbConnection {
             Statement statement = conn.createStatement();
             statement.execute("SELECT 1");
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static Connection getConn(){
+    public static Connection getConn() {
         return conn;
     }
 

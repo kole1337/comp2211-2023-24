@@ -2,7 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/comp2211/seg/src/main/resources/user.txt
+seg/src/main/resources/user.txt
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml

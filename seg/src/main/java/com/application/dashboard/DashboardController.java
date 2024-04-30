@@ -5,9 +5,12 @@ import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -23,18 +27,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import org.jfree.chart.ChartFrame;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -152,6 +158,12 @@ public class DashboardController implements Initializable {
     public ComboBox contextFilter;
     public ComboBox ageFilter;
     public ComboBox incomeFilter;
+    @FXML public CheckBox chkSelectAll;
+    @FXML public CheckBox chkConversion;
+    @FXML public CheckBox chkContextOriginal;
+    @FXML public CheckBox chkIncome;
+    @FXML public CheckBox chkAge;
+    @FXML public CheckBox chkGender;
 
     CategoryAxis xAxis = new CategoryAxis();
 
@@ -295,7 +307,18 @@ public class DashboardController implements Initializable {
         ageFilter.setValue(" ");
         incomeFilter.setValue(" ");
         timeBox.setValue("hour");
+
+        dataChart.setMaxHeight(Double.MAX_VALUE);
+        dataChart.setMaxWidth(Double.MAX_VALUE);
+        dataChart.widthProperty().addListener(new ChangeListener() {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                System.out.println(oldValue + "|" + newValue);
+            }
+        });
+//        checkUserExistsTask();
     }
+
+
 
 
 
@@ -308,9 +331,42 @@ public class DashboardController implements Initializable {
     public DashboardController() throws Exception {
         logger.log(Level.INFO, "creating dashboard and connecting to database");
         //dbConnection.makeConn("root", "jojo12345");
-
+//        Timer timer = new Timer();
+//        timer.schedule(new UserExistenceTask(),0,3000);
 
     }
+
+    private void checkUserExistsTask(){
+        Timer timer = new Timer();
+
+        timer.schedule(new UserExistenceTask(),0,3000);
+    }
+    static String currentUser = "";
+    public static void setCurrentUser(String username){
+        currentUser = username;
+    }
+
+    private class UserExistenceTask extends TimerTask {
+        UserManager um = new UserManager();
+
+        @Override
+        public void run() {
+            Platform.runLater(() -> {
+                if (um.checkUserExistence(currentUser)) {
+                    System.out.println("Exists!");
+
+                } else {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setHeaderText("Invalid Date-Time Selection");
+                    errorAlert.setContentText("The end date-time must be after the start date-time.");
+                    errorAlert.show();
+                    System.out.println("Gooner!");
+                    logoutButton(new ActionEvent());
+                }
+            });
+        }
+    }
+
 
 
 
@@ -346,7 +402,7 @@ public class DashboardController implements Initializable {
 //        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
-        //uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
+//        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
 //        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressionsWithinDates());
 //
 //        totalClicksLabel.setText("Total clicks: " + countTotalClicksWithinDates());
@@ -354,6 +410,8 @@ public class DashboardController implements Initializable {
 //        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
 //        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
 //        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
+
+
     }
 
     public void loadDataGraphs(List<CheckBox> selectedCheckBoxes) {
@@ -368,7 +426,7 @@ public class DashboardController implements Initializable {
             time = "hour";
         }
         loadingBar();
-        dc = new DatasetCreator(fph);
+//        dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         System.out.println("selected attributes are " + selectedAttributes.get(0));
@@ -381,7 +439,7 @@ public class DashboardController implements Initializable {
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
         String time = (String) timeBox.getValue();
-
+        
         //to set hour as default time
         if(time == null){
             time = "hour";
@@ -435,6 +493,157 @@ public class DashboardController implements Initializable {
         System.out.println(selectedCheckboxes.get(0));
         return selectedCheckboxes;
     }
+    public void exportChartToPDF(){
+        PDFExporter pdfExporter = new PDFExporter();
+        pdfExporter.exportChartToPDF(dataChart);
+    }
+    public void saveChartAsImage(){
+
+        ImageExporter imageExporter = new ImageExporter();
+        imageExporter.exportChartToImage(dataChart);
+    }
+
+    public void exportSinglePieChartToPDF(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        PDFExporter pdfExporter = new PDFExporter();
+        if(buttonId.equals("exportAgeGraphToPDF")){
+           pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToPDF")){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToPDF")){
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToPDF")){
+            pdfExporter.exportChartToPDF(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToPDF")){
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+
+    }
+    public void exportSinglePieChartToImage(ActionEvent e){
+        Button clickedButton = (Button) e.getSource();
+        String buttonId = clickedButton.getId();
+        ImageExporter imageExporter = new ImageExporter();
+        if(buttonId.equals("exportAgeGraphToImage")){
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(buttonId.equals("exportGenderGraphToImage")){
+            imageExporter.exportChartToImage(genderGraph);
+        }
+        if(buttonId.equals("exportIncomeGraphToImage")){
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if(buttonId.equals("exportCOGraphToImage")){
+            imageExporter.exportChartToImage(contextOriginGraph);
+        }
+        if(buttonId.equals("exportConversionGraphToImage")){
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+    }
+
+
+
+    /**
+     * print the pie chart
+     * @param chart the pie chart
+     */
+    public void printPieChart(PieChart chart){
+        SnapshotParameters parameters = new SnapshotParameters();
+        WritableImage image = chart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(image);
+        PrinterUtil printerUtil = new PrinterUtil();
+        printerUtil.print(imageView, this.stage);
+    }
+
+    public void printSelectedPieCharts(){
+
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            printPieChart(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            printPieChart(contextOriginGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            printPieChart(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            printPieChart(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            printPieChart(genderGraph);
+        }
+    }
+
+    /**
+     * print the data chart (main chart)
+     */
+    public void printChart(){
+        PrinterUtil printerUtil = new PrinterUtil();
+        SnapshotParameters parameters = new SnapshotParameters();
+
+        // Create a writable image based on the chart dimensions
+        WritableImage writableImage = dataChart.snapshot(parameters, null);
+        ImageView imageView = new ImageView(writableImage);
+        printerUtil.print(imageView, this.stage);
+    }
+
+    /**
+     * check whether the CheckBox is slected
+     */
+    public void handleSelectAllAction(){
+        boolean selected = chkSelectAll.isSelected();
+        chkConversion.setSelected(selected);
+        chkContextOriginal.setSelected(selected);
+        chkIncome.setSelected(selected);
+        chkAge.setSelected(selected);
+        chkGender.setSelected(selected);
+    }
+
+    /**
+     * download selected pie charts in the selected directory
+     */
+    public void downloadSelectedCharts() {
+
+        ImageExporter imageExporter = new ImageExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            imageExporter.exportChartToImage(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            imageExporter.exportChartToImage(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            imageExporter.exportChartToImage(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            imageExporter.exportChartToImage(genderGraph);
+        }
+    }
+    public void downloadSelectedPDFs(){
+        PDFExporter pdfExporter = new PDFExporter();
+        if (conversionGraph != null && chkConversion.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (contextOriginGraph != null && chkContextOriginal.isSelected()) {
+            pdfExporter.exportChartToPDF(conversionGraph);
+        }
+        if (incomeGraph != null && chkIncome.isSelected()) {
+            pdfExporter.exportChartToPDF(incomeGraph);
+        }
+        if (ageGraph != null && chkAge.isSelected()) {
+            pdfExporter.exportChartToPDF(ageGraph);
+        }
+        if(genderGraph != null && chkGender.isSelected()){
+            pdfExporter.exportChartToPDF(genderGraph);
+        }
+    }
+
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
         loadGenders();
@@ -443,9 +652,8 @@ public class DashboardController implements Initializable {
         loadContextOriginChart();
         loadConversionChart();
 //        loadHistogramChart();
-        //loadHistogramClickCost();
+//        loadHistogramClickCost();
         chartPane.layout();
-
     }
     // add new load Graphs function handle the date range
 
@@ -481,6 +689,8 @@ public class DashboardController implements Initializable {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
+        dataChart.layout();
+
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         dataChart.setAnimated(false);
@@ -532,6 +742,7 @@ public class DashboardController implements Initializable {
         });
 
     }
+
 
     public String getToDateTime(){
         if(toDate.getValue() == null){
@@ -770,12 +981,12 @@ public class DashboardController implements Initializable {
 //        logger.log(Level.INFO, "Loading Total clicks within start and end time");
 //        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
-public int countTotalBounces(){
+    public int countTotalBounces(){
     logger = Logger.getLogger(DashboardController.class.getName());
     logger.log(Level.INFO, "Loading Total Bounces");
 
     return dataman.selectTotalBounces(timeSpentBounce.getText(), pageViewedBounce.getText());
-}
+    }
     public double countBounceRate(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Bounce Rate");
@@ -868,21 +1079,21 @@ public int countTotalBounces(){
 //
 //    }
 //public void loadHistogramClickCost() {
-   // Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
-
-    // Create data series for the histogram chart
-  //  XYChart.Series<String, Number> series = new XYChart.Series<>();
-
-    // Populate data series with dates and corresponding click costs
-   // for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
-   //     series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-   // }
-
-    // Add data series to the histogram chart
-   // histogramClicks.getData().add(series);
-  //  histogramClicks.setTitle("Histogram");
-
-    // Adjust the width of the bars
+//    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+////
+////     Create data series for the histogram chart
+//    XYChart.Series<String, Number> series = new XYChart.Series<>();
+////
+////     Populate data series with dates and corresponding click costs
+//    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+//        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+//    }
+////
+////     Add data series to the histogram chart
+//    histogramClicks.getData().add(series);
+//    histogramClicks.setTitle("Histogram");
+////
+////     Adjust the width of the bars
 //    double barWidth = 100; // Adjust this value as needed
 //    for (XYChart.Data<String, Number> data : series.getData()) {
 //        Node bar = data.getNode();
@@ -926,14 +1137,49 @@ public int countTotalBounces(){
         logger.log(Level.ALL, "Loading genders.");
 
         logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() == null && toDate.getValue() == null){
+            int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
-        genderGraph.setTitle("Gender Graph");
+
+        if(fromDate.getValue() != null && toDate.getValue() != null){
+            int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog",fromDate.getValue().toString(), toDate.getValue().toString());
+            String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
+        }
+
+        if(fromDate.getValue() != null && toDate.getValue() == null) {
+
+            int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
+        }
+
+        if(fromDate.getValue() == null && toDate.getValue() != null) {
+
+            int[] vals = dataman.getUniqueAppearanceInt("gender", "impressionlog", dataman.getMinDateFromTable("impressionlog"), toDate.getValue().toString());
+            String[] names = dataman.getUniqueAppearanceString("gender", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
+        }
+
+
+
+        genderGraph.setTitle("Gender Graph (totals)");
         genderGraph.setLabelLineLength(20);
         genderGraph.setLabelsVisible(true);
         genderGraph.setData(pieChartData);
@@ -946,12 +1192,31 @@ public int countTotalBounces(){
         logger.log(Level.ALL, "Loading age graph.");
 
         logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("age", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("age", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
         ageGraph.setLabelLineLength(20);
         ageGraph.setLabelsVisible(true);
@@ -960,13 +1225,31 @@ public int countTotalBounces(){
 
     //Load income graph
     public void loadIncomeGraph(){
-        logger.log(Level.ALL, "Loading income graph.");
-        int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("income", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("income", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
         incomeGraph.setLabelLineLength(20);
         incomeGraph.setLabelsVisible(true);
@@ -977,12 +1260,31 @@ public int countTotalBounces(){
 
         logger.log(Level.ALL, "Loading income graph.");
 
-        int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog");
-        String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
 
         contextOriginGraph.setLabelLineLength(20);
@@ -991,13 +1293,31 @@ public int countTotalBounces(){
     }
 
     public void loadConversionChart() {
-        int[] vals = dataman.getUniqueAppearanceInt("conversion", "serverlog");
-        String[] names = dataman.getUniqueAppearanceString("conversion", "serverlog");
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        for (int i = 0; i < vals.length; i++) {
-            names[i] = names[i] + ": " + vals[i];
-            pieChartData.add(new PieChart.Data(names[i], vals[i]));
-            //System.out.println(vals[i]);
+
+        if(fromDate.getValue() != null) {
+            if(toDate.getValue() != null) {
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), toDate.getValue().toString());
+                String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }else{
+                int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", fromDate.getValue().toString(), dataman.getMaxDateFromTable("impressionlog"));
+                String[] names = dataman.getUniqueAppearanceString("contextn", "impressionlog");
+                for (int i = 0; i < vals.length; i++) {
+                    names[i] = names[i] + ": " + vals[i];
+                    pieChartData.add(new PieChart.Data(names[i], vals[i]));
+                }
+            }
+        }else{
+            int[] vals = dataman.getUniqueAppearanceInt("context", "impressionlog", dataman.getMinDateFromTable("impressionlog"), dataman.getMaxDateFromTable("impressionlog"));
+            String[] names = dataman.getUniqueAppearanceString("context", "impressionlog");
+            for (int i = 0; i < vals.length; i++) {
+                names[i] = names[i] + ": " + vals[i];
+                pieChartData.add(new PieChart.Data(names[i], vals[i]));
+            }
         }
 
         conversionGraph.setLabelLineLength(20);
@@ -1048,8 +1368,9 @@ public int countTotalBounces(){
 
     //Display tutorial overlay
     public void loadTutorial() {
-        tutPNG.setVisible(true);
-        tutorialOFF.setVisible(true);
+//        tutPNG.setVisible(true);
+//        tutorialOFF.setVisible(true);
+
     }
     public void openCompareCampaign(ActionEvent event){
         logger.log(Level.INFO,"pressed compare-campaign button");
@@ -1122,7 +1443,7 @@ public int countTotalBounces(){
         try {
             if(fph.getClickPath() != null) {
 //              File file1 = fph.getImpressionPath();
-                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
                 ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
                 tct.main(tempClicks);
                 System.out.println();

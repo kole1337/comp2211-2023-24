@@ -1,0 +1,2 @@
+Starting session: gesh at Tue Apr 30 20:36:49 BST 2024
+Logging as user. Opening dashboard

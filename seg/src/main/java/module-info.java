@@ -18,6 +18,10 @@ module com.example.seg {
     requires java.sql;
     requires com.zaxxer.hikari;
 
+    requires javafx.swing;
+//    requires pdfbox;
+    requires org.apache.pdfbox;
+
     opens com.application.login to javafx.fxml;
     exports com.application.login;
     exports com.application.dashboard;
@@ -28,4 +32,6 @@ module com.example.seg {
     exports com.application.shenanigans;
     exports com.application.menu;
     opens com.application.menu to javafx.fxml;
+    opens com.application.setup to javafx.fxml;
+    exports com.application.setup;
 }
