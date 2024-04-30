@@ -41,10 +41,10 @@ public class FilePathHandler {
             notFound.add("clicklog");
         }
         if(!impressionPath.exists()){
-            notFound.add(2);
+            notFound.add("inpressionlog");
         }
         if(!serverPath.exists()){
-            notFound.add(3);
+            notFound.add("servelog");
         }
         try{
 
