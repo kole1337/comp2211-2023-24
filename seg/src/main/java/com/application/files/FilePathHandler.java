@@ -37,13 +37,13 @@ public class FilePathHandler {
 
 
     public boolean fileTypeHandler(List<File> files){
-        if(!clickPath.exists()){
+        if(clickPath == null){
             notFound.add("clicklog");
         }
-        if(!impressionPath.exists()){
+        if(impressionPath == null){
             notFound.add("inpressionlog");
         }
-        if(!serverPath.exists()){
+        if(serverPath == null){
             notFound.add("servelog");
         }
         try{
@@ -63,26 +63,26 @@ public class FilePathHandler {
                 firstLn = firstLn.replaceAll("\\s+", "");
                 System.out.println(firstLn);
                 temp = files.get(i);
-                if (firstLn.equals("dateidclickcost") && clickPath.exists()) {
+                if (firstLn.equals("dateidclickcost") && clickPath == null) {
                     Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate clicklog selected file  found! \n Replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                     replace_click(a1);
                 }else if(firstLn.equals("dateidclickcost")){
                     setClickPath(files.get(i).getName());
                     notFound.remove("clicklog");
                 }
-                if (firstLn.equals("dateidgenderageincomecontextimpressioncost")&& impressionPath.exists()) {
-                    Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate impressionlog selected file  found! \n Replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
+                if (firstLn.equals("dateidgenderageincomecontextimpressioncost")&&impressionPath == null) {
+                    Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate impressionlog selected file  found! \n Replace " + impressionPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                     replace_imp(a1);
                 }else if(firstLn.equals("dateidgenderageincomecontextimpressioncost")){
                     setImpressionPath(files.get(i).getName());
                     notFound.remove("impressionlog");
                 }
-                if (firstLn.equals("entrydateidexitdatepagesviewedconversion")&& serverPath.exists()) {
-                    Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate serverlog selected file found! \n Replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
+                if (firstLn.equals("entrydateidexitdatepagesviewedconversion")&& serverPath == null) {
+                    Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate serverlog selected file found! \n Replace " + serverPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                     replace_server(a1);
                 }else if(firstLn.equals("entrydateidexitdatepagesviewedconversion")){
                     setServerPath(files.get(i).getName());
-                    notFound.remove(3);
+                    notFound.remove("serverlog");
                 }
             }
         }catch (Exception e){
@@ -100,13 +100,13 @@ public class FilePathHandler {
         }
         File[] files = dir.listFiles();
         try {
-            if(!clickPath.exists()){
+            if(clickPath == null){
                 notFound.add("clicklog");
             }
-            if(!impressionPath.exists()){
+            if(impressionPath == null){
                 notFound.add("impressionlog");
             }
-            if(!serverPath.exists()){
+            if(serverPath == null){
                 notFound.add("serverlog");
             }
             for (int i = 0; i < files.length; i++) {
@@ -123,7 +123,7 @@ public class FilePathHandler {
                     firstLn = firstLn.toLowerCase();
                     firstLn = firstLn.replaceAll("\\s+", "");
                     firstl = firstLn;
-                    if(firstLn.equals("dateidclickcost") & clickPath.exists() && notFound.contains("clicklog")){
+                    if(firstLn.equals("dateidclickcost") & clickPath == null && notFound.contains("clicklog")){
                         Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate clicklog file in directory " + dir.getName() + " found! \n replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                         replace_click(a1);
                     }   else if (firstLn.equals("dateidclickcost") && notFound.contains("clicklog")) {
@@ -133,7 +133,7 @@ public class FilePathHandler {
                         Alert a1 = new Alert(Alert.AlertType.WARNING , "Another clicklog was found in " + dir.getName() + " \n do you want to replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                         replace_click(a1);
                     }
-                    if(firstLn.equals("dateidgenderageincomecontextimpressioncost") & clickPath.exists() && notFound.contains(2)){
+                    if(firstLn.equals("dateidgenderageincomecontextimpressioncost") & impressionPath == null && notFound.contains(2)){
                         Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate impressionlog file in directory: " + dir.getName() + " found! \n replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                         replace_imp(a1);
                     }   else if (firstLn.equals("dateidgenderageincomecontextimpressioncost") && notFound.contains("impressionlog")) {
@@ -143,7 +143,7 @@ public class FilePathHandler {
                         Alert a1 = new Alert(Alert.AlertType.WARNING , "Another impressionlog was found in " + dir.getName() + " \n do you want to replace " + clickPath.getName() + " with: " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                         replace_imp(a1);
                     }
-                    if(firstLn.equals("entrydateidexitdatepagesviewedconversion") & clickPath.exists() && notFound.contains("serverlog")){
+                    if(firstLn.equals("entrydateidexitdatepagesviewedconversion") & serverPath == null && notFound.contains("serverlog")){
                         Alert a1 = new Alert(Alert.AlertType.WARNING , "Duplicate serverlog file in directory: " + dir.getName() + " found! \n replace " + clickPath.getName() + " with " + temp.getName() + " ?", ButtonType.OK, ButtonType.CANCEL);
                         replace_server(a1);
                     }   else if (firstLn.equals("entrydateidexitdatepagesviewedconversion") && notFound.contains("serverlog")) {
@@ -156,14 +156,14 @@ public class FilePathHandler {
                 }
             }
         }catch (Exception e){throw new RuntimeException("error with the file system");}
-        if(notFound.contains("clicklog")&& clickPath.exists()){
+        if(notFound.contains("clicklog")&& clickPath == null){
             notFound.remove("clicklog");
         }
-        if(notFound.contains("impressionlog")&&impressionPath.exists()){
+        if(notFound.contains("impressionlog")&&impressionPath == null){
             notFound.remove("impressionlog");
         }
-        if(notFound.contains("serverlog")&&impressionPath.exists()){
-            notFound.remove(3);
+        if(notFound.contains("serverlog")&&serverPath == null){
+            notFound.remove("serverlog");
         }
         if(!notFound.isEmpty()){
             Alert alert = new Alert(Alert.AlertType.WARNING ,"files: " + notFound + "were not found" , ButtonType.OK);
