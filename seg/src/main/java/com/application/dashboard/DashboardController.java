@@ -4,6 +4,7 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.styles.checkStyle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -106,27 +107,27 @@ public class DashboardController implements Initializable {
     private Logger logger = Logger.getLogger(DashboardController.class.getName());
     private DatasetCreator dc;
     @FXML
-    public Button TotalClicks;
+    public CheckBox totalClicks;
     @FXML
-    public Button TotalImpressions;
+    public CheckBox totalImpressions;
     @FXML
-    public Button TotalCost;
+    public CheckBox totalCost;
     @FXML
-    public Button TotalUniques;
+    public CheckBox totalUniques;
     @FXML
-    public Button TotalBounces;
+    public CheckBox totalBounces;
     @FXML
-    public Button TotalConversions;
+    public CheckBox totalConversions;
     @FXML
-    public Button CPA;
+    public CheckBox clicksPerAcq;
     @FXML
-    public Button CPC;
+    public CheckBox costPerClicks;
     @FXML
-    public Button CTR;
+    public CheckBox costPerImpres;
     @FXML
-    public Button CPM;
+    public CheckBox costPerThousandImpres;
     @FXML
-    public Button BounceRate;
+    public CheckBox bounceRate;
     public ComboBox timeBox;
     @FXML
     public VBox timeControlVBox = new VBox ();
@@ -162,7 +163,11 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Increase the spacing between tick labels
+        xAxis.setTickLabelGap(10);
 
+        // Rotate the tick labels by -45 degrees
+        xAxis.setTickLabelRotation(-45);
         String[] bounces = new String[]{"Clicks","Uniques","Bounces","Impressions","Conversion rate", "Total Cost", "Cost per acquisition",
         "Cost per clicks", "Cost per impression", "Cost per thousands","Bounce rate"};
 
@@ -211,6 +216,50 @@ public class DashboardController implements Initializable {
                     // You can show an error message or take appropriate action
                 }
             }
+        });
+        totalClicks.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        totalImpressions.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        totalCost.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        totalUniques.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        totalBounces.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        totalConversions.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        clicksPerAcq.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        costPerClicks.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        costPerImpres.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        costPerThousandImpres.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
+        });
+        bounceRate.selectedProperty().addListener((observable,oldValue,newValue)->{
+            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
+            loadDataGraphs(selectedCheckBoxes);
         });
         // Assuming you have defined the ComboBoxes in your controller class
         ObservableList<String> hours = FXCollections.observableArrayList();
@@ -307,29 +356,26 @@ public class DashboardController implements Initializable {
 //        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
     }
 
-    public void loadDataGraphs(ActionEvent actionEvent) {
-        dataChart.layout();
-        Button clickedButton = (Button) actionEvent.getSource();
-        String buttonId = clickedButton.getId();
+    public void loadDataGraphs(List<CheckBox> selectedCheckBoxes) {
+        List<String> selectedAttributes = new ArrayList<>();
+        for(CheckBox i:selectedCheckBoxes){
+            selectedAttributes.add(i.getText());
+        }
         String time = (String) timeBox.getValue();
 
         //to set hour as default time
         if (time == null) {
             time = "hour";
         }
-        //to set total clicks as default graph
-        if(buttonId.equals("loadCSVbutton3")){
-            buttonId = "totalClicks";
-        }
         loadingBar();
         dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        loadGraph(buttonId, time);
-        dataChart.layout();
+        loadGraph(selectedAttributes, time);
+        dataChart.requestLayout();
 
     }
-    public void loadDataGraphsWithinRange(ActionEvent actionEvent){
+  /*  public void loadDataGraphsWithinRange(ActionEvent actionEvent){
         dataChart.layout();
         Button clickedButton = (Button) actionEvent.getSource();
         String buttonId = clickedButton.getId();
@@ -349,8 +395,44 @@ public class DashboardController implements Initializable {
 //        tfc.createTimeFrame();
         loadGraph(buttonId,time);
         dataChart.layout();
+    } */
+    private List<CheckBox> getSelectedCheckBoxes() {
+        List<CheckBox> selectedCheckboxes = new ArrayList<>();
+        if (totalClicks.isSelected()) {
+            selectedCheckboxes.add(totalClicks);
+        }
+        if (totalImpressions.isSelected()) {
+            selectedCheckboxes.add(totalImpressions);
+        }
+        if (totalCost.isSelected()) {
+            selectedCheckboxes.add(totalCost);
+        }
+        if (totalUniques.isSelected()) {
+            selectedCheckboxes.add(totalUniques);
+        }
+        if (totalBounces.isSelected()) {
+            selectedCheckboxes.add(totalBounces);
+        }
+        if (totalConversions.isSelected()) {
+            selectedCheckboxes.add(totalConversions);
+        }
+        if (clicksPerAcq.isSelected()) {
+            selectedCheckboxes.add(clicksPerAcq);
+        }
+        if (costPerClicks.isSelected()) {
+            selectedCheckboxes.add(costPerClicks);
+        }
+        if (costPerImpres.isSelected()) {
+            selectedCheckboxes.add(costPerImpres);
+        }
+        if (costPerThousandImpres.isSelected()) {
+            selectedCheckboxes.add(costPerThousandImpres);
+        }
+        if (bounceRate.isSelected()) {
+            selectedCheckboxes.add(bounceRate);
+        }
+        return selectedCheckboxes;
     }
-
     public void loadGraphs(ActionEvent actionEvent) {
         chartPane.layout();
         loadGenders();
@@ -393,18 +475,20 @@ public class DashboardController implements Initializable {
     }
 
     //load the graph
-    public void loadGraph(String selectedButton, String time) {
+    public void loadGraph(List<String> selectedButtons, String time) {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.getData().clear();
-        dataChart.layout();
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
-        if (selectedButton != null) {
+        dataChart.setAnimated(false);
+        if (selectedButtons != null) {
             //to set start date way back in the past as default, so it reads every data
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
-            dataChart.getData().add(dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
+            for (String selectedButton:selectedButtons){
+                dataChart.getData().add(dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString()));
+            }
             }
             //to set end date way far in the future as dafault, so it reads every data
         if(toDate.getValue() == null){
@@ -429,18 +513,18 @@ public class DashboardController implements Initializable {
 //            }else {
 //                dataChart.getData().add(convertMapToSeries(dc.createDataset(selectedButton, time, fromDate.getValue(), toDate.getValue()), selectedButton));
 //            }
-            // Increase the spacing between tick labels
-            xAxis.setTickLabelGap(10);
-
-            // Rotate the tick labels by -45 degrees
-            xAxis.setTickLabelRotation(-45);
-
-            // Enable auto-ranging for the x-axis
-            dataChart.getXAxis().setAutoRanging(true);
 
             // Force a layout update
 
-        dataChart.layout();
+        // Trigger a layout update after a short delay
+        Platform.runLater(() -> {
+            try {
+                Thread.sleep(100); // Adjust the delay as needed
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            dataChart.requestLayout();
+        });
 
     }
 
