@@ -398,8 +398,8 @@ public class DashboardController implements Initializable {
         avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
         totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
         avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
-//        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
-//        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
+        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
+        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
 //        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
@@ -985,12 +985,12 @@ public class DashboardController implements Initializable {
     logger = Logger.getLogger(DashboardController.class.getName());
     logger.log(Level.INFO, "Loading Total Bounces");
 
-    return dataman.selectTotalBounces(timeSpentBounce.getText(), pageViewedBounce.getText());
+    return dataman.selectTotalBounces();
     }
     public double countBounceRate(){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Bounce Rate");
-        return dataman.selectBounceRate(timeSpentBounce.getText(), pageViewedBounce.getText());
+        return dataman.selectBounceRate();
     }
 
     //Function to find the total entries from adds - needs better explanation

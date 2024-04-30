@@ -341,7 +341,7 @@
                                                      </FXCollections>
                                                  </items>
                                              </ComboBox>
-                                             <TextField fx:id="timeSpentBounce" layoutX="100" layoutY="110" promptText="time spent for a bounce" />
+                                             <TextField fx:id="timeSpentBounce" layoutX="100" layoutY="110" promptText="time spent for a bounce in seconds" />
                                              <TextField fx:id="pageViewedBounce" layoutX="100" layoutY="113" promptText="page viewed for a bounce" />
                                          </children>
                                          <opaqueInsets>

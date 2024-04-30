@@ -145,24 +145,14 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted as bounce
      * @return total bounces which data type is int
      */
-    public int selectTotalBounces(String timeSpentBounce, String pageViewedBounce){
+    public int selectTotalBounces(){
         int totals = 0;
-        String timeBounce ;
-        String pageBounce;
-        if (timeSpentBounce.equals("")){
-            timeBounce = "10";
-        }else{
-            timeBounce = timeSpentBounce;
-        }
-        if(pageViewedBounce.equals("")){
-            pageBounce= "1";
-        }else{
-            pageBounce = pageViewedBounce;
-        }
+        String timeBounce = getBounceTimeMinute();
+        String pageBounce = getBouncePages();
         try {
-            String query = "SELECT COUNT(*) FROM serverlog " +
-                    "WHERE TIMESTAMPDIFF(SECOND, entrydate, exitdate) <= " + timeBounce +
-                    "OR page_viewed < " + pageBounce ;
+            String query = "SELECT COUNT(*) FROM serverlog AS server " +
+                    "WHERE TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + timeBounce +
+                    " OR server.pagesViewed >= " + pageBounce ;
 
             rs = statement.executeQuery(query);
             if (rs.next()) {
@@ -179,9 +169,9 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted bounce
      * @return bounce rate which data type is double
      */
-    public double selectBounceRate(String timeSpentBounce, String pageViewedBounce) {
+    public double selectBounceRate() {
         double bounceRate = 0.0;
-        int totalBounces = selectTotalBounces(timeSpentBounce, pageViewedBounce);
+        int totalBounces = selectTotalBounces();
         int totalSessions = 0;
 
         try {
@@ -494,7 +484,7 @@ public  class DataManager {
             query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
                     "FROM clicklog as click " +
                     "JOIN impressionlog AS impression ON click.id = impression.id JOIN serverlog AS server ON click.id = server.id "
-                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(MINUTE, server.entrydate, server.exitdate) > " + getBounceTimeMinte() + " OR server.pagesviewed > " + getBouncePages() + ") GROUP BY date";
+                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + getBounceTimeMinute() + " OR server.pagesviewed >= " + getBouncePages() + ") GROUP BY date";
         }
         if(dataName.equals("totalConversions")){
             query = "SELECT DATE_FORMAT(server.entryDate, " + timePeriod + " ) AS date, COUNT(*) AS data " +
@@ -790,7 +780,7 @@ public  class DataManager {
     public void setBouncePages(int pages){
         bouncePages = pages;
     }
-    public String getBounceTimeMinte(){
+    public String getBounceTimeMinute(){
         return Integer.toString(bounceTimeMinute);
     }
     public String getBouncePages(){
