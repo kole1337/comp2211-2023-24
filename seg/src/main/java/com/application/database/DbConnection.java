@@ -20,7 +20,7 @@ public class DbConnection {
 
     public DbConnection() {
 
-        readFromFile("user.txt");
+        readFromFile("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\sem2\\comp2211\\seg\\user.txt");
 
         try {
             makeConn();

@@ -652,7 +652,7 @@ public class DashboardController implements Initializable {
         loadContextOriginChart();
         loadConversionChart();
 //        loadHistogramChart();
-//        loadHistogramClickCost();
+        loadHistogramClickCost();
         chartPane.layout();
     }
     // add new load Graphs function handle the date range
@@ -1078,30 +1078,30 @@ public class DashboardController implements Initializable {
 //        histogramClicks.setTitle("Histogram");
 //
 //    }
-//public void loadHistogramClickCost() {
-//    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
-////
-////     Create data series for the histogram chart
-//    XYChart.Series<String, Number> series = new XYChart.Series<>();
-////
-////     Populate data series with dates and corresponding click costs
-//    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
-//        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-//    }
-////
-////     Add data series to the histogram chart
-//    histogramClicks.getData().add(series);
-//    histogramClicks.setTitle("Histogram");
-////
-////     Adjust the width of the bars
-//    double barWidth = 100; // Adjust this value as needed
-//    for (XYChart.Data<String, Number> data : series.getData()) {
-//        Node bar = data.getNode();
-//        if (bar != null) {
-//            bar.setStyle("-fx-bar-width: " + barWidth + ";");
-//        }
-//    }
-//}
+public void loadHistogramClickCost() {
+    Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("clicklog");
+//
+//     Create data series for the histogram chart
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+//
+//     Populate data series with dates and corresponding click costs
+    for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
+        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+    }
+//
+//     Add data series to the histogram chart
+    histogramClicks.getData().add(series);
+    histogramClicks.setTitle("Histogram");
+//
+//     Adjust the width of the bars
+    double barWidth = 100; // Adjust this value as needed
+    for (XYChart.Data<String, Number> data : series.getData()) {
+        Node bar = data.getNode();
+        if (bar != null) {
+            bar.setStyle("-fx-bar-width: " + barWidth + ";");
+        }
+    }
+}
 
 
 //    public void loadHistogramClickCost() {
