@@ -35,8 +35,6 @@ public  class DataManager {
 
     static Logger logger = Logger.getLogger(UserManager.class.getName());
 
-//    public static void main(String[] args) throws SQLException {
-//    }
 
     public static void deleteData(String tableName){
         try{
@@ -69,6 +67,24 @@ public  class DataManager {
         }
         catch (Exception e){
             throw new RuntimeException("could not close connection");
+        }
+    }
+
+    public static void dumpData() throws SQLException{
+        try{
+
+            pstmt = conn.prepareStatement("DELETE FROM impressionlog;");
+            pstmt.executeUpdate();
+
+            // Delete data from serverlog table
+            pstmt = conn.prepareStatement("DELETE FROM serverlog;");
+            pstmt.executeUpdate();
+
+            // Delete data from clickslog table
+            pstmt = conn.prepareStatement("DELETE FROM clicklog;");
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -131,6 +147,7 @@ public  class DataManager {
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
             rs = statement.executeQuery("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery );
+            System.out.println("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery);
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -398,8 +415,8 @@ public  class DataManager {
                     while (rs1.next() && rs2.next()) {
                         String xValue = rs1.getString("date");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
-                        System.out.println(xValue);
-                        System.out.println(yValue);
+//                        System.out.println(xValue);
+//                        System.out.println(yValue);
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
                 } catch (SQLException ex) {

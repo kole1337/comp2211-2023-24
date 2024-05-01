@@ -30,8 +30,6 @@ module com.example.seg {
     exports com.application.database;
     opens com.application.admin to javafx.fxml;
     exports com.application.shenanigans;
-    exports com.application.menu;
-    opens com.application.menu to javafx.fxml;
     opens com.application.setup to javafx.fxml;
     exports com.application.setup;
 }

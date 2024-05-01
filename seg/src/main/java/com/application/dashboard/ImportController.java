@@ -1,6 +1,5 @@
 package com.application.dashboard;
-import com.application.database.DbConnection;
-import com.application.database.UserManager;
+import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.logger.LogAction;
@@ -12,13 +11,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -115,12 +117,16 @@ public class ImportController {
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+
             DashboardController dashboardController = fxmlLoader.getController();
             dashboardController.fph = this.fph;
+            
             stage.show();
+
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
             logAction.logActionToFile("Opening dashboard panel.");
+
         } catch (Exception e) {
             Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
             a.show();
@@ -140,7 +146,8 @@ public class ImportController {
         String path = "";
         try {
             logger.log(Level.INFO, "Selecting serverlog");
-            path = fileChooser.openFileBox("Server Log").toString();
+            path = fileChooser.openSingleFileBox("Server Log").toString();
+
             fph.setServerPath(path);
             serverPath.setText(path);
             logAction.logActionToFile("Selecting serverlog.");
@@ -163,7 +170,7 @@ public class ImportController {
         String path = "";
         try {
             logger.log(Level.INFO, "Selecting impressionlog.");
-            path = fileChooser.openFileBox("Impression Log").toString();
+            path = fileChooser.openSingleFileBox("Impression Log").toString();
             fph.setImpressionPath(path);
             impressionPath.setText(path);
             logAction.logActionToFile("Selecting impressionlog");
@@ -187,7 +194,7 @@ public class ImportController {
         try {
             logger.log(Level.INFO, "Selecting clicklog.");
 
-            path = fileChooser.openFileBox("Click Log").toString();
+            path = fileChooser.openSingleFileBox("Click Log").toString();
             fph.setClickPath(path);
             clicksPath.setText(path);
             logAction.logActionToFile("Selecting clickLog");
@@ -248,5 +255,57 @@ public class ImportController {
             logger.log(Level.SEVERE, "Error enabling dark theme: ", e);
             logAction.logActionToFile("Error enabling dark theme: " + e);
         }
+    }
+
+    DataManager dm = new DataManager();
+    DbConnection db = new DbConnection();
+    public void loadSQL(){
+        try {
+            dm.dumpData();
+            Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+            testClickThread tct = new testClickThread();
+            testServerThread tst = new testServerThread();
+            FileSplit splitFiles = new FileSplit();
+//        fph.setClickPath("asdffa");
+//        fph.setImpressionPath("asfdsdfa");
+//        fph.setServerPath("dasdadas");
+
+
+            try {
+                if (fph.getClickPath() != null) {
+                    File file1 = fph.getClickPath();
+//                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    tct.main(tempClicks);
+                    System.out.println();
+                    System.out.println("Importing");
+                }
+                if (fph.getImpressionPath() != null) {
+                    File file1 = fph.getImpressionPath();
+//                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
+
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    multiImpress.main(tempClicks);
+
+                }
+                if (fph.getServerPath() != null) {
+                    File file1 = fph.getServerPath();
+//                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
+
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    tst.main(tempClicks);
+
+                }
+
+                db.closeConn();
+
+                db.makeConn();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("Ready ^_^!");
     }
 }

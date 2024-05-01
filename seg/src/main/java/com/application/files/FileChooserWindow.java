@@ -46,6 +46,25 @@ public class FileChooserWindow {
         return selectedFile;
     }
 
+    public File openSingleFileBox(String filename) {
+        // Open file chooser dialog
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select "+ filename + " file");
+        fileChooser.setInitialDirectory(pathHandler.getFilesPath());
+        ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
+
+        fileChooser.getExtensionFilters().add(ex1);
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if(selectedFile != null){
+            //System.out.println("Open file: " + selectedFile.getAbsolutePath());
+        }
+        FilePathHandler obj = new FilePathHandler();
+//        obj.fileTypeHandler(selectedFile);
+        System.out.println(obj.getClickPath());
+        return selectedFile;
+    }
+
     public String selectFolderPath(){
         String path = "";
         DirectoryChooser directoryChooser = new DirectoryChooser();

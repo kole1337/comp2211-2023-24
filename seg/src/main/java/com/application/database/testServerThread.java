@@ -47,13 +47,13 @@ public class testServerThread {
         ArrayList<String> paths = new ArrayList<>();
         paths = path;
         //8_828_248
-        String csvFilePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv";
+//        String csvFilePath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv";
         //486_104
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         int count = 0;
-//        for(String p : paths) {
-            try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+        for(String p : paths) {
+            try (BufferedReader br = new BufferedReader(new FileReader(p))) {
                 String line;
 
                 List<String> batchLines = new ArrayList<>();
@@ -82,7 +82,7 @@ public class testServerThread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//        }
+        }
 
         // Shutdown the executor after all tasks are completed
         System.out.println("count: " + count);

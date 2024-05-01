@@ -43,12 +43,12 @@ public class testClickThread {
         ArrayList<String> paths = new ArrayList<>();
         paths = path;
 
-        String csvPath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
+//        String csvPath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         int count = 0;
-//        for(String p : paths) {
-            try (BufferedReader br = new BufferedReader(new FileReader(csvPath))) {
+        for(String p : paths) {
+            try (BufferedReader br = new BufferedReader(new FileReader(p))) {
                 String line;
 
                 List<String> batchLines = new ArrayList<>();
@@ -75,7 +75,7 @@ public class testClickThread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//        }
+        }
 
         // Shutdown the executor after all tasks are completed
         System.out.println("count: " + count);

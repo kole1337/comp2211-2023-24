@@ -20,6 +20,7 @@ public class UserManager {
         try {
             conn = DbConnection.getConn();
             statement = conn.createStatement();
+            System.out.println("User manager connections is all good");
         } catch (SQLException e) {
             logger.log(Level.WARNING, "Could not create statement");
             e.printStackTrace();

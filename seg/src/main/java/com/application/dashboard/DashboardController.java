@@ -3,6 +3,7 @@ package com.application.dashboard;
 import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
+import com.application.logger.LogAction;
 import com.application.styles.checkStyle;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -75,8 +76,6 @@ public class DashboardController implements Initializable {
     public BarChart histogramClicks;
 
     public ImageView loadingGIF;
-    public ChoiceBox selectGraph;
-
 
     DataManager dataman = new DataManager();
 
@@ -171,16 +170,13 @@ public class DashboardController implements Initializable {
     boolean impressionsLoaded = false;
     boolean serverLoaded = false;
 
-    checkStyle obj = new checkStyle();
+    private checkStyle obj = new checkStyle();
+
+    private LogAction logAction = new LogAction();
+
+    DbConnection dbConnection = new DbConnection();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Increase the spacing between tick labels
-        xAxis.setTickLabelGap(10);
-        // Rotate the tick labels by -45 degrees
-        xAxis.setTickLabelRotation(-45);
-        String[] bounces = new String[]{"Clicks","Uniques","Bounces","Impressions","Conversion rate", "Total Cost", "Cost per acquisition",
-        "Cost per clicks", "Cost per impression", "Cost per thousands","Bounce rate"};
-
         String theme = obj.checkStyle();
 
         if(theme.equals("dark")){
@@ -188,7 +184,14 @@ public class DashboardController implements Initializable {
         }else{
             enableLightTheme();
         }
-        selectGraph.getItems().addAll(bounces);
+        logAction.logActionToFile("Open dashboard panel.");
+        startUP();
+    }
+
+
+
+
+    public void startUP(){
 
         timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) { // Regular expression for digits only
@@ -208,6 +211,7 @@ public class DashboardController implements Initializable {
                 }
             }
         });
+
         pageViewedBounce.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) { // Regular expression for digits only
                 pageViewedBounce.setText(newValue.replaceAll("[^\\d]", "")); // Replace all non-digits
@@ -244,7 +248,7 @@ public class DashboardController implements Initializable {
         }
 
 
-// Set the previously populated hour, minute, and second lists to the ComboBoxes
+        // Set the previously populated hour, minute, and second lists to the ComboBoxes
         fromHour.setItems(hours);
         fromMinute.setItems(minutes);
         fromSecond.setItems(seconds);
@@ -263,96 +267,34 @@ public class DashboardController implements Initializable {
 
         dataChart.setMaxHeight(Double.MAX_VALUE);
         dataChart.setMaxWidth(Double.MAX_VALUE);
-        dataChart.widthProperty().addListener(new ChangeListener() {
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                System.out.println(oldValue + "|" + newValue);
-            }
-        });
-//        checkUserExistsTask();
     }
 
+    public DashboardController(){
+        logger.log(Level.INFO, "Creating dashboard and connecting to database");
+    }
 
-
-
-
-    /*
-     * @TODO:
-     *   1. Context origin
-     *   2. Conversion graph
+    /**
+     * The button Load data displays
      * */
+    public void loadData() {
 
-    public DashboardController() throws Exception {
-        logger.log(Level.INFO, "creating dashboard and connecting to database");
-        //dbConnection.makeConn("root", "jojo12345");
-//        Timer timer = new Timer();
-//        timer.schedule(new UserExistenceTask(),0,3000);
+        logger.log(Level.ALL, "loadData button");
 
-    }
+        String genderFilt = genderFilter.getValue().toString();
+        String ageFilt = ageFilter.getValue().toString();
+        String incomeFilt = incomeFilter.getValue().toString();
+        String contextFilt = contextFilter.getValue().toString();
 
-    private void checkUserExistsTask(){
-        Timer timer = new Timer();
-
-        timer.schedule(new UserExistenceTask(),0,3000);
-    }
-    static String currentUser = "";
-    public static void setCurrentUser(String username){
-        currentUser = username;
-    }
-
-    private class UserExistenceTask extends TimerTask {
-        UserManager um = new UserManager();
-
-        @Override
-        public void run() {
-            Platform.runLater(() -> {
-                if (um.checkUserExistence(currentUser)) {
-                    System.out.println("Exists!");
-
-                } else {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setHeaderText("Invalid Date-Time Selection");
-                    errorAlert.setContentText("The end date-time must be after the start date-time.");
-                    errorAlert.show();
-                    System.out.println("Gooner!");
-                    logoutButton(new ActionEvent());
-                }
-            });
-        }
-    }
-
-
-
-
-    public void loadCSV(ActionEvent actionEvent) {
-
-        logger.log(Level.ALL, "loadCSV button");
-//        Button clickedButton = (Button) actionEvent.getSource();
-//        String buttonId = clickedButton.getId();
-//        String time = (String) ComboBox.getValue();
-//        //to set hour as default time
-//        if(time == null){
-//            time = "hour";
-//        }
-//        //to set total clicks as default graph
-//        if(buttonId.equals("loadCSVbutton3")){
-//            buttonId = "TotalClicks";
-//        }
-//        loadingBar();
-//        dc = new DatasetCreator(fph);
-////        TimeFrameControl tfc = new TimeFrameControl();
-////        tfc.createTimeFrame();
-//        loadGraph(buttonId,time);
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        uniqueImpressionLabel.setText("Unique Impressions: " +   countUniqueImpressions(genderFilt, ageFilt, incomeFilt, contextFilt));
+        sumImpressionsLabel.setText("Total impressions: " +      countTotalImpressions(genderFilt, ageFilt, incomeFilt, contextFilt));
+        totalClicksLabel.setText("Total clicks: " +              countTotalClicks(genderFilt, ageFilt, incomeFilt, contextFilt));
 //
-
-        totalClicksLabel.setText("Total clicks: " + countTotalClicks(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClick(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
-        bounceRateLabel.setText("Bounce Rate: " + countBounceRate(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        zeroCostClickLabel.setText("Zero cost clicks: " +        countZeroCostClick(genderFilt, ageFilt, incomeFilt, contextFilt));
+        avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick(genderFilt, ageFilt, incomeFilt, contextFilt));
+        totalEntriesLabel.setText("Total entries from ads: " +   countTotalEntries(genderFilt, ageFilt, incomeFilt, contextFilt));
+        avgPagesViewedLabel.setText("Average pages viewed: " +   countAvgPageViewed(genderFilt, ageFilt, incomeFilt, contextFilt));
+        totalBouncesLabel.setText("Total Bounce: " +             countTotalBounces(genderFilt, ageFilt, incomeFilt, contextFilt));
+        bounceRateLabel.setText("Bounce Rate: " +                countBounceRate(genderFilt, ageFilt, incomeFilt, contextFilt));
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
 //        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
@@ -363,8 +305,24 @@ public class DashboardController implements Initializable {
 //        avgClickPriceLabel.setText("Average price per click: " + countAverageProcePerClickWithinDates());
 //        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
 //        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
-
-
+    }
+    public void clearFilters(){
+        dataChart.getData().clear();
+        uniqueImpressionLabel.setText("Unique Impressions:");
+        sumImpressionsLabel.setText("Total impressions: ");
+        totalClicksLabel.setText("Total clicks: ");
+        zeroCostClickLabel.setText("Zero cost clicks: ");
+        avgClickPriceLabel.setText("Average price per click: ");
+        totalEntriesLabel.setText("Total entries from ads: ");
+        avgPagesViewedLabel.setText("Average pages viewed: ");
+        totalBouncesLabel.setText("Total Bounce: ");
+        bounceRateLabel.setText("Bounce Rate: ");
+        genderGraph.getData().clear();
+        ageGraph.getData().clear();
+        incomeGraph.getData().clear();
+        contextOriginGraph.getData().clear();
+        conversionGraph.getData().clear();
+        histogramClicks.getData().clear();
     }
 
     public void loadDataGraphs(ActionEvent event) {
@@ -555,14 +513,12 @@ public class DashboardController implements Initializable {
         }
     }
 
-    public void loadGraphs(ActionEvent actionEvent) {
-        chartPane.layout();
+    public void loadGraphs() {
         loadGenders();
         loadAgeGraph();
         loadIncomeGraph();
         loadContextOriginChart();
         loadConversionChart();
-//        loadHistogramChart();
         loadHistogramClickCost();
         chartPane.layout();
     }
@@ -1234,46 +1190,6 @@ public void loadHistogramClickCost() {
         conversionGraph.setData(pieChartData);
 
     }
-//    public void loadHistogramChart() {
-//        Map<String, Double> dateAndClickCost = dataman.getDateAndClickCost("serverlog");
-//
-//        // Create a category axis for the X-axis
-//        CategoryAxis xAxis = new CategoryAxis();
-//        xAxis.setLabel("Date");
-//
-//        // Create a number axis for the Y-axis
-//        NumberAxis yAxis = new NumberAxis();
-//        yAxis.setLabel("Click Cost");
-//
-//        // Create a histogram chart
-//        LineChart<String, Number> histogramChart = new LineChart<>(xAxis, yAxis);
-//
-//        // Set chart title
-//        histogramChart.setTitle("Click Costs Over Time");
-//
-//        // Create data series for the histogram chart
-//        XYChart.Series<String, Number> series = new XYChart.Series<>();
-//
-//        // Populate data series with dates and corresponding click costs
-//        for (Map.Entry<String, Double> entry : dateAndClickCost.entrySet()) {
-//            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-//        }
-//
-//        // Add data series to the histogram chart
-//        histogramChart.getData().add(series);
-//
-//        // Add the histogram chart to your layout
-//        // Replace 'yourPane' with the actual Pane or other layout container you want to add the chart to
-//        //histogramClicks.getChildren().add(histogramChart);
-//        histogramClicks.setLabelLineLength(20);
-//        histogramClicks.setLabelsVisible(true);
-//        histogramClicks.setData(histogramChart);
-//
-//    }
-
-
-
-
 
     //Display tutorial overlay
     public void loadTutorial() {
@@ -1308,6 +1224,7 @@ public void loadHistogramClickCost() {
 
     //Open dialogue box for opening files
     public void openCampaign(){
+
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         FileChooserWindow fileChooser = new FileChooserWindow();
 
@@ -1318,13 +1235,14 @@ public void loadHistogramClickCost() {
         a.setContentText("Inputting data...");
         a.show();
         //loadingBar();
-        //loadSQL();
+        loadSQL();
         a.hide();
 
         a.setContentText("Ready.");
         a.show();
         //a.hide();
         System.out.println("Ready ^_^!");
+//        dataman.closeConnection();
     }
     public void setClicksLoaded(Boolean bool){
         clicksLoaded = bool;
@@ -1338,44 +1256,54 @@ public void loadHistogramClickCost() {
 
 
     public void loadSQL(){
-
-
-        Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
-        testClickThread tct = new testClickThread();
-        testServerThread tst = new testServerThread();
-        FileSplit splitFiles = new FileSplit();
-        fph.setClickPath("asdffa");
-        fph.setImpressionPath("asfdsdfa");
-        fph.setServerPath("dasdadas");
-
-
         try {
-            if(fph.getClickPath() != null) {
-//              File file1 = fph.getImpressionPath();
-                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
-                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
-                tct.main(tempClicks);
-                System.out.println();
-                System.out.println("Importing");
+            dataman.dumpData();
+            Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+            testClickThread tct = new testClickThread();
+            testServerThread tst = new testServerThread();
+            FileSplit splitFiles = new FileSplit();
+//        fph.setClickPath("asdffa");
+//        fph.setImpressionPath("asfdsdfa");
+//        fph.setServerPath("dasdadas");
+
+
+            try {
+                if (fph.getClickPath() != null) {
+                    File file1 = fph.getClickPath();
+//                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    tct.main(tempClicks);
+                    System.out.println();
+                    System.out.println("Importing");
+                    clicksLoaded = true;
+                    clicksLoadedLabel.setText("clicks_log.csv: loaded");
+                }
+                if (fph.getImpressionPath() != null) {
+                    File file1 = fph.getImpressionPath();
+//                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
+
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    multiImpress.main(tempClicks);
+                    impressionsLoaded = true;
+                    impressionLoadedLabel.setText("impression_log.csv: loaded");
+                }
+                if (fph.getServerPath() != null) {
+                    File file1 = fph.getServerPath();
+//                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
+
+                    ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
+                    tst.main(tempClicks);
+                    serverLoaded = true;
+                    serverLoadedLabel.setText("server_log.csv: loaded");
+                }
+
+                dbConnection.closeConn();
+
+                dbConnection.makeConn();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if(fph.getImpressionPath()!= null) {
-//                File file1 = fph.getImpressionPath();
-                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
-
-                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
-                multiImpress.main(tempClicks);
-            }
-            if(fph.getServerPath()!= null) {
-//                File file1 = fph.getServerPath();
-                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
-
-                ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
-                tst.main(tempClicks);
-            }
-
-
-
-        }catch (Exception e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         System.out.println("Ready ^_^!");

@@ -11,7 +11,6 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -30,7 +29,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<VBox prefHeight="1213.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
         <MenuBar prefHeight="25.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <menus>
@@ -130,7 +129,7 @@
                                                 <VBox prefHeight="421.0" prefWidth="214.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                                     <DatePicker fx:id="fromDate" layoutX="14.0" layoutY="100" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#createTimeFrame" prefHeight="25" prefWidth="200" promptText="Start Date" VBox.vgrow="ALWAYS" />
                                                     <VBox fx:id="fromTimeVBox">
-                                                        <Label text = "Hour: " />
+                                                        <Label text="Hour: " />
                                                         <ComboBox fx:id="fromHour" />
                                                         <Label text="Minute:" />
                                                         <ComboBox fx:id="fromMinute" />
@@ -138,7 +137,7 @@
                                                         <ComboBox fx:id="fromSecond" />
                                                     </VBox>
                                                     <VBox fx:id="filtersVBox">
-                                                        <Label text = "Gender: " />
+                                                        <Label text="Gender: " />
                                                         <ComboBox fx:id="genderFilter" prefWidth="150.0" />
                                                         <Label text="Context: " />
                                                         <ComboBox fx:id="contextFilter" prefWidth="150.0" />
@@ -158,9 +157,16 @@
                                                         <ComboBox fx:id="toSecond" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="69.0" HBox.hgrow="ALWAYS" />
                                                     </HBox>
                                                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#loadCSVWithinDates" prefHeight="25.0" prefWidth="194.0" text="Apply filters" VBox.vgrow="ALWAYS" />
+                                       <Button fx:id="clearFiltersButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearFilters" prefHeight="25.0" prefWidth="84.0" text="Clear Filters" VBox.vgrow="ALWAYS" />
                                                 </VBox>
                                             </children>
                                         </VBox>
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                                      <Button fx:id="loadCSVbutton3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadData" prefHeight="41.0" prefWidth="178.0" text="Load Data" VBox.vgrow="ALWAYS" />
+                                                      <Button fx:id="loadGraphButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
                                     </children>
                                     <opaqueInsets>
                                         <Insets />
@@ -181,18 +187,8 @@
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1043.0" prefWidth="1679.0">
                                             <children>
-                                                <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                                <HBox prefHeight="33.0" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <AnchorPane>
-                                                            <children>
-                                                                <Label fx:id="graphLabel" text="Graph:">
-                                                                    <font>
-                                                                        <Font size="18.0" />
-                                                                    </font>
-                                                                </Label>
-                                                                <ChoiceBox fx:id="selectGraph" layoutX="53.0" layoutY="1.0" prefWidth="150.0" />
-                                                            </children>
-                                                        </AnchorPane>
                                                         <HBox alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="732.0" spacing="30.0" HBox.hgrow="ALWAYS">
                                                             <children>
                                                                 <Label fx:id="clicksLoadedLabel" alignment="CENTER" prefHeight="53.0" prefWidth="180.0" text="clicks_log.csv: not loaded" HBox.hgrow="ALWAYS">
@@ -229,47 +225,47 @@
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="sumImpressionsLabel" prefHeight="27.0" prefWidth="187.0" text="Total impressions:">
+                                                                        <Label fx:id="sumImpressionsLabel" prefHeight="27.0" prefWidth="447.0" text="Total impressions:" VBox.vgrow="ALWAYS">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="uniqueImpressionLabel" prefHeight="27.0" prefWidth="315.0" text="Unique impressions:" VBox.vgrow="ALWAYS">
+                                                                        <Label fx:id="uniqueImpressionLabel" prefHeight="27.0" prefWidth="477.0" text="Unique impressions:" VBox.vgrow="ALWAYS">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="zeroCostClickLabel" prefHeight="27.0" prefWidth="292.0" text="Zero cost clicks:" VBox.vgrow="ALWAYS">
+                                                                        <Label fx:id="zeroCostClickLabel" prefHeight="27.0" prefWidth="503.0" text="Zero cost clicks:" VBox.vgrow="ALWAYS">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalClicksLabel" prefHeight="27.0" prefWidth="296.0" text="Total Clicks:" VBox.vgrow="ALWAYS">
+                                                                        <Label fx:id="totalClicksLabel" prefHeight="27.0" prefWidth="481.0" text="Total Clicks:" VBox.vgrow="ALWAYS">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="avgClickPriceLabel" prefHeight="27.0" prefWidth="325.0" text="Average price per click:">
+                                                                        <Label fx:id="avgClickPriceLabel" prefHeight="27.0" prefWidth="481.0" text="Average price per click:">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalEntriesLabel" prefHeight="27.0" prefWidth="311.0" text="Total entries from ads:">
+                                                                        <Label fx:id="totalEntriesLabel" prefHeight="27.0" prefWidth="455.0" text="Total entries from ads:">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="avgPagesViewedLabel" prefHeight="27.0" prefWidth="335.0" text="Average pages viewed:">
+                                                                        <Label fx:id="avgPagesViewedLabel" prefHeight="27.0" prefWidth="472.0" text="Average pages viewed:">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="totalBouncesLabel" prefHeight="27.0" prefWidth="299.0" text="Total Bounces:">
+                                                                        <Label fx:id="totalBouncesLabel" prefHeight="27.0" prefWidth="552.0" text="Total Bounces:">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
                                                                         </Label>
-                                                                        <Label fx:id="bounceRateLabel" prefHeight="27.0" prefWidth="290.0" text="Bounce rate:">
+                                                                        <Label fx:id="bounceRateLabel" prefHeight="27.0" prefWidth="612.0" text="Bounce rate:">
                                                                             <font>
                                                                                 <Font size="18.0" />
                                                                             </font>
@@ -278,29 +274,15 @@
                                                                 </VBox>
                                                                 <AnchorPane fx:id="freeAnchor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="303.0" VBox.vgrow="ALWAYS">
                                                                     <children>
-                                                                        <Button fx:id="loadCSVbutton3" layoutX="178.0" mnemonicParsing="false" onAction="#loadCSV" prefHeight="41.0" prefWidth="178.0" text="Load Data">
+                                                                        <Button mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="false">
                                                                             <font>
                                                                                 <Font name="System Bold" size="14.0" />
                                                                             </font>
                                                                         </Button>
-                                                                        <Button fx:id="tutorialOFF" layoutY="41.0" mnemonicParsing="false" onAction="#disableTutPNG" prefHeight="43.0" prefWidth="178.0" text="TURN OFF TUTORIAL">
-                                                                            <font>
-                                                                                <Font name="System Bold" size="15.0" />
-                                                                            </font>
-                                                                        </Button>
-                                                                        <Button fx:id="loadGraphButton" layoutX="178.0" layoutY="44.0" mnemonicParsing="false" onAction="#loadGraphs" prefHeight="41.0" prefWidth="177.0" text="Load Graphs">
-                                                                            <font>
-                                                                                <Font name="System Bold" size="14.0" />
-                                                                            </font>
-                                                                        </Button>
-                                                                        <Button mnemonicParsing="false" onAction="#loadSQL" prefHeight="41.0" prefWidth="177.0" text="Load SQL" visible="true">
-                                                                            <font>
-                                                                                <Font name="System Bold" size="14.0" />
-                                                                            </font>
-                                                                        </Button>
-                                                                        <Button fx:id="printButton" layoutY="96.0" mnemonicParsing="false" onAction="#printChart" text="Print" />
-                                                                        <Button fx:id="exportImage" layoutX="61.0" layoutY="96.0" mnemonicParsing="false" onAction="#saveChartAsImage" text="Export Image" />
-                                                                        <Button fx:id="exportPDF" layoutX="174.0" layoutY="96.0" mnemonicParsing="false" onAction="#exportChartToPDF" prefHeight="25.0" prefWidth="93.0" text="Export PDF" />
+                                                                        <Button fx:id="printButton" layoutY="132.0" mnemonicParsing="false" onAction="#printChart" text="Print" />
+                                                                        <Button fx:id="exportImage" layoutX="60.0" layoutY="132.0" mnemonicParsing="false" onAction="#saveChartAsImage" text="Export Image" />
+                                                                        <Button fx:id="exportPDF" layoutX="177.0" layoutY="132.0" mnemonicParsing="false" onAction="#exportChartToPDF" prefHeight="25.0" prefWidth="93.0" text="Export PDF" />
+                                                      <Label layoutX="-2.0" layoutY="115.0" prefHeight="17.0" prefWidth="163.0" text="Chart printing options:" />
 
                                                                     </children>
                                                                 </AnchorPane>
@@ -312,13 +294,13 @@
                                                                   <tabs>
                                                                       <Tab text="Age Graph">
                                                                           <content>
-                                                            <VBox>
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                <children>
-                                                                                      <PieChart fx:id="ageGraph" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="413.0" prefWidth="507.0" title="Age Graph" visible="true" />
-                                                                  <HBox>
+                                                                                      <PieChart fx:id="ageGraph" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="413.0" prefWidth="507.0" title="Age Graph" visible="true" VBox.vgrow="ALWAYS" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                      <children>
-                                                                                            <Button fx:id="exportAgeGraphToPDF" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="158.0" text="Export to PDF" HBox.hgrow="ALWAYS" />
-                                                                                            <Button fx:id="exportAgeGraphToImage" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" prefHeight="25.0" prefWidth="139.0" text="Export to PNG" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportAgeGraphToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="158.0" text="Export to PDF" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportAgeGraphToImage" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" prefHeight="25.0" prefWidth="139.0" text="Export to PNG" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
                                                                </children>
@@ -327,13 +309,13 @@
                                                                       </Tab>
                                                                       <Tab text="Gender Graph">
                                                                           <content>
-                                                            <VBox>
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                <children>
-                                                                                      <PieChart fx:id="genderGraph" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="415.0" prefWidth="507.0" title="Gender Graph" />
-                                                                  <HBox>
+                                                                                      <PieChart fx:id="genderGraph" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="415.0" prefWidth="507.0" title="Gender Graph" VBox.vgrow="ALWAYS" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                      <children>
-                                                                                            <Button fx:id="exportGenderGraphToPDF" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="259.0" text="Export to PDF" />
-                                                                                            <Button fx:id="exportGenderGraphToImage" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Export to PNG" />
+                                                                                            <Button fx:id="exportGenderGraphToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="92.0" text="Export to PDF" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportGenderGraphToImage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Export to PNG" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
                                                                </children>
@@ -342,13 +324,13 @@
                                                                       </Tab>
                                                                       <Tab text="Income graph">
                                                                           <content>
-                                                            <VBox>
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                <children>
-                                                                                      <PieChart fx:id="incomeGraph" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="416.0" prefWidth="510.0" title="Income Graph" />
-                                                                  <HBox>
+                                                                                      <PieChart fx:id="incomeGraph" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="416.0" prefWidth="510.0" title="Income Graph" VBox.vgrow="ALWAYS" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                      <children>
-                                                                                            <Button fx:id="exportIncomeGraphToPDF" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="255.0" text="Export to PDF" />
-                                                                                            <Button fx:id="exportIncomeGraphToImage" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Export to PNG" />
+                                                                                            <Button fx:id="exportIncomeGraphToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="265.0" text="Export to PDF" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportIncomeGraphToImage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" prefHeight="25.0" prefWidth="265.0" text="Export to PNG" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
                                                                </children>
@@ -357,13 +339,13 @@
                                                                       </Tab>
                                                                       <Tab text="Context origin">
                                                                           <content>
-                                                            <VBox>
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                <children>
-                                                                                      <PieChart fx:id="contextOriginGraph" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" title="Context Graph" />
-                                                                  <HBox>
+                                                                                      <PieChart fx:id="contextOriginGraph" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" title="Context Graph" VBox.vgrow="ALWAYS" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                      <children>
-                                                                                            <Button fx:id="exportCOGraphToPDF" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="221.0" text="Export to PDF" />
-                                                                                            <Button fx:id="exportCOGraphToImage" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Export to PNG" />
+                                                                                            <Button fx:id="exportCOGraphToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="265.0" text="Export to PDF" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportCOGraphToImage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" prefHeight="25.0" prefWidth="265.0" text="Export to PNG" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
                                                                </children>
@@ -372,13 +354,13 @@
                                                                       </Tab>
                                                                       <Tab text="Conversion">
                                                                           <content>
-                                                            <VBox>
+                                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                                <children>
-                                                                                      <PieChart fx:id="conversionGraph" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" title="Conversion Graph" visible="true" />
-                                                                  <HBox>
+                                                                                      <PieChart fx:id="conversionGraph" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" title="Conversion Graph" visible="true" VBox.vgrow="ALWAYS" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                      <children>
-                                                                                            <Button fx:id="exportConversionGraphToPDF" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" prefHeight="25.0" prefWidth="250.0" text="Export to PDF" />
-                                                                                            <Button fx:id="exportConversionGraphToImage" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Expor tto PNG" />
+                                                                                            <Button fx:id="exportConversionGraphToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToPDF" text="Export to PDF" HBox.hgrow="ALWAYS" />
+                                                                                            <Button fx:id="exportConversionGraphToImage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportSinglePieChartToImage" text="Expor tto PNG" HBox.hgrow="ALWAYS" />
                                                                      </children>
                                                                   </HBox>
                                                                </children>
@@ -387,7 +369,8 @@
                                                                       </Tab>
                                                                   </tabs>
                                                               </TabPane>
-                                                                  <HBox VBox.vgrow="ALWAYS">
+                                                <Label text="Graph printing options:" />
+                                                                  <HBox VBox.vgrow="NEVER">
                                                                       <CheckBox fx:id="chkConversion" text="Conversion">
                                                                           <HBox.margin>
                                                                               <Insets bottom="0" left="0" right="5" top="0" />
@@ -415,14 +398,14 @@
                                                                       </CheckBox>
                                                                       <CheckBox fx:id="chkSelectAll" onAction="#handleSelectAllAction" text="Select All" />
                                                                   </HBox>
-                                                                  <HBox prefHeight="0.0" prefWidth="573.0" VBox.vgrow="ALWAYS">
-                                                                      <Button fx:id="exportPieChartToImage" onAction="#downloadSelectedCharts" text="Export Image" />
-                                                                      <Button fx:id="exportPieChartToPDF" onAction="#downloadSelectedPDFs" text="Export PDF" />
-                                                                      <Button fx:id="printPieChartButton" onAction="#printSelectedPieCharts" text="Print" />
+                                                                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="573.0" spacing="100.0" VBox.vgrow="NEVER">
+                                                                      <Button fx:id="exportPieChartToImage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#downloadSelectedCharts" text="Export Image" HBox.hgrow="ALWAYS" />
+                                                                      <Button fx:id="exportPieChartToPDF" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#downloadSelectedPDFs" text="Export PDF" HBox.hgrow="ALWAYS" />
+                                                                      <Button fx:id="printPieChartButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#printSelectedPieCharts" text="Print" HBox.hgrow="ALWAYS" />
                                                                   </HBox>
                                              </children>
                                           </VBox>
-                                                        <BarChart fx:id="histogramClicks" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="483.0" prefWidth="614.0" style="-fx-border-color: black;" title="Histogram of clicks" visible="true" HBox.hgrow="ALWAYS">
+                                                        <BarChart fx:id="histogramClicks" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="483.0" prefWidth="614.0" style="-fx-border-color: black;" title="Histogram of clicks" visible="true" HBox.hgrow="ALWAYS">
                                                             <xAxis>
                                                                 <CategoryAxis side="BOTTOM" />
                                                             </xAxis>
