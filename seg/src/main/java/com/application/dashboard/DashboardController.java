@@ -172,12 +172,10 @@ public class DashboardController implements Initializable {
     boolean serverLoaded = false;
 
     checkStyle obj = new checkStyle();
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Increase the spacing between tick labels
         xAxis.setTickLabelGap(10);
-
         // Rotate the tick labels by -45 degrees
         xAxis.setTickLabelRotation(-45);
         String[] bounces = new String[]{"Clicks","Uniques","Bounces","Impressions","Conversion rate", "Total Cost", "Cost per acquisition",
@@ -1421,6 +1419,4 @@ public void loadHistogramClickCost() {
             obj.writeTheme("dark");
         }
     }
-    public void selectClickGraph(ActionEvent actionEvent) {}
-
 }

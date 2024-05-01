@@ -20,8 +20,13 @@ public class DbConnection {
 
     public DbConnection() {
 
-        readFromFile("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\sem2\\comp2211\\seg\\user.txt");
-
+        //DO NOT MODIFY THIS COMMENT IT OUT AND WRITE YOU OWN FILE LOCATION
+        //read from file Nikola
+        readFromFile("user.txt");
+        //Gouri
+        //Min
+        //Pano
+        //Yu-Han
         try {
             makeConn();
         } catch (Exception e) {
@@ -47,7 +52,7 @@ public class DbConnection {
         try {
             logger.log(Level.INFO, "establishing connection");
 
-            conn = DriverManager.getConnection(url, "root", "149162536496481Mkt!");
+            conn = DriverManager.getConnection(url, getUser(), getPass());
             DataManager.getConn();
             UserManager.getConn();
 

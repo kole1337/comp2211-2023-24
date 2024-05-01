@@ -3,6 +3,7 @@ import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
+import com.application.logger.LogAction;
 import com.application.styles.checkStyle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -24,31 +25,33 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ImportController {
-    public TextField folderPath;
-    public TextField serverPath;
-    public TextField impressionPath;
-    public TextField clicksPath;
-    public AnchorPane background;
-    FilePathHandler fph = new FilePathHandler();
-    private Parent root;
-    private Scene scene;
-    private Stage stage;
-    private Logger logger = Logger.getLogger(getClass().getName());
-    @FXML
-    public Button importButton;
-    @FXML
-    public Button dashboardButton;
 
-    FileChooserWindow fileChooser = new FileChooserWindow();
+        public TextField folderPath;
+        public TextField serverPath;
+        public TextField impressionPath;
+        public TextField clicksPath;
+        public AnchorPane background;
+        FilePathHandler fph = new FilePathHandler();
+        private Parent root;
+        private Scene scene;
+        private Stage stage;
+        private Logger logger = Logger.getLogger(getClass().getName());
+        @FXML
+        public Button importButton;
+        @FXML
+        public Button dashboardButton;
 
-    private Boolean light = true;
-    private Boolean dark = false;
-    static String currentUser=  "";
+        FileChooserWindow fileChooser = new FileChooserWindow();
 
-    Timer timer = new Timer();
+        private Boolean light = true;
+        private Boolean dark = false;
 
-    DbConnection db = new DbConnection();
-    static UserManager um = new UserManager();
+        LogAction logAction = new LogAction();
+
+    /**
+     * The initialization of the import panel is
+     * checking the theme
+     * */
     public void initialize(){
             checkStyle obj = new checkStyle();
             String theme = obj.checkStyle();
@@ -58,40 +61,12 @@ public class ImportController {
             }else{
                 enableLightTheme();
             }
-//        checkUserExistsTask();
+            logAction.logActionToFile("Launching Import scene.");
     }
 
-
-    public void stopTimer(){
-        System.out.println("Stopping timer hopefully");
-        timer.cancel();
-        timer.purge();
-    }
-
-    private void checkUserExistsTask(){
-
-        timer.schedule(new UserExistenceTask(),0,3000);
-
-    }
-    public void setCurrentUser(String username){
-        currentUser = username;
-    }
-
-    private static class UserExistenceTask extends TimerTask {
-        @Override
-        public void run() {
-            if (!um.checkUserExistence(currentUser)) {
-                // User does not exist, perform actions accordingly
-                System.out.println("User does not exist!");
-                // Update UI or take necessary actions
-                new ImportController().logoutSession(new ActionEvent());
-            } else {
-                // User exists
-                System.out.println("User exists!");
-            }
-        }
-    }
-
+    /**
+     * Action for the logout button. It logs out the user and opens the login panel.
+     * */
     public void logoutSession(ActionEvent event){
         try {
             root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
@@ -99,29 +74,39 @@ public class ImportController {
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
-            logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.INFO, "Opening hello view.");
-        } catch (IOException e) {
-            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.INFO, "Opening login panel.");
+            logAction.logActionToFile("Logging out to Login panel from Import panel.");
+        } catch (Exception e) {
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening login panel: " + e);
+            a.show();
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            logAction.logActionToFile("Critical error logging out: " + e);
         }
-        stopTimer();
     }
     String fileFolderPath = "";
-    public void openCampaign(){
-        fileFolderPath = fileChooser.selectFolderPath();
 
-        folderPath.setText(fileFolderPath);
-//        fph.fileTypeHandler(fileChooser.openFileBox());
-//        System.out.println(fph.getImpressionPath());
-//        System.out.println(fph.getClickPath());
-//        System.out.println(fph.getServerPath());
-//        System.out.println("Ready ^_^!");
-        //dashboardButton.setDisable(false);
+    /**
+     * Function of the "Select campaign folder" button.
+     * It opens a file explorer that only allows the selection of a directory.
+     * */
+    public void openCampaign(){
+        logger.log(Level.INFO, "Opening campaign directory");
+        try {
+            fileFolderPath = fileChooser.selectFolderPath();
+            folderPath.setText(fileFolderPath);
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening file explorer: " +e);
+            a.show();
+            logger.log(Level.SEVERE, "Error opening file explorer: " + e);
+            logAction.logActionToFile("Error opening file explorer: " + e);
+        }
     }
 
 
-
+    /**
+     * Function of the "Go to Dashboard" button.
+     * It opens the Dashboard panel
+     * */
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
         try {
@@ -135,53 +120,133 @@ public class ImportController {
             stage.show();
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
-        } catch (IOException e) {
+            logAction.logActionToFile("Opening dashboard panel.");
+        } catch (Exception e) {
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+            a.show();
             logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Failed to create new Window.", e);
+            logger.log(Level.SEVERE, "Failed to create new Window: ", e);
+            logAction.logActionToFile("Critical error: " + e);
         }
     }
 
-    public void selectServerLog(ActionEvent actionEvent) {
+    /**
+     * Function that opens the directory from
+     * openDashboard
+     * It is meant to select the serverlog file.
+     *
+     * */
+    public void selectServerLog() {
         String path = "";
-        path = fileChooser.openFileBox("Server Log").toString();
-        fph.setServerPath(path);
-        serverPath.setText(path);
+        try {
+            logger.log(Level.INFO, "Selecting serverlog");
+            path = fileChooser.openFileBox("Server Log").toString();
+            fph.setServerPath(path);
+            serverPath.setText(path);
+            logAction.logActionToFile("Selecting serverlog.");
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting server log: " + e);
+            a.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Error selecting server log:", e);
+            logAction.logActionToFile("Error selecting server log: " + e);
+        }
     }
 
-    public void selectImpressionLog(ActionEvent actionEvent) {
+    /**
+     * Function that opens the directory from
+     * openDashboard
+     * It is meant to select the impressionlog file.
+     *
+     * */
+    public void selectImpressionLog() {
         String path = "";
-        path = fileChooser.openFileBox("Impression Log").toString();
-        fph.setImpressionPath(path);
-        impressionPath.setText(path);
+        try {
+            logger.log(Level.INFO, "Selecting impressionlog.");
+            path = fileChooser.openFileBox("Impression Log").toString();
+            fph.setImpressionPath(path);
+            impressionPath.setText(path);
+            logAction.logActionToFile("Selecting impressionlog");
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting Impression Log: " + e);
+            a.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Error selecting Impression Log:", e);
+            logAction.logActionToFile("Error selecting Impression Log: " + e);
+        }
     }
 
-    public void selectClickLog(ActionEvent actionEvent) {
+    /**
+     * Function that opens the directory from
+     * openDashboard
+     * It is meant to select the clicklog file.
+     *
+     * */
+    public void selectClickLog() {
         String path = "";
-        path = fileChooser.openFileBox("Click Log").toString();
-        fph.setClickPath(path);
-        clicksPath.setText(path);
+        try {
+            logger.log(Level.INFO, "Selecting clicklog.");
+
+            path = fileChooser.openFileBox("Click Log").toString();
+            fph.setClickPath(path);
+            clicksPath.setText(path);
+            logAction.logActionToFile("Selecting clickLog");
+
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting clicklog: " + e);
+            a.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Error selecting clicklog: ", e);
+            logAction.logActionToFile("Error selecting clicklog: " + e);
+        }
+
     }
 
+    /**
+     * Function that disables the dark theme (essentially enabling "light theme")
+     * */
     public void enableLightTheme() {
-        if (!light) {
-            light = true;
-            dark = false;
-            logger.log(Level.INFO,"Light theme displayed");
-            background.getStylesheets().clear();
+        try {
+            if (!light) {
+                light = true;
+                dark = false;
+                logger.log(Level.INFO, "Light theme displayed");
+                logAction.logActionToFile("Light theme displayed.");
+
+                background.getStylesheets().clear();
+            }
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error enabling light theme: " + e);
+            a.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Error enabling light theme: ", e);
+            logAction.logActionToFile("Error enabling light theme: " + e);
         }
     }
 
+    /**
+     * Function that loads the darkTheme stylesheet
+     * */
     public void enableDarkTheme(){
         logger.log(Level.INFO, "Loading dark theme");
-        if(!dark){
+        try {
+            if (!dark) {
+                logger.log(Level.INFO, "Dark theme displayed.");
+                logAction.logActionToFile("Dark theme displayed.");
 
-            String stylesheetPath = getClass().getClassLoader().getResource("uploadDarkTheme.css").toExternalForm();;
-            System.out.println(stylesheetPath);
-            background.getStylesheets().add(stylesheetPath);
-            dark = true;
-            light = false;
-            logger.log(Level.INFO,"Dark theme displayed");
+                String stylesheetPath = getClass().getClassLoader().getResource("uploadDarkTheme.css").toExternalForm();
+                System.out.println(stylesheetPath);
+                background.getStylesheets().add(stylesheetPath);
+                dark = true;
+                light = false;
 
+            }
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error enabling dark theme: " + e);
+            a.show();
+            logger = Logger.getLogger(getClass().getName());
+            logger.log(Level.SEVERE, "Error enabling dark theme: ", e);
+            logAction.logActionToFile("Error enabling dark theme: " + e);
         }
     }
 }

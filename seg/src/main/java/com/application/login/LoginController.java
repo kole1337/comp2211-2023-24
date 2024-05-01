@@ -49,6 +49,10 @@ public class LoginController {
     private Boolean light = true;
     private Boolean dark = false;
 
+    /**
+     * At initialization, the application
+     * is checking the theme.
+     * */
     public void initialize(){
         checkStyle obj = new checkStyle();
         String theme = obj.checkStyle();
@@ -61,39 +65,37 @@ public class LoginController {
     }
 
 
-        /**
+    /**
      * Login function that checks if the user is
      * an Admin or User.
      */
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
-        //dbConnection.makeConn("root", "jojo12345");
-
         logger.log(Level.INFO, "You pressed loginButton.");
+
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
                 LogAction la = new LogAction(usernameField.getText());
                 logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
+                la.logActionToFile("Logging as "+usernameField.getText()+". Opening dashboard");
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("import-view.fxml"));
                 root = loader.load();
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
-                ImportController ic = loader.getController();
-                ic.setCurrentUser(usernameField.getText());
                 System.out.println(usernameField.getText());
                 stage.setScene(scene);
                 stage.show();
 
-                la.logActionToFile("Logging as user. Opening dashboard");
-            } catch (IOException e) {
+               } catch (IOException e) {
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
             }
         }else {
-            logger.log(Level.SEVERE, "Wrong credentials entered..");
+            logger.log(Level.SEVERE, "Wrong credentials entered.");
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setHeaderText("Problem");
-            errorAlert.setContentText("Wrong credentials");
+            errorAlert.setContentText("Wrong credentials. Try again or change your password using ''Forgot password''.");
             usernameField.setText("");
             passwordField.setText("");
 
@@ -101,82 +103,130 @@ public class LoginController {
         }
     }
 
-    public Boolean checkUser(String username, String password) throws SQLException {
-        logger.log(Level.INFO, "Checking user credentials.");
-        return userManager.selectUser(username, password);
+    /**
+     * Function that passes the user details to the UserManager class.
+     * It returns true if the user exists and false if the user doesn't exist, the password
+     * is wrong
+     * */
+    public Boolean checkUser(String username, String password){
+        Boolean result = false;
+        try {
+            //if the user exists and has the correct roles, they will be logged in.
+            logger.log(Level.INFO, "Checking user credentials.");
+            result = userManager.selectUser(username, password);
+            return result;
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error checking user credentials: " + e);
+            a.show();
+            logger.log(Level.WARNING, "Error with SQL: " + e);
+        }
+        return result;
     }
 
+    /**
+     * Function for the admin button to open the admin panel.
+     * */
     public void adminFunc(ActionEvent event) throws Exception {
-        //dbConnection.makeConn("root", "jojo12345");
 
         logger.log(Level.INFO, "Checking admin credentials");
         if (checkAdmin(usernameField.getText(), passwordField.getText())) {
             try {
                 LogAction la = new LogAction(usernameField.getText());
+                la.logActionToFile("Opening admin dashboard");
+                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+
                 root = fxmlLoader.load(getClass().getResource("admin-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);
-
-//                AdminController ac = new AdminController();
-//                ac.loadUsers();
-
                 stage.setScene(scene);
-
                 stage.setMinHeight(720);
                 stage.setMinWidth(1280);
                 stage.show();
-                la.logActionToFile("Opening admin dashboard");
-                logger.log(Level.INFO, "Logging in as admin. Opening dashboard.");
+
             } catch (IOException e) {
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         } else {
-            logger.log(Level.SEVERE, "Wrong credentials entered..");
+            logger.log(Level.SEVERE, "Wrong credentials entered.");
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setHeaderText("Problem");
-            errorAlert.setContentText("Wrong credentials");
+            errorAlert.setContentText("Wrong credentials. Try again or change your password using ''Forgot password''.");
             usernameField.setText("");
             passwordField.setText("");
 
             errorAlert.showAndWait();
         }
     }
-    public Boolean checkAdmin(String username, String password) throws SQLException {
-        logger.log(Level.SEVERE, "Checking admin credentials.");
-        return userManager.selectAdmin(username, password);
+
+    /**
+     * Function that checks the user credentials.
+     * */
+    public Boolean checkAdmin(String username, String password){
+        Boolean result = false;
+        try {
+            logger.log(Level.INFO, "Checking admin credentials.");
+            result = userManager.selectAdmin(username, password);
+            return result;
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error checking user credentials: " + e);
+            a.show();
+            logger.log(Level.WARNING, "Error with SQL: " + e);
+        }
+        return result;
     }
 
+    /**
+     * Function to enable light theme.
+     * */
     public void enableLightTheme() {
-        if (!light) {
-            light = true;
-            dark = false;
-            logger.log(Level.INFO,"Light theme displayed");
-            panel.getStylesheets().clear();
+        logger.log(Level.INFO, "Loading light theme");
+
+        try {
+            if (!light) {
+                light = true;
+                dark = false;
+                logger.log(Level.INFO, "Light theme displayed.");
+                panel.getStylesheets().clear();
+            }
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error displaying light theme. This won't affect the performance");
+            a.show();
+            logger.log(Level.WARNING, "Error displaying the theme: " + e);
         }
     }
 
+    /**
+     * Function to enable dark theme.
+     * */
     public void enableDarkTheme(){
-        logger.log(Level.INFO, "Loading dark theme");
-        if(!dark){
+        try {
+            logger.log(Level.INFO, "Loading dark theme.");
+            if (!dark) {
 
-            String stylesheetPath = getClass().getClassLoader().getResource("loginDarkTheme.css").toExternalForm();;
-            System.out.println(stylesheetPath);
-            panel.getStylesheets().add(stylesheetPath);
-            dark = true;
-            light = false;
-            logger.log(Level.INFO,"Dark theme displayed");
+                String stylesheetPath = getClass().getClassLoader().getResource("loginDarkTheme.css").toExternalForm();
+                ;
+                System.out.println(stylesheetPath);
+                panel.getStylesheets().add(stylesheetPath);
+                dark = true;
+                light = false;
+                logger.log(Level.INFO, "Dark theme displayed");
 
+            }
+        }catch(Exception e){
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error displaying dark theme. This won't affect the performance");
+            a.show();
+            logger.log(Level.WARNING, "Error displaying the theme: " + e);
         }
     }
 
-    public void darkLoader() {
-        enableDarkTheme();
-    }
 
-    public void openChangePassword(MouseEvent mouseEvent) {
+    /**
+     * Function that opens the window from where the user can change their password.
+     * It opens the changePassword.fxml panel
+     * */
+    public void openChangePassword() {
+        logger.log(Level.INFO,"Opening change password panel.");
         try {
             Parent parent = FXMLLoader.load(getClass().getResource("changePassword.fxml"));
             Scene scene = new Scene(parent);
@@ -185,7 +235,9 @@ public class LoginController {
             stage.initStyle(StageStyle.UTILITY);
             stage.show();
         }catch(Exception e){
-            e.printStackTrace();
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening changing password panel: " + e);
+            a.show();
+            logger.log(Level.SEVERE, "Error opening change password panel: " +e);
         }
     }
 }
