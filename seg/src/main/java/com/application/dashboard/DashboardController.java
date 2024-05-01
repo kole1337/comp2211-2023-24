@@ -31,11 +31,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javafx.stage.StageStyle;
 import org.jfree.chart.ChartFrame;
+import org.jfree.chart.LegendItem;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -175,10 +177,12 @@ public class DashboardController implements Initializable {
     private LogAction logAction = new LogAction();
 
     DbConnection dbConnection = new DbConnection();
+    List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
+    List<String> labelTextList = new ArrayList<>();
+    List<Tooltip> toolTipList = new ArrayList<>();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         String theme = obj.checkStyle();
-
         if(theme.equals("dark")){
             enableDarkTheme();
         }else{
@@ -306,8 +310,10 @@ public class DashboardController implements Initializable {
 //        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntriesWithinDates());
 //        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewedWithinDates());
     }
-    public void clearFilters(){
+    public void clearGraphs(){
         dataChart.getData().clear();
+        labelTextList.clear();
+        toolTipList.clear();
         uniqueImpressionLabel.setText("Unique Impressions:");
         sumImpressionsLabel.setText("Total impressions: ");
         totalClicksLabel.setText("Total clicks: ");
@@ -323,6 +329,10 @@ public class DashboardController implements Initializable {
         contextOriginGraph.getData().clear();
         conversionGraph.getData().clear();
         histogramClicks.getData().clear();
+        genderFilter.setValue("Any");
+        incomeFilter.setValue("Any");
+        ageFilter.setValue("Any");
+        contextFilter.setValue("Any");
     }
 
     public void loadDataGraphs(ActionEvent event) {
@@ -556,7 +566,6 @@ public class DashboardController implements Initializable {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
         dataChart.layout();
-
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         dataChart.setAnimated(false);
@@ -564,21 +573,53 @@ public class DashboardController implements Initializable {
             //to set start date way back in the past as default, so it reads every data
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
-            XYChart.Series<String,Number> data = new XYChart.Series<>();
-            data = dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString());
-            data.setName(selectedButton+ " with "+ "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate);
-            Tooltip tooltip = new Tooltip(selectedButton+ " with "+ "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate );
+            XYChart.Series<String, Number> data = new XYChart.Series<>();
+            data = dataman.getData(selectedButton, timeBox.getValue().toString(), startDate, endDate, genderFilter.getValue().toString(), incomeFilter.getValue().toString(), contextFilter.getValue().toString(), ageFilter.getValue().toString());
+            data.setName(selectedButton + " with " + "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate);
+            seriesList.add(data);
             dataChart.getData().add(data);
-            }
-            //to set end date way far in the future as dafault, so it reads every data
-        if(toDate.getValue() == null){
+            Set<Node> nodes = dataChart.lookupAll(".chart-legend-item");
+            List<Node> nodesList = nodes.stream().toList();
+            labelTextList.add(selectedButton);
+            toolTipList.add(new Tooltip(selectedButton + " with " + "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate));
+            System.out.println(data.getName());
+            for (Node legend : nodesList) {
+                int index = nodesList.indexOf(legend);
+                Label label = (Label) legend;
+                label.setText(labelTextList.get(index));
+                label.setTooltip(toolTipList.get(index));
+                label.setOnMouseClicked(e -> {
+                    System.out.println("WHATTTT");
+                    boolean isVisible =!(label.getOpacity() == 1.0); // Check if the label is currently visible
+                    label.setStyle("-fx-opacity: " + (isVisible ? 1.0 : 0.5) + ";"); // Set the opacity based on the visibility
 
-                int day = dataman.getLastDate("DAY","clicklog");
-                int month = dataman.getLastDate("MONTH","clicklog");
-                int year = dataman.getLastDate("YEAR","clicklog");
+                    for (XYChart.Series<String, Number> i : seriesList) {
+                        System.out.println(i.getName());
+                        System.out.println(label.getTooltip().getText());
+                        if (i.getName().equals(label.getTooltip().getText()) && index == seriesList.indexOf(i)) {
+                            System.out.println("Ok");
+                            Node seriesNode = i.getNode();
+                            seriesNode.setVisible(isVisible);
+
+                            // Iterate over data points and set their visibility
+                            for (XYChart.Data<String, Number> idata : i.getData()) {
+                                Node dataNode = idata.getNode();
+                                if (dataNode != null) {
+                                    dataNode.setVisible(isVisible);
+                                }
+                            }
+                        }
+                    }
+                });
+            }//to set end date way far in the future as dafault, so it reads every data
+            if (toDate.getValue() == null) {
+
+                int day = dataman.getLastDate("DAY", "clicklog");
+                int month = dataman.getLastDate("MONTH", "clicklog");
+                int year = dataman.getLastDate("YEAR", "clicklog");
 
 
-                toDate.setValue(LocalDate.of(year,month,day));
+                toDate.setValue(LocalDate.of(year, month, day));
             }
 //           if(selectedButton.equals("BounceRate") || selectedButton.equals("TotalBounces")){
 //                if(timeSpentBounce.getText()!=null && pageViewedBounce.getText()!=null){
@@ -596,17 +637,18 @@ public class DashboardController implements Initializable {
 
             // Force a layout update
 
-        // Trigger a layout update after a short delay
-        Platform.runLater(() -> {
-            try {
-                Thread.sleep(100); // Adjust the delay as needed
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            dataChart.requestLayout();
-        });
+            // Trigger a layout update after a short delay
+            Platform.runLater(() -> {
+                try {
+                    Thread.sleep(100); // Adjust the delay as needed
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                dataChart.requestLayout();
+            });
 
-    }
+        }
+    };
 
 
     public String getToDateTime(){

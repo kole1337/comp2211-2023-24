@@ -22,9 +22,9 @@ public class DbConnection {
 
         //DO NOT MODIFY THIS COMMENT IT OUT AND WRITE YOU OWN FILE LOCATION
         //read from file Nikola
-        readFromFile("user.txt");
+        //readFromFile("user.txt");
         //Gouri
-        //Min
+        readFromFile("C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\user.txt");
         //Pano
         //Yu-Han
         try {
@@ -72,7 +72,7 @@ public class DbConnection {
             File file = new File(filePath);
             System.out.println(file.getParent());
             if (!file.exists()) {
-                logger.log(Level.SEVERE, "FIle does not exist");
+                logger.log(Level.SEVERE, "File does not exist");
                 return;
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
