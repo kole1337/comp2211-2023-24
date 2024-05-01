@@ -4,14 +4,11 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.logger.LogAction;
-import com.application.styles.checkStyle;
+import com.application.setup.styles.checkStyle;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,19 +26,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javafx.stage.StageStyle;
 import org.jfree.chart.ChartFrame;
-import org.jfree.chart.LegendItem;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -834,7 +825,7 @@ public class DashboardController implements Initializable {
     //Function to count the unique impressions
     public int countUniqueImpressions(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
-        return dataman.selectTotalData("impressionlog", gender, age, income, context);
+        return dataman.selectUniqueImpressionData(gender, age, income, context, getFromDateTime(), getToDateTime());
     }
     // function to count the unique impressions within dates
 //    public int countUniqueImpressionsWithinDates(){
@@ -846,7 +837,7 @@ public class DashboardController implements Initializable {
     //Function to count the zero cost clicks
     public int countZeroCostClick(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
-        return dataman.selectZeroClickCost( gender, age, income, context);
+        return dataman.selectZeroClickCost( gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 //    public int countZeroCostClickWithinDates(){
 //        Logger logger = Logger.getLogger(DashboardController.class.getName());
@@ -857,7 +848,7 @@ public class DashboardController implements Initializable {
     //Function to find the average price per click
     public double countAveragePricePerClick(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Average Price per Click");
-        return dataman.selectAvgData("clickCost", "clicklog",  gender, age, income, context);
+        return dataman.selectAvgData("clickCost", "clicklog",  gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 //    public double countAverageProcePerClickWithinDates(){
 //        Logger logger = Logger.getLogger(DashboardController.class.getName());
@@ -869,7 +860,7 @@ public class DashboardController implements Initializable {
     //Function to find the total impressions
     public int countTotalImpressions(String gender, String age, String income, String context) {
 
-        return dataman.selectTotalData("impressionlog",  gender, age, income, context);
+        return dataman.selectTotalData("impressionlog",  gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 //    public int countTotalImpressionsWithinDates(){
 //        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
@@ -881,7 +872,7 @@ public class DashboardController implements Initializable {
 
         logger.log(Level.INFO, "Loading Total clicks");
 
-        return dataman.selectTotalData("clicklog", gender, age, income, context);
+        return dataman.selectTotalData("clicklog", gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 //    public int countTotalClicksWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());
@@ -892,18 +883,18 @@ public class DashboardController implements Initializable {
     logger = Logger.getLogger(DashboardController.class.getName());
     logger.log(Level.INFO, "Loading Total Bounces");
 
-    return dataman.selectTotalBounces(gender, age, income, context);
+    return dataman.selectTotalBounces(gender, age, income, context, getFromDateTime(), getToDateTime());
     }
     public double countBounceRate(String gender, String age, String income, String context){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Bounce Rate");
-        return dataman.selectBounceRate(gender, age, income, context);
+        return dataman.selectBounceRate(gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 
     //Function to find the total entries from adds - needs better explanation
     public int countTotalEntries(String gender, String age, String income, String context){
         logger.log(Level.ALL, "Loading total entries from ads.");
-        return dataman.selectTotalData("serverlog", gender, age, income, context);
+        return dataman.selectTotalData("serverlog", gender, age, income, context, getFromDateTime(), getToDateTime());
     }
 //    public int countTotalEntriesWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());
@@ -913,7 +904,7 @@ public class DashboardController implements Initializable {
     //Function to find the average number of pages
     public double countAvgPageViewed(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading average pages viewed.");
-        return Math.round(dataman.selectAvgData("pagesViewed", "serverlog", gender, age, income, context) * 100) / 100;
+        return Math.round(dataman.selectAvgData("pagesViewed", "serverlog", gender, age, income, context, getFromDateTime(), getToDateTime()) * 100) / 100;
     }
 //    public double countAvgPageViewedWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());

@@ -142,16 +142,40 @@ public  class DataManager {
         System.out.println("INSERTED!");
     }
 
-    public int selectTotalData(String table,String gender, String age, String income, String context){
+    public int selectTotalData(String table,String gender, String age, String income, String context, String startDate, String endDate){
         int totals = 0;
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            rs = statement.executeQuery("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery );
-            System.out.println("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery);
+            if(table.equals("impressionlog")){
+                rs = statement.executeQuery("select count(1) from " + table + " AS impression " + filterQuery + " AND impression.Date BETWEEN '" + startDate + "' AND '" + endDate +"'");
+
+            }
+            else if(table.equals("serverlog") || table.equals("Serverlog")){
+
+                rs = statement.executeQuery("select count(1) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'");
+
+            }
+            else {
+                rs = statement.executeQuery("select count(1) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".date BETWEEN '" + startDate + "' AND '" + endDate + "'");
+            }
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
         }catch (Exception e){
+            e.printStackTrace();
+        }
+        return totals;
+    }
+    public int selectUniqueImpressionData(String gender, String age, String income, String context, String startDate, String endDate){
+        int totals = 0;
+        String filterQuery = filterQueryHelper(gender,age,income,context);
+        try{
+            rs = statement.executeQuery("select count(DISTINCT impression.id) from impressionLog AS impression " + filterQuery + " AND impression.Date BETWEEN '" + startDate + "' AND '" + endDate +"'");
+        if(rs.next()){
+            totals = rs.getInt(1);
+        }
+        }
+        catch(Exception e){
             e.printStackTrace();
         }
         return totals;
@@ -163,13 +187,13 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted as bounce
      * @return total bounces which data type is int
      */
-    public int selectTotalBounces(String gender, String age, String income, String context){
+    public int selectTotalBounces(String gender, String age, String income, String context, String startDate, String endDate){
         int totals = 0;
         String filterQuery = filterQueryHelper(gender,age,income, context);
         String timeBounce = getBounceTimeMinute();
         String pageBounce = getBouncePages();
         try {
-            String query = "SELECT COUNT(*) FROM serverlog AS server JOIN impressionLog AS impression ON server.id = impression.id " + filterQuery +
+            String query = "SELECT COUNT(1) FROM serverlog AS server JOIN impressionLog AS impression ON server.id = impression.id " + filterQuery + " AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'" +
                     " AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + timeBounce +
                     " OR server.pagesViewed >= " + pageBounce + ")" ;
 
@@ -188,14 +212,14 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted bounce
      * @return bounce rate which data type is double
      */
-    public double selectBounceRate(String gender, String age, String income, String context) {
+    public double selectBounceRate(String gender, String age, String income, String context, String startDate, String endDate) {
         double bounceRate = 0.0;
-        int totalBounces = selectTotalBounces(gender, age, income, context);
+        int totalBounces = selectTotalBounces(gender, age, income, context, startDate, endDate);
         int totalSessions = 0;
         String filterQuery = filterQueryHelper(gender,age,income,context);
         try {
             // Query to count the total number of sessions
-            String queryTotalSessions = "SELECT COUNT(*) FROM serverlog AS server JOIN impressionLog AS impression ON impression.id = server.id " + filterQuery ;
+            String queryTotalSessions = "SELECT COUNT(1) FROM serverlog AS server JOIN impressionLog AS impression ON impression.id = server.id " + filterQuery + " AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'" ;
 
             rs = statement.executeQuery(queryTotalSessions);
             if (rs.next()) {
@@ -212,11 +236,11 @@ public  class DataManager {
 
         return bounceRate;
     }
-    public int selectZeroClickCost(String gender, String age, String income, String context){
+    public int selectZeroClickCost(String gender, String age, String income, String context, String startDate, String endDate){
         int totals = 0;
         String filterQuery = filterQueryHelper(gender,age, income, context);
         try {
-            rs = statement.executeQuery("SELECT count(*) FROM clicklog AS clicks JOIN impressionLog AS impression ON impression.id = clicks.id " + filterQuery + " AND clickCost = 0");
+            rs = statement.executeQuery("SELECT count(1) FROM clicklog AS clicks JOIN impressionLog AS impression ON impression.id = clicks.id " + filterQuery + " AND clicks.Date BETWEEN '" + startDate + "' AND '" + endDate +"'" + " AND clickCost = 0");
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -226,11 +250,16 @@ public  class DataManager {
         return totals;
     }
 
-    public int selectAvgData(String column, String table, String gender, String age, String income, String context){
+    public int selectAvgData(String column, String table, String gender, String age, String income, String context, String startDate, String endDate){
         int totals = 0;
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery);
+            if(table.equals("serverlog") || table.equals("Serverlog")){
+                rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'" );
+
+            }
+            else{rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".Date BETWEEN '" + startDate + "' AND '" + endDate +"'" );}
+
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -245,7 +274,7 @@ public  class DataManager {
         int totals[] = new int[uniqueVals];
 
         try {
-            rs = statement.executeQuery("SELECT "+column+", COUNT(*) AS count FROM "+table+" WHERE date BETWEEN '"+fromDate +"' " + " AND '" +toDate +"' GROUP BY "+column);
+            rs = statement.executeQuery("SELECT "+column+", COUNT(1) AS count FROM "+table+" WHERE date BETWEEN '"+fromDate +"' " + " AND '" +toDate +"' GROUP BY "+column);
             int i = 0;
             while(rs.next()){
 

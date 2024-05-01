@@ -1,29 +1,6 @@
 package com.application.shenanigans;
 
 import com.application.database.*;
-import com.application.files.FileChooserWindow;
-import com.application.files.FilePathHandler;
-import com.application.logger.LogAction;
-import com.application.styles.checkStyle;
-import eu.hansolo.tilesfx.Tile;
-import javafx.application.Application;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.layout.TilePane;
-import javafx.stage.Stage;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.*;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static javafx.application.Application.launch;
 
