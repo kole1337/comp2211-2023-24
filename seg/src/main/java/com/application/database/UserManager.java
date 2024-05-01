@@ -228,6 +228,17 @@ public class UserManager {
 
         return null;
     }
+
+    public static void deleteUserWithID(int id){
+        try{
+            String query = "DELETE FROM users WHERE user_id = ?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 //        finally {
 //            try {
 //                if (rs != null) rs.close();

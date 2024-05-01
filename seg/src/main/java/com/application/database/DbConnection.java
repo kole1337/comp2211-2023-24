@@ -152,6 +152,15 @@ public class DbConnection {
         }
     }
 
+    public void resetConn(){
+        try{
+            conn.close();
+            conn = DriverManager.getConnection(url, getUser(), getPass());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static Connection getConn() {
         return conn;
     }

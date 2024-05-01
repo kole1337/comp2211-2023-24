@@ -1,7 +1,10 @@
 package com.application.admin;
 
+import com.application.database.DataManager;
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
+import com.application.logger.LogAction;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,16 +37,6 @@ import java.util.logging.Logger;
 
 
 public class AdminController {
-    public TextField getDBname;
-    public PasswordField getDBpassword;
-    public TextField getDBusername;
-    @FXML
-    public Label statusLabel;
-    @FXML
-    public Button checkConnectionDB;
-    public TextField passwordField;
-    public TextField userIdField;
-    public TextField usernameField;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -52,6 +45,7 @@ public class AdminController {
 
     UserManager userManager = new UserManager();
     User user = null;
+    LogAction logAction = new LogAction();
 
     @FXML
     private TableView<User> showUsers = new TableView<>();
@@ -78,14 +72,21 @@ public class AdminController {
 
     @FXML
     public void initialize() throws Exception{
-        if(db.checkConn()) statusLabel.setText("Status: connected");
+        logAction.logActionToFile("Opening Admin Panel.");
     }
 
+
+    /**
+     * Function that logs the user out to the login panel.
+     * It invokes an alert and waits for the user to confirm the exit.
+     * */
     public void logoutFunc(ActionEvent event) {
         Alert a = new Alert(Alert.AlertType.WARNING, "Signing out!", ButtonType.OK, ButtonType.CANCEL);
         Optional<ButtonType> result = a.showAndWait();
         if(result.isPresent() && result.get()==ButtonType.OK) {
             try {
+                db.resetConn();
+                logAction.logActionToFile("Logging out of admin panel.");
                 root = FXMLLoader.load(getClass().getResource("/com/application/login/hello-view.fxml"));
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
@@ -95,14 +96,22 @@ public class AdminController {
 
                 stage.show();
                 logger.log(Level.INFO, "Opening hello view.");
-            } catch (IOException e) {
-                logger = Logger.getLogger(getClass().getName());
+
+
+            } catch (Exception e) {
                 logger.log(Level.SEVERE, "Failed to create new Window.", e);
+                logAction.logActionToFile("Error logging out: " + e);
+                Alert a1 = new Alert(Alert.AlertType.WARNING, "Error logging out: " + e);
+                a1.show();
             }
         }
     }
 
     ObservableList<User> UserList = FXCollections.observableArrayList();
+
+    /**
+     * Function that refreshes the table of users
+     * */
     @FXML
     private void refreshTable() {
         for ( int i = 0; i<showUsers.getItems().size(); i++) {
@@ -126,34 +135,90 @@ public class AdminController {
 //                System.out.println(UserList.get(1));
             }
             showUsers.setItems(UserList);
-        } catch (SQLException e) {
+            logAction.logActionToFile("Refreshing table with users.");
+            logger.log(Level.SEVERE, "Refreshing table with users.");
+
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, "Error refreshing table: ", e);
+            logAction.logActionToFile("Error refreshing table " + e);
+            Alert a1 = new Alert(Alert.AlertType.WARNING, "Error refreshing table: " + e);
+            a1.show();
         }
 
 
     }
 
+    /**
+     * Function for the delete button
+     * that gets the selection from the table
+     * and deletes that user
+     * */
     @FXML
     private void deleteSelected(){
         TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
-
         ObservableList<Integer> list = selectionModel.getSelectedIndices();
-        Integer[] selectedIndice = new Integer[list.size()];
-        selectedIndice = list.toArray(selectedIndice);
-        showUsers.getItems().remove(selectedIndice[0].intValue());
+        if(list.size() != 0) {
+            try {
+                user = showUsers.getSelectionModel().getSelectedItem();
+                UserManager um = new UserManager();
+                um.deleteUserWithID(user.getUser_id());
+
+                Integer[] selectedIndice = new Integer[list.size()];
+                selectedIndice = list.toArray(selectedIndice);
+                showUsers.getItems().remove(selectedIndice[0].intValue());
+                logger.log(Level.INFO, "Deleting a user.");
+                logAction.logActionToFile("Deleting a user from table.");
+
+            }catch(Exception e){
+                logger.log(Level.WARNING,"Error deleting user: " + e);
+                Alert a = new Alert(Alert.AlertType.INFORMATION, "Error deleting user: " + e);
+                a.show();
+                logAction.logActionToFile("Error deleting a user.");
+                e.printStackTrace();
+            }
+        }else{
+            logAction.logActionToFile("No user was selecting for deletion.");
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "No user is selected.");
+            a.show();
+            logger.log(Level.INFO,"No user was selected for deletion.");
+
+        }
         
     }
 
+    /**
+     * Function for the Edit button
+     * that takes the selected user and
+     * opens the editUser panel, and sends the details
+     * of the selected user to the editUser panel
+     * */
     @FXML
     void editSelected(MouseEvent event) {
         TableView.TableViewSelectionModel<User> selectionModel = showUsers.getSelectionModel();
-        User user = showUsers.getSelectionModel().getSelectedItem();
-
-        editUserController obj = new editUserController();
-
-        obj.openEditPanel(user.getUsername(),user.getPassword(), user.getUser_id());
+        if(showUsers.getSelectionModel().getSelectedItem() != null) {
+            try {
+                User user = showUsers.getSelectionModel().getSelectedItem();
+                editUserController obj = new editUserController();
+                obj.openEditPanel(user.getUsername(), user.getPassword(), user.getUser_id());
+            }catch(Exception e){
+                logAction.logActionToFile("Error editing user: " + e);
+                Alert a = new Alert(Alert.AlertType.INFORMATION, "Error editing user: " + e);
+                a.show();
+                logger.log(Level.WARNING,"Error editing user: " + e);
+                e.printStackTrace();
+            }
+        }else{
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "No user is selected");
+            a.show();
+            logger.log(Level.WARNING,"No user is selected");
+            logAction.logActionToFile("No user is selected");
+        }
     }
 
+    /**
+     * Simply load the users in the table from the database
+     * */
     public void loadUsers(){
         populateTableView();
     }
@@ -177,14 +242,26 @@ public class AdminController {
                 showUsers.getItems().add(new User(fName, surName,userid));
                 System.out.println(fName + ", " + surName);
             }
-
-        } catch (SQLException e) {
+            logger.log(Level.INFO,"Loading users into table.");
+            logAction.logActionToFile("Loading users into table.");
+        } catch (Exception e) {
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "Error population table: " + e);
+            a.show();
+            logger.log(Level.WARNING,"Error population table: " + e);
+            logAction.logActionToFile("Error population table: " + e);
             e.printStackTrace();
         }
     }
 
+    /**
+     * Function to create a new user.
+     * It opens the createNewUser panel which has its own
+     * controller {@link com.application.admin.addUserController}
+     * */
     public void createNewUser() {
         try {
+            logger.log(Level.WARNING,"Creating new user.");
+            logAction.logActionToFile("Creating new user.");
             Parent parent = FXMLLoader.load(getClass().getResource("createNewUser.fxml"));
             Scene scene = new Scene(parent);
             Stage stage = new Stage();
@@ -192,54 +269,11 @@ public class AdminController {
             stage.initStyle(StageStyle.UTILITY);
             stage.show();
         }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void connectToDB(ActionEvent actionEvent) throws Exception {
-        logger.log(Level.INFO, "Establishing connection with db.");
-        if(getDBname.getText().isEmpty() || getDBpassword.getText().isEmpty()){
-            Alert a = new Alert(Alert.AlertType.WARNING);
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "Error creating new user: " + e);
             a.show();
-        }else {
-            String user = getDBusername.getText();
-            String password = getDBpassword.getText();
-            //String dbName = getDBname.getText();
-
-            //db.makeConn(user, password);
-            createOrUpdateFile("seg/src/main/resources/user.txt", user, password);
-            statusLabel.setText("Status: connected");
-        }
-
-    }
-
-    @FXML
-    Label test = new Label();
-    public void checkConnection(){
-        try {
-            db.checkConn();
-            logger.log(Level.INFO, "Connected with db.");
-            statusLabel.setText("Status: connected");
-           // System.out.println("Connceted!");
-        }catch (Exception e){
+            logger.log(Level.WARNING,"Error creating new user: " + e);
+            logAction.logActionToFile("Error creating new user: " + e);
             e.printStackTrace();
         }
     }
-
-    public static void createOrUpdateFile(String filePath, String username, String password) {
-        try {
-            File file = new File(filePath);
-            FileWriter writer = new FileWriter(file);
-            BufferedWriter buffer = new BufferedWriter(writer);
-            buffer.write(username);
-            buffer.newLine();
-            buffer.write(password);
-            buffer.close();
-            System.out.println("File created/updated successfully.");
-        } catch (IOException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-    }
-
-
 }
