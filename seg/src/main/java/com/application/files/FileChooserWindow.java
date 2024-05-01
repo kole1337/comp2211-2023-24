@@ -59,9 +59,6 @@ public class FileChooserWindow {
         if(selectedFile != null){
             //System.out.println("Open file: " + selectedFile.getAbsolutePath());
         }
-        FilePathHandler obj = new FilePathHandler();
-//        obj.fileTypeHandler(selectedFile);
-        System.out.println(obj.getClickPath());
         return selectedFile;
     }
 
