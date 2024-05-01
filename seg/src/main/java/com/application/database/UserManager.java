@@ -87,7 +87,7 @@ public class UserManager {
         return false;
     }
 
-    public static void insertUser(String username, String pass, String role){
+    public static void insertUser(String username, String pass, String role) throws SQLException {
 
         String inUser = "INSERT INTO users(username, password, role) VALUES (?,?,?)";
         try {
@@ -99,10 +99,12 @@ public class UserManager {
             System.out.println("INSERTED!");
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
+
         }
     }
 
-    public void updateUserPasswordUsername(String username, String newPassword){
+    public void updateUserPasswordUsername(String username, String newPassword) throws SQLException {
         logger.log(Level.INFO, "Updating password.");
         try {
             String updatePass = "UPDATE users SET password = ? WHERE username = ?";
@@ -118,11 +120,12 @@ public class UserManager {
         }catch (Exception e){
             e.printStackTrace();
             logger.log(Level.INFO, "Ooops! Error: " + e.getMessage());
+            throw e;
 
         }
     }
 
-    public static void updateUserPasswordID(String id, String newPassword){
+    public static void updateUserPasswordID(String id, String newPassword) throws SQLException {
         logger.log(Level.INFO, "Updating password.");
         try {
             String updatePass = "UPDATE users SET password = ? WHERE user_id = ?";
@@ -138,11 +141,12 @@ public class UserManager {
         }catch (Exception e){
             e.printStackTrace();
             logger.log(Level.INFO, "Ooops! Error: " + e.getMessage());
+            throw e;
 
         }
     }
 
-    public void updateUsername(String oldUsername, String newUsername){
+    public void updateUsername(String oldUsername, String newUsername) throws SQLException {
         logger.log(Level.INFO,"Update username");
         try{
             String updateUsername = "UPDATE users SET username = ? WHERE username =?";
@@ -154,10 +158,12 @@ public class UserManager {
             pstmt.execute();
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
+
         }
     }
 
-    public void updatePasswordWithUsername(String newPassword, String username){
+    public void updatePasswordWithUsername(String newPassword, String username) throws SQLException {
         logger.log(Level.INFO,"Update password with username");
         try{
             String updateUsername = "UPDATE users SET password = ? WHERE username =?";
@@ -169,10 +175,12 @@ public class UserManager {
             pstmt.execute();
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
+
         }
     }
 
-    public void updateUserId(int oldId, int newId){
+    public void updateUserId(int oldId, int newId) throws SQLException {
         logger.log(Level.INFO,"Update user id");
         try{
             String updateUsername = "UPDATE users SET user_id = ? WHERE user_id =?";
@@ -184,6 +192,7 @@ public class UserManager {
             pstmt.execute();
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -202,34 +211,7 @@ public class UserManager {
         }
     }
 
-    public static Boolean checkUserExistence(String username) {
-        try {
-            String query = "SELECT COUNT(*) FROM users WHERE username = ?";
-            pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, username);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                if (count == 0) {
-                    // User does not exist, perform actions accordingly
-                    return false;
-                    // Update UI or take necessary actions
-                } else {
-                    // User exists
-                    return true;
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return null;
-    }
-
-    public static void deleteUserWithID(int id){
+    public static void deleteUserWithID(int id) throws SQLException {
         try{
             String query = "DELETE FROM users WHERE user_id = ?";
             pstmt = conn.prepareStatement(query);
@@ -237,16 +219,8 @@ public class UserManager {
             pstmt.executeUpdate();
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
+
         }
     }
-//        finally {
-//            try {
-//                if (rs != null) rs.close();
-//                if ( pstmt != null)  pstmt.close();
-//                if (conn != null) conn.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
 }

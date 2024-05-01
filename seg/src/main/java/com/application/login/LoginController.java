@@ -67,7 +67,9 @@ public class LoginController {
     @FXML
     public void loginFunc(ActionEvent event) throws Exception {
         logger.log(Level.INFO, "You pressed loginButton.");
-
+        if(usernameField.getText().isEmpty()){
+            System.out.println("gesh");
+        }
         //if the login details are wrong, show error
         if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
@@ -104,6 +106,7 @@ public class LoginController {
      * is wrong
      * */
     public Boolean checkUser(String username, String password){
+
         Boolean result = false;
         try {
             //if the user exists and has the correct roles, they will be logged in.

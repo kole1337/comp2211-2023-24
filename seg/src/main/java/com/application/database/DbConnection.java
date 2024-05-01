@@ -152,12 +152,14 @@ public class DbConnection {
         }
     }
 
-    public void resetConn(){
+    public void resetConn() throws SQLException {
         try{
+            System.out.println("Resseting");
             conn.close();
             conn = DriverManager.getConnection(url, getUser(), getPass());
         }catch(Exception e){
             e.printStackTrace();
+            throw e;
         }
     }
 
