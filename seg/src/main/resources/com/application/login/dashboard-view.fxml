@@ -317,21 +317,21 @@
                                                      <Insets left="15.0" />
                                                  </opaqueInsets>
                                              </Label>
-                                             <CheckBox fx:id="totalClicks" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="256.0" text="Clicks" VBox.vgrow="ALWAYS"/>
-                                             <CheckBox fx:id="totalUniques" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="308.0" style="-fx-border-insets: 50;" text="Uniques" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalBounces" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="355.0" text="Bounces" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalImpressions" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="374.0" text="Impressions" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalConversions" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="315.0" text="Conversion Rate" VBox.vgrow="ALWAYS" />
-                                             <CheckBox fx:id="totalCost" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="332.0" text="Total Cost" />
-                                             <CheckBox fx:id="costPerAcq" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="308.0" text="Cost per acquisition" />
-                                             <CheckBox fx:id="costPerClicks" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="350.0" text="Cost per clicks" />
-                                             <CheckBox fx:id="costPerImpres" alignment="TOP_CENTER" mnemonicParsing="false"  prefHeight="25.0" prefWidth="348.0" text="Cost per impression" />
-                                             <CheckBox fx:id="costPerThousandImpres" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="350.0" text="Cost per thousand impressions" wrapText="true" />
-                                             <CheckBox fx:id="bounceRate" alignment="TOP_CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="445.0" text="Bounce Rate">
+                                             <Button fx:id="totalClicks" alignment="TOP_CENTER" mnemonicParsing="false"  onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="256.0" text="Clicks" VBox.vgrow="ALWAYS"/>
+                                             <Button fx:id="totalUniques" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" style="-fx-border-insets: 50;" text="Uniques" VBox.vgrow="ALWAYS" />
+                                             <Button fx:id="totalBounces" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="355.0" text="Bounces" VBox.vgrow="ALWAYS" />
+                                             <Button fx:id="totalImpressions" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs"  prefHeight="25.0" prefWidth="374.0" text="Impressions" VBox.vgrow="ALWAYS" />
+                                             <Button fx:id="totalConversions" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="315.0" text="Conversion Rate" VBox.vgrow="ALWAYS" />
+                                             <Button fx:id="totalCost" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="332.0" text="Total Cost" />
+                                             <Button fx:id="costPerAcq" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" text="Cost per acquisition" />
+                                             <Button fx:id="costPerClicks" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="350.0" text="Cost per clicks" />
+                                             <Button fx:id="costPerImpres" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="348.0" text="Cost per impression" />
+                                             <Button fx:id="costPerThousandImpres" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="350.0" text="Cost per thousand impressions" wrapText="true" />
+                                             <Button fx:id="bounceRate" alignment="TOP_CENTER" mnemonicParsing="false" onAction = "#loadDataGraphs" prefHeight="25.0" prefWidth="445.0" text="Bounce Rate">
                                                  <opaqueInsets>
                                                      <Insets top="10.0" />
                                                  </opaqueInsets>
-                                             </CheckBox>
+                                             </Button>
                                              <ComboBox fx:id="timeBox" prefHeight="25.0" prefWidth="414.0">
                                                  <items>
                                                      <FXCollections fx:factory="observableArrayList">

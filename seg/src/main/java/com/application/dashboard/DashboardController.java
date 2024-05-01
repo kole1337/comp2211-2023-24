@@ -113,27 +113,27 @@ public class DashboardController implements Initializable {
     private Logger logger = Logger.getLogger(DashboardController.class.getName());
     private DatasetCreator dc;
     @FXML
-    public CheckBox totalClicks;
+    public Button totalClicks;
     @FXML
-    public CheckBox totalImpressions;
+    public Button totalImpressions;
     @FXML
-    public CheckBox totalCost;
+    public Button totalCost;
     @FXML
-    public CheckBox totalUniques;
+    public Button totalUniques;
     @FXML
-    public CheckBox totalBounces;
+    public Button totalBounces;
     @FXML
-    public CheckBox totalConversions;
+    public Button totalConversions;
     @FXML
-    public CheckBox costPerAcq;
+    public Button costPerAcq;
     @FXML
-    public CheckBox costPerClicks;
+    public Button costPerClicks;
     @FXML
-    public CheckBox costPerImpres;
+    public Button costPerImpres;
     @FXML
-    public CheckBox costPerThousandImpres;
+    public Button costPerThousandImpres;
     @FXML
-    public CheckBox bounceRate;
+    public Button bounceRate;
     public ComboBox timeBox;
     @FXML
     public VBox timeControlVBox = new VBox ();
@@ -190,7 +190,6 @@ public class DashboardController implements Initializable {
         }else{
             enableLightTheme();
         }
-
         selectGraph.getItems().addAll(bounces);
 
         timeSpentBounce.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -229,50 +228,6 @@ public class DashboardController implements Initializable {
                 }
             }
         });
-        totalClicks.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        totalImpressions.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        totalCost.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        totalUniques.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        totalBounces.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        totalConversions.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        costPerAcq.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        costPerClicks.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        costPerImpres.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        costPerThousandImpres.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
-        bounceRate.selectedProperty().addListener((observable,oldValue,newValue)->{
-            List<CheckBox> selectedCheckBoxes = getSelectedCheckBoxes();
-            loadDataGraphs(selectedCheckBoxes);
-        });
         // Assuming you have defined the ComboBoxes in your controller class
         ObservableList<String> hours = FXCollections.observableArrayList();
         ObservableList<String> minutes = FXCollections.observableArrayList();
@@ -302,10 +257,10 @@ public class DashboardController implements Initializable {
         contextFilter.setItems(dataman.getContext());
         ageFilter.setItems(dataman.getAge());
         incomeFilter.setItems(dataman.getIncome());
-        genderFilter.setValue(" ");
-        contextFilter.setValue(" ");
-        ageFilter.setValue(" ");
-        incomeFilter.setValue(" ");
+        genderFilter.setValue("Any");
+        contextFilter.setValue("Any");
+        ageFilter.setValue("Any");
+        incomeFilter.setValue("Any");
         timeBox.setValue("hour");
 
         dataChart.setMaxHeight(Double.MAX_VALUE);
@@ -389,17 +344,17 @@ public class DashboardController implements Initializable {
 ////        TimeFrameControl tfc = new TimeFrameControl();
 ////        tfc.createTimeFrame();
 //        loadGraph(buttonId,time);
-        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions());
-        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions());
+        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressions(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        sumImpressionsLabel.setText("Total impressions: " + countTotalImpressions(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
 //
 
-        totalClicksLabel.setText("Total clicks: " + countTotalClicks());
-        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClick());
-        avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick());
-        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries());
-        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed());
-        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces());
-        bounceRateLabel.setText("Bounce Rate: " + countBounceRate());
+        totalClicksLabel.setText("Total clicks: " + countTotalClicks(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        zeroCostClickLabel.setText("Zero cost clicks: " + countZeroCostClick(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        avgClickPriceLabel.setText("Average price per click: " + countAveragePricePerClick(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        totalEntriesLabel.setText("Total entries from ads: " + countTotalEntries(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        avgPagesViewedLabel.setText("Average pages viewed: " + countAvgPageViewed(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        totalBouncesLabel.setText("Total Bounce: " + countTotalBounces(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
+        bounceRateLabel.setText("Bounce Rate: " + countBounceRate(genderFilter.getValue().toString(),ageFilter.getValue().toString(),incomeFilter.getValue().toString(),contextFilter.getValue().toString()));
     }
     public void loadCSVWithinDates(ActionEvent actionEvent){
 //        uniqueImpressionLabel.setText("Unique Impressions: " + countUniqueImpressionsWithinDates());
@@ -414,13 +369,10 @@ public class DashboardController implements Initializable {
 
     }
 
-    public void loadDataGraphs(List<CheckBox> selectedCheckBoxes) {
-        List<String> selectedAttributes = new ArrayList<>();
-        for(CheckBox i:selectedCheckBoxes){
-            selectedAttributes.add(i.getId());
-        }
+    public void loadDataGraphs(ActionEvent event) {
         String time = (String) timeBox.getValue();
-
+        Button clicked = (Button) event.getSource();
+        String graphName = clicked.getId();
         //to set hour as default time
         if (time == null) {
             time = "hour";
@@ -429,8 +381,7 @@ public class DashboardController implements Initializable {
 //        dc = new DatasetCreator(fph);
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
-        System.out.println("selected attributes are " + selectedAttributes.get(0));
-        loadGraph(selectedAttributes, time);
+        loadGraph(graphName, time);
         dataChart.requestLayout();
 
     }
@@ -455,44 +406,6 @@ public class DashboardController implements Initializable {
         loadGraph(buttonId,time);
         dataChart.layout();
     } */
-    private List<CheckBox> getSelectedCheckBoxes() {
-        List<CheckBox> selectedCheckboxes = new ArrayList<>();
-        if (totalClicks.isSelected()) {
-            selectedCheckboxes.add(totalClicks);
-        }
-        if (totalImpressions.isSelected()) {
-            selectedCheckboxes.add(totalImpressions);
-        }
-        if (totalCost.isSelected()) {
-            selectedCheckboxes.add(totalCost);
-        }
-        if (totalUniques.isSelected()) {
-            selectedCheckboxes.add(totalUniques);
-        }
-        if (totalBounces.isSelected()) {
-            selectedCheckboxes.add(totalBounces);
-        }
-        if (totalConversions.isSelected()) {
-            selectedCheckboxes.add(totalConversions);
-        }
-        if (costPerAcq.isSelected()) {
-            selectedCheckboxes.add(costPerAcq);
-        }
-        if (costPerClicks.isSelected()) {
-            selectedCheckboxes.add(costPerClicks);
-        }
-        if (costPerImpres.isSelected()) {
-            selectedCheckboxes.add(costPerImpres);
-        }
-        if (costPerThousandImpres.isSelected()) {
-            selectedCheckboxes.add(costPerThousandImpres);
-        }
-        if (bounceRate.isSelected()) {
-            selectedCheckboxes.add(bounceRate);
-        }
-        System.out.println(selectedCheckboxes.get(0));
-        return selectedCheckboxes;
-    }
     public void exportChartToPDF(){
         PDFExporter pdfExporter = new PDFExporter();
         pdfExporter.exportChartToPDF(dataChart);
@@ -685,25 +598,23 @@ public class DashboardController implements Initializable {
     }
 
     //load the graph
-    public void loadGraph(List<String> selectedButtons, String time) {
+    public void loadGraph(String selectedButton, String time) {
         logger = Logger.getLogger(getClass().getName());
         logger.log(Level.INFO, "Creating data graph");
-        dataChart.getData().clear();
         dataChart.layout();
 
         xAxis.setTickLabelGap(10); // Set the spacing between major tick marks
         xAxis.setTickLabelRotation(-45);
         dataChart.setAnimated(false);
-        if (selectedButtons != null) {
+        if (selectedButton != null) {
             //to set start date way back in the past as default, so it reads every data
             String startDate = getFromDateTime();
             String endDate = getToDateTime();
-            for (String selectedButton:selectedButtons){
-                XYChart.Series<String,Number> data = new XYChart.Series<>();
-                data = dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString());
-                data.setName(selectedButton);
-                dataChart.getData().add(data);
-            }
+            XYChart.Series<String,Number> data = new XYChart.Series<>();
+            data = dataman.getData(selectedButton, timeBox.getValue().toString() , startDate,endDate, genderFilter.getValue().toString() , incomeFilter.getValue().toString(), contextFilter.getValue().toString() , ageFilter.getValue().toString());
+            data.setName(selectedButton+ " with "+ "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate);
+            Tooltip tooltip = new Tooltip(selectedButton+ " with "+ "gender: " + genderFilter.getValue().toString() + " income: " + incomeFilter.getValue().toString() + " context: " + contextFilter.getValue().toString() + " age: " + ageFilter.getValue().toString() + " from " + startDate + " to " + endDate );
+            dataChart.getData().add(data);
             }
             //to set end date way far in the future as dafault, so it reads every data
         if(toDate.getValue() == null){
@@ -925,9 +836,9 @@ public class DashboardController implements Initializable {
 
 
     //Function to count the unique impressions
-    public int countUniqueImpressions(){
+    public int countUniqueImpressions(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Unique visits from impressions_log");
-        return dataman.selectTotalData("impressionlog");
+        return dataman.selectTotalData("impressionlog", gender, age, income, context);
     }
     // function to count the unique impressions within dates
 //    public int countUniqueImpressionsWithinDates(){
@@ -937,9 +848,9 @@ public class DashboardController implements Initializable {
 //    }
 
     //Function to count the zero cost clicks
-    public int countZeroCostClick(){
+    public int countZeroCostClick(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Zero Cost Clicks");
-        return dataman.selectZeroClickCost();
+        return dataman.selectZeroClickCost( gender, age, income, context);
     }
 //    public int countZeroCostClickWithinDates(){
 //        Logger logger = Logger.getLogger(DashboardController.class.getName());
@@ -948,9 +859,9 @@ public class DashboardController implements Initializable {
 //    }
 
     //Function to find the average price per click
-    public double countAveragePricePerClick(){
+    public double countAveragePricePerClick(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading Average Price per Click");
-        return dataman.selectAvgData("clickCost", "clicklog");
+        return dataman.selectAvgData("clickCost", "clicklog",  gender, age, income, context);
     }
 //    public double countAverageProcePerClickWithinDates(){
 //        Logger logger = Logger.getLogger(DashboardController.class.getName());
@@ -960,9 +871,9 @@ public class DashboardController implements Initializable {
 
 
     //Function to find the total impressions
-    public int countTotalImpressions() {
+    public int countTotalImpressions(String gender, String age, String income, String context) {
 
-        return dataman.selectTotalData("impressionlog");
+        return dataman.selectTotalData("impressionlog",  gender, age, income, context);
     }
 //    public int countTotalImpressionsWithinDates(){
 //        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
@@ -970,33 +881,33 @@ public class DashboardController implements Initializable {
 
     //Function to find the total clicks for the campaign
 
-    public int countTotalClicks(){
+    public int countTotalClicks(String gender, String age, String income, String context){
 
         logger.log(Level.INFO, "Loading Total clicks");
 
-        return dataman.selectTotalData("clicklog");
+        return dataman.selectTotalData("clicklog", gender, age, income, context);
     }
 //    public int countTotalClicksWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());
 //        logger.log(Level.INFO, "Loading Total clicks within start and end time");
 //        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
-    public int countTotalBounces(){
+    public int countTotalBounces(String gender, String age, String income, String context){
     logger = Logger.getLogger(DashboardController.class.getName());
     logger.log(Level.INFO, "Loading Total Bounces");
 
-    return dataman.selectTotalBounces();
+    return dataman.selectTotalBounces(gender, age, income, context);
     }
-    public double countBounceRate(){
+    public double countBounceRate(String gender, String age, String income, String context){
         logger = Logger.getLogger(DashboardController.class.getName());
         logger.log(Level.INFO, "Loading Bounce Rate");
-        return dataman.selectBounceRate();
+        return dataman.selectBounceRate(gender, age, income, context);
     }
 
     //Function to find the total entries from adds - needs better explanation
-    public int countTotalEntries(){
+    public int countTotalEntries(String gender, String age, String income, String context){
         logger.log(Level.ALL, "Loading total entries from ads.");
-        return dataman.selectTotalData("serverlog");
+        return dataman.selectTotalData("serverlog", gender, age, income, context);
     }
 //    public int countTotalEntriesWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());
@@ -1004,9 +915,9 @@ public class DashboardController implements Initializable {
 //        return dataman.selectTotalDataWithinRange("severlog", getStartDateTimeAsString(),getEndDateTimeAsString());
 //    }
     //Function to find the average number of pages
-    public double countAvgPageViewed(){
+    public double countAvgPageViewed(String gender, String age, String income, String context){
         logger.log(Level.INFO, "Loading average pages viewed.");
-        return Math.round(dataman.selectAvgData("pagesViewed", "serverlog") * 100) / 100;
+        return Math.round(dataman.selectAvgData("pagesViewed", "serverlog", gender, age, income, context) * 100) / 100;
     }
 //    public double countAvgPageViewedWithinDates(){
 //        logger = Logger.getLogger(DashboardController.class.getName());

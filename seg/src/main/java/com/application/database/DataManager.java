@@ -126,10 +126,11 @@ public  class DataManager {
         System.out.println("INSERTED!");
     }
 
-    public int selectTotalData(String table){
+    public int selectTotalData(String table,String gender, String age, String income, String context){
         int totals = 0;
+        String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            rs = statement.executeQuery("select count(*) from " + table);
+            rs = statement.executeQuery("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery );
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -145,14 +146,15 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted as bounce
      * @return total bounces which data type is int
      */
-    public int selectTotalBounces(){
+    public int selectTotalBounces(String gender, String age, String income, String context){
         int totals = 0;
+        String filterQuery = filterQueryHelper(gender,age,income, context);
         String timeBounce = getBounceTimeMinute();
         String pageBounce = getBouncePages();
         try {
-            String query = "SELECT COUNT(*) FROM serverlog AS server " +
-                    "WHERE TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + timeBounce +
-                    " OR server.pagesViewed >= " + pageBounce ;
+            String query = "SELECT COUNT(*) FROM serverlog AS server JOIN impressionLog AS impression ON server.id = impression.id " + filterQuery +
+                    " AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + timeBounce +
+                    " OR server.pagesViewed >= " + pageBounce + ")" ;
 
             rs = statement.executeQuery(query);
             if (rs.next()) {
@@ -169,14 +171,14 @@ public  class DataManager {
      * @param pageViewedBounce this is the String that user specifying which pageviewed will be counted bounce
      * @return bounce rate which data type is double
      */
-    public double selectBounceRate() {
+    public double selectBounceRate(String gender, String age, String income, String context) {
         double bounceRate = 0.0;
-        int totalBounces = selectTotalBounces();
+        int totalBounces = selectTotalBounces(gender, age, income, context);
         int totalSessions = 0;
-
+        String filterQuery = filterQueryHelper(gender,age,income,context);
         try {
             // Query to count the total number of sessions
-            String queryTotalSessions = "SELECT COUNT(*) FROM serverlog";
+            String queryTotalSessions = "SELECT COUNT(*) FROM serverlog AS server JOIN impressionLog AS impression ON impression.id = server.id " + filterQuery ;
 
             rs = statement.executeQuery(queryTotalSessions);
             if (rs.next()) {
@@ -193,10 +195,11 @@ public  class DataManager {
 
         return bounceRate;
     }
-    public int selectZeroClickCost(){
+    public int selectZeroClickCost(String gender, String age, String income, String context){
         int totals = 0;
+        String filterQuery = filterQueryHelper(gender,age, income, context);
         try {
-            rs = statement.executeQuery("select count(*) from clicklog where clickCost = 0");
+            rs = statement.executeQuery("SELECT count(*) FROM clicklog AS clicks JOIN impressionLog AS impression ON impression.id = clicks.id " + filterQuery + " AND clickCost = 0");
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -206,10 +209,11 @@ public  class DataManager {
         return totals;
     }
 
-    public int selectAvgData(String column, String table){
+    public int selectAvgData(String column, String table, String gender, String age, String income, String context){
         int totals = 0;
+        String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table);
+            rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery);
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -502,25 +506,25 @@ public  class DataManager {
     }
 
     private String filterQueryHelper(String gender, String age, String income, String context){
-        if(gender.equals(" ")){
+        if(gender.equals("Any")){
             gender = "IS NOT NULL";
         }
         else{
             gender = "= '" + gender + "'";
         }
-        if(age.equals(" ")){
+        if(age.equals("Any")){
             age = "IS NOT NULL";
         }
         else{
             age = "= '" + age + "'";
         }
-        if(income.equals(" ")){
+        if(income.equals("Any")){
             income = "IS NOT NULL";
         }
         else{
             income = "= '" + income + "'";
         }
-        if(context.equals(" ")){
+        if(context.equals("Any")){
             context = "IS NOT NULL";
         }
         else{
@@ -531,7 +535,7 @@ public  class DataManager {
     }
     public ObservableList<String> getGenders(){
         ObservableList<String> genders = FXCollections.observableArrayList();
-        String query = "SELECT DISTINCT Gender FROM impressionlog";
+        String query = "SELECT DISTINCT Gender FROM impressionLog AS impression " ;
         try{
             rs = statement.executeQuery(query);
             while(rs.next()){
@@ -540,7 +544,7 @@ public  class DataManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        genders.add(" ");
+        genders.add("Any");
         return genders;
     }
     public ObservableList<String> getContext(){
@@ -554,7 +558,7 @@ public  class DataManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        context.add(" ");
+        context.add("Any");
         return context;
     }
     public ObservableList<String> getAge(){
@@ -568,7 +572,7 @@ public  class DataManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        age.add(" ");
+        age.add("Any");
         return age;
     }
     public ObservableList<String> getIncome(){
@@ -582,7 +586,7 @@ public  class DataManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        income.add(" ");
+        income.add("Any");
         return income;
     }
 
