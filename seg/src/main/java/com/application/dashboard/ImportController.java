@@ -254,12 +254,16 @@ public class ImportController {
 
     DataManager dm = new DataManager();
     DbConnection db = new DbConnection();
+
+    Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+    testClickThread tct = new testClickThread();
+    testServerThread tst = new testServerThread();
     public void loadSQL(){
+
         try {
             dm.dumpData();
-            Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
-            testClickThread tct = new testClickThread();
-            testServerThread tst = new testServerThread();
+
+
             FileSplit splitFiles = new FileSplit();
 //        fph.setClickPath("asdffa");
 //        fph.setImpressionPath("asfdsdfa");
@@ -292,9 +296,6 @@ public class ImportController {
 
                 }
 
-                db.closeConn();
-
-                db.makeConn();
             } catch (Exception e) {
                 e.printStackTrace();
             }

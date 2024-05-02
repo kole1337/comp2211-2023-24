@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +26,7 @@ public class testClickThread {
     private static Logger logger = Logger.getLogger(testClickThread.class.getName());
 
     // Define the number of threads
-    static final int NUM_THREADS = 150; // Adjust according to your requirements
+    static final int NUM_THREADS = 50; // Adjust according to your requirements
 
 
     public static void main(ArrayList<String> path) throws Exception {
@@ -33,20 +34,30 @@ public class testClickThread {
         config.setJdbcUrl(JDBC_URL);
         config.setUsername(DB_USER);
         config.setPassword(DB_PASSWORD);
+
         config.setMaximumPoolSize(150);
         config.setConnectionTimeout(300000);
         config.setIdleTimeout(120000);
         config.setLeakDetectionThreshold(300000);
+        config.setMaxLifetime(60000);
 
-        DataSource dataSource = new HikariDataSource(config);
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.addDataSourceProperty("userServerPrepStmts",true);
+
+        HikariDataSource dataSource = new HikariDataSource(config);
 
         ArrayList<String> paths = new ArrayList<>();
         paths = path;
+        CountDownLatch latch = new CountDownLatch(paths.size() * NUM_THREADS);
+
 
 //        String csvPath = "D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv";
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         int count = 0;
+
         for(String p : paths) {
             try (BufferedReader br = new BufferedReader(new FileReader(p))) {
                 String line;
@@ -59,7 +70,7 @@ public class testClickThread {
 
                     // If batchLines size reaches a certain threshold, submit task to the thread pool
                     if (batchLines.size() >= 1_000) {
-                        executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource));
+                        executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource, latch));
                         // Clear batchLines after submitting task
                         batchLines.clear();
                         count++;
@@ -68,7 +79,7 @@ public class testClickThread {
                 }
                 // Submit the remaining lines as a final task
                 if (!batchLines.isEmpty()) {
-                    executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource));
+                    executor.submit(new InsertTask(new ArrayList<>(batchLines), dataSource, latch));
                     count++;
                     System.out.println(batchLines.size());
                 }
@@ -79,18 +90,29 @@ public class testClickThread {
 
         // Shutdown the executor after all tasks are completed
         System.out.println("count: " + count);
+
         executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        dataSource.close();
 
     }
 
 
     static class InsertTask implements Runnable {
         private final List<String> batchLines;
-        private final DataSource dataSource;
+        private final HikariDataSource dataSource;
+        private final CountDownLatch latch;
 
-        InsertTask(List<String> batchLines, DataSource dataSource) {
+
+        InsertTask(List<String> batchLines, HikariDataSource dataSource, CountDownLatch latch) {
             this.batchLines = batchLines;
             this.dataSource = dataSource;
+            this.latch = latch;
         }
 
         @Override
@@ -121,10 +143,16 @@ public class testClickThread {
                         }
                     }
                     preparedStatement.executeBatch();
+//                    conn.close();
+
                 }
+                latch.countDown();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
         }
+
     }
 }
