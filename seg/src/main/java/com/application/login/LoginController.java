@@ -68,10 +68,11 @@ public class LoginController {
     public void loginFunc(ActionEvent event) throws Exception {
         logger.log(Level.INFO, "You pressed loginButton.");
         if(usernameField.getText().isEmpty()){
-            System.out.println("gesh");
-        }
-        //if the login details are wrong, show error
-        if (checkUser(usernameField.getText(), passwordField.getText())) {
+            Alert alert = new Alert(Alert.AlertType.WARNING,"Please enter a valid username.",ButtonType.OK);
+            alert.showAndWait();
+
+        }//if the login details are wrong, show error
+        else if (checkUser(usernameField.getText(), passwordField.getText())) {
             try {
                 LogAction la = new LogAction(usernameField.getText());
                 logger.log(Level.INFO, "Logging in as user. Opening dashboard.");
