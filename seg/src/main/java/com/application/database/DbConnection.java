@@ -22,10 +22,13 @@ public class DbConnection {
 
         //DO NOT MODIFY THIS COMMENT IT OUT AND WRITE YOU OWN FILE LOCATION
         //read from file Nikola
-        readFromFile("seg\\user.txt");
+
+        //readFromFile("user.txt");
+
         //Gouri
-        //Min
+        readFromFile("C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\user.txt");
         //Pano
+      //readFromFile("seg\\user.txt");
         //Yu-Han
         try {
             makeConn();
@@ -71,7 +74,7 @@ public class DbConnection {
             File file = new File(filePath);
             System.out.println(file.getParent());
             if (!file.exists()) {
-                logger.log(Level.SEVERE, "FIle does not exist");
+                logger.log(Level.SEVERE, "File does not exist");
                 return;
             }
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -148,6 +151,17 @@ public class DbConnection {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void resetConn() throws SQLException {
+        try{
+            System.out.println("Resseting");
+            conn.close();
+            conn = DriverManager.getConnection(url, getUser(), getPass());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 

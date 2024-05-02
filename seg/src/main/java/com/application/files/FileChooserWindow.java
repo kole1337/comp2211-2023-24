@@ -73,7 +73,6 @@ public class FileChooserWindow {
         }catch (Exception e){
 
         }
-
     }
 
     public String selectFolderPath(){

@@ -2,6 +2,7 @@ package com.application.admin;
 
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
+import com.application.logger.LogAction;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +16,8 @@ import org.w3c.dom.Text;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class addUserController {
 
@@ -30,20 +33,23 @@ public class addUserController {
     @FXML
     private Button cancelButton;
 
+    LogAction logAction = new LogAction();
     DbConnection db = new DbConnection();
     UserManager um = new UserManager();
+    private Logger logger = Logger.getLogger(getClass().getName());
 
 
 
     public void initialize(){
         String[] roles = new String[]{"admin","user"};
-
-
         selectRole.getItems().addAll(roles);
-
-
+        logAction.logActionToFile("Opening Add User panel.");
     }
 
+    /**
+     * Function to add a user to the database.
+     * It must have a username, password and role selected.
+     * */
     @FXML
     public void addUserToDb() {
         try {
@@ -53,6 +59,7 @@ public class addUserController {
                 // get a handle to the stage
                 Alert a = new Alert(Alert.AlertType.WARNING, "Fields cannot be empty!", ButtonType.OK);
                 a.show();
+                logger.log(Level.WARNING,"Not all fields were selected.");
             }else{
                 um.insertUser(usernameField.getText(),passwordField.getText(),selectRole.getValue().toString());
 
@@ -62,13 +69,22 @@ public class addUserController {
                 usernameField.clear();
                 passwordField.clear();
                 selectRole.setValue(null);
+                logger.log(Level.INFO, "User was inserted successfully.");
+                logAction.logActionToFile("User was inserted successfully.");
+
             }
         }catch(Exception e){
             e.printStackTrace();
+            logger.log(Level.INFO, "Error adding user to database: " + e);
+            logAction.logActionToFile("Error adding user to database: " + e);
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error adding user to database: " + e);
+            a.show();
         }
-        System.out.println(usernameField.getText()+" "+passwordField.getText()+" "+selectRole.getValue());
     }
 
+    /**
+     * A function that closes the add user panel.
+     * */
     @FXML
     public void cancelOperation() {
         try {
@@ -79,16 +95,18 @@ public class addUserController {
                 Optional<ButtonType> result = a.showAndWait();
                 if(result.isPresent() && result.get()==ButtonType.OK) {
                     Stage stage = (Stage) cancelButton.getScene().getWindow();
-                    // do what you have to do
                     stage.close();
                 }
             }else{
                 Stage stage = (Stage) cancelButton.getScene().getWindow();
-                // do what you have to do
                 stage.close();
             }
         }catch(Exception e){
             e.printStackTrace();
+            logger.log(Level.INFO, "Error closing addUserPanel: " + e);
+            logAction.logActionToFile("Error closing addUserPanel: " + e);
+            Alert a = new Alert(Alert.AlertType.WARNING, "Error closing addUserPanel:" + e);
+            a.show();
         }
     }
 }

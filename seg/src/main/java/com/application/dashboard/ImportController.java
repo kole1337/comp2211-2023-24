@@ -3,8 +3,7 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.logger.LogAction;
-import com.application.styles.checkStyle;
-import javafx.application.Platform;
+import com.application.setup.styles.checkStyle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +11,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -25,11 +23,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -368,12 +366,16 @@ public class ImportController {
 
     DataManager dm = new DataManager();
     DbConnection db = new DbConnection();
+
+    Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
+    testClickThread tct = new testClickThread();
+    testServerThread tst = new testServerThread();
     public void loadSQL(){
+
         try {
             dm.dumpData();
-            Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
-            testClickThread tct = new testClickThread();
-            testServerThread tst = new testServerThread();
+
+
             FileSplit splitFiles = new FileSplit();
 //        fph.setClickPath("asdffa");
 //        fph.setImpressionPath("asfdsdfa");
@@ -406,9 +408,6 @@ public class ImportController {
 
                 }
 
-                db.closeConn();
-
-                db.makeConn();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,35 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.Double?>
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioMenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox prefHeight="1213.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<VBox fx:id="background" prefHeight="1213.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
         <MenuBar prefHeight="25.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <menus>
@@ -57,16 +36,7 @@
                                 <ToggleGroup fx:id="theme" />
                             </toggleGroup>
                         </RadioMenuItem>
-                        <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#enableDarkTheme" text="Dark theme" toggleGroup="$theme" />
-                        <RadioMenuItem fx:id="increaseTextSize" mnemonicParsing="false" onAction="#enableDarkTheme" text="Increase Text Size">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="theme1" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="decreaseTextSize" mnemonicParsing="false" onAction="#enableDarkTheme" text="Decrease Text Size">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="theme11" />
-                            </toggleGroup>
+                        <RadioMenuItem fx:id="darkTheme" mnemonicParsing="false" onAction="#enableDarkTheme" text="Dark theme" toggleGroup="$theme">
                         </RadioMenuItem>
                     </items>
                 </Menu>
@@ -99,10 +69,10 @@
                                         <Button fx:id="totalImpressions" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="309.0" text="Impressions" VBox.vgrow="ALWAYS" />
                                         <Button fx:id="totalConversions" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="329.0" text="Conversion Rate" VBox.vgrow="ALWAYS" />
                                         <Button fx:id="totalCost" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="341.0" text="Total Cost" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="CPA" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" text="Cost per acquisition" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="CPC" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" text="Cost per clicks" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="CTR" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="330.0" text="Cost per impression" VBox.vgrow="ALWAYS" />
-                                        <Button fx:id="CPM" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="286.0" text="Cost per thousand impressions" wrapText="true" VBox.vgrow="ALWAYS" />
+                                        <Button fx:id="costPerAcq" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" text="Cost per acquisition" VBox.vgrow="ALWAYS" />
+                                        <Button fx:id="costPerClicks" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="308.0" text="Cost per clicks" VBox.vgrow="ALWAYS" />
+                                        <Button fx:id="costPerImpres" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="330.0" text="Cost per impression" VBox.vgrow="ALWAYS" />
+                                        <Button fx:id="costPerThousandImpres" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="286.0" text="Cost per thousand impressions" wrapText="true" VBox.vgrow="ALWAYS" />
                                         <Button fx:id="bounceRate" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadDataGraphs" prefHeight="25.0" prefWidth="353.0" text="Bounce Rate" VBox.vgrow="ALWAYS">
                                             <opaqueInsets>
                                                 <Insets top="10.0" />
@@ -157,7 +127,7 @@
                                                         <ComboBox fx:id="toSecond" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="69.0" HBox.hgrow="ALWAYS" />
                                                     </HBox>
                                                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#loadCSVWithinDates" prefHeight="25.0" prefWidth="194.0" text="Apply filters" VBox.vgrow="ALWAYS" />
-                                       <Button fx:id="clearFiltersButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearFilters" prefHeight="25.0" prefWidth="84.0" text="Clear Filters" VBox.vgrow="ALWAYS" />
+                                                    <Button fx:id="clearGraphsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearGraphs" prefHeight="25.0" prefWidth="84.0" text="Clear Graphs" VBox.vgrow="ALWAYS" />
                                                 </VBox>
                                             </children>
                                         </VBox>
