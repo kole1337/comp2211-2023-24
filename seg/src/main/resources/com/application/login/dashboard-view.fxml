@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.Double?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="background" prefHeight="1213.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
+<VBox fx:id="background" prefHeight="1213.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.dashboard.DashboardController">
     <children>
-        <MenuBar prefHeight="25.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
+        <MenuBar fx:id="menuItems" prefHeight="25.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <menus>
                 <Menu fx:id="File" mnemonicParsing="false" text="File">
                     <items>
@@ -45,7 +66,7 @@
         </MenuBar>
         <SplitPane dividerPositions="0.12482614742698192" prefHeight="1175.0" prefWidth="1433.0" VBox.vgrow="ALWAYS">
             <items>
-                <HBox SplitPane.resizableWithParent="false">
+                <HBox fx:id="backgroundDataFilters" SplitPane.resizableWithParent="false">
                     <children>
                         <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-fit-to-width: true;" HBox.hgrow="ALWAYS">
                             <content>
@@ -153,7 +174,7 @@
                     <items>
                         <VBox>
                             <children>
-                                <ScrollPane prefHeight="594.0" prefWidth="1696.0" style="-fx-fit-to-height: true; -fx-fit-to-width: true;" VBox.vgrow="ALWAYS">
+                                <ScrollPane fx:id="upperPanel" prefHeight="594.0" prefWidth="1696.0" style="-fx-fit-to-height: true; -fx-fit-to-width: true;" VBox.vgrow="ALWAYS">
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1043.0" prefWidth="1679.0">
                                             <children>
@@ -188,7 +209,7 @@
                                                     <children>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
                                                             <children>
-                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="282.0" style="-fx-border-color: black;" VBox.vgrow="ALWAYS">
+                                                                <VBox fx:id="dataBackground" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="290.0" prefWidth="282.0" style="-fx-border-color: black;" VBox.vgrow="ALWAYS">
                                                                     <children>
                                                                         <Label alignment="CENTER" contentDisplay="BOTTOM" prefHeight="31.0" prefWidth="406.0" text="Data:" textAlignment="CENTER" VBox.vgrow="ALWAYS">
                                                                             <font>
@@ -258,7 +279,7 @@
                                                                 </AnchorPane>
                                                             </children>
                                                         </VBox>
-                                          <VBox prefHeight="738.0" prefWidth="547.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                                          <VBox fx:id="piechartVbox" prefHeight="738.0" prefWidth="547.0" spacing="10.0" HBox.hgrow="ALWAYS">
                                              <children>
                                                               <TabPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="481.0" prefWidth="509.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                                                   <tabs>
@@ -401,9 +422,9 @@
                                 </ScrollPane>
                             </children>
                         </VBox>
-                        <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="470.0" prefWidth="1210.0" style="-fx-fit-to-height: true; -fx-fit-to-width: true;">
+                        <ScrollPane fx:id="lowerPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="470.0" prefWidth="1210.0" style="-fx-fit-to-height: true; -fx-fit-to-width: true;">
                             <content>
-                                <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="523.0" prefWidth="1693.0">
+                                <HBox fx:id="chartBackground" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="523.0" prefWidth="1693.0">
                                     <children>
                                         <AreaChart fx:id="dataChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" title="Chart" HBox.hgrow="ALWAYS">
                                             <xAxis>
