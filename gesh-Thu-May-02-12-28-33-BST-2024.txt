@@ -1,0 +1,10 @@
+Starting session: gesh at Thu May 02 12:28:33 BST 2024
+Logging as gesh. Opening dashboard
+Launching Import scene.
+Open dashboard panel.
+Opening dashboard panel.
+Loading data labels;
+Loading data labels;
+Loading data labels;
+Loading data labels;
+Loading data labels;

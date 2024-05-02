@@ -160,17 +160,6 @@ public  class DataManager {
         int totals = 0;
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            if(table.equals("impressionlog")){
-                rs = statement.executeQuery("select count(1) from " + table + " AS impression " + filterQuery + " AND impression.Date BETWEEN '" + startDate + "' AND '" + endDate +"';");
-
-            }
-            else if(table.equals("serverlog") || table.equals("Serverlog")){
-
-
-                rs = statement.executeQuery("SELECT COUNT(1) FROM " + table + " as server WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " and date BETWEEN '" + startDate + "' AND '"+endDate+"')");
-
-            }
-            else {
                 System.out.println(startDate);
                 System.out.println(endDate);
 //                rs = statement.executeQuery("select count(distinct "+table+".id), COUNT(DISTINCT impression.id)  from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".date BETWEEN '" + startDate + "' AND '" + endDate + "'");
@@ -179,7 +168,7 @@ public  class DataManager {
                         startDate + "' AND '" + endDate + "')";
                 rs = statement.executeQuery(query);
 //                    rs = statement.executeQuery("SELECT COUNT(*) FROM clicklog");
-            }
+
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -448,98 +437,71 @@ public  class DataManager {
         }
     }
 
-    public XYChart.Series<String,Number> getRateData(String dataName, String timePeriod,  String startDate, String endDate, String gender, String income, String context, String age) {
+    public XYChart.Series<String, Number> getRateData(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        ResultSet rs1 = null;
-        ResultSet rs2 = null;
-        String query1 = "";
-        String query2 = "";
+        Map<String, Double> data1 = new HashMap<>();
+        Map<String, Double> data2 = new HashMap<>();
+        String query1 = " ";
+        String query2 = " ";
         if (dataName.equals("costPerImpres")) {
             query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
             query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
-            try {
-                rs1 = statement.executeQuery(query1);
-                rs2 = statement1.executeQuery(query2);
-                while (rs1.next() && rs2.next()) {
-                    String xValue = rs1.getString("date1");
-                    Number yValue = rs1.getInt("data") / rs2.getInt("data");
-                    series.getData().add(new XYChart.Data<>(xValue, yValue));
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
         }
         if (dataName.equals("costPerAcq")) {
-                query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalConversions", timePeriod,  startDate, endDate, gender, income, context, age);
-
-                try {
-                    rs1 = statement.executeQuery(query1);
-                    rs2 = statement1.executeQuery(query2);
-                    while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date1");
-                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
-//                        System.out.println(xValue);
-//                        System.out.println(yValue);
-                        series.getData().add(new XYChart.Data<>(xValue, yValue));
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-            }
-        if (dataName.equals("costPerThousandImpres")) {
-                query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalImpressions",timePeriod, startDate, endDate, gender, income, context, age);
-                try {
-                    rs1 = statement.executeQuery(query1);
-                    rs2 = statement1.executeQuery(query2);
-                    while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date1");
-                        Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
-                        series.getData().add(new XYChart.Data<>(xValue, yValue));
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        if (dataName.equals("costPerClicks")) {
-                query1 = queryGenerator("totalCost", timePeriod,  startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalClicks", timePeriod,  startDate, endDate, gender, income, context, age);
-                try {
-                    rs1 = statement.executeQuery(query1);
-                    rs2 = statement1.executeQuery(query2);
-                    while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date1");
-                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
-                        System.out.println(rs1.getInt("data"));
-                        System.out.println(rs2.getInt("data"));
-                        series.getData().add(new XYChart.Data<>(xValue, yValue));
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-            }
-        if (dataName.equals("bounceRate")) {
-                query1 = queryGenerator("totalBounces", timePeriod,  startDate, endDate, gender, income, context, age);
-                query2 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
-                try {
-                    rs1 = statement.executeQuery(query1);
-                    rs2 = statement1.executeQuery(query2);
-                    while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date1");
-                        Number yValue = rs1.getInt("data") / rs2.getInt("data");
-                        series.getData().add(new XYChart.Data<>(xValue, yValue));
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-            }
-            return series;
+            query1 = queryGenerator("totalCost", timePeriod, startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalConversions", timePeriod, startDate, endDate, gender, income, context, age);
         }
+        if (dataName.equals("costPerThousandImpres")) {
+            query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
+        }
+        if (dataName.equals("costPerClicks")) {
+            query1 = queryGenerator("totalCost", timePeriod, startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+        }
+        if (dataName.equals("bounceRate")) {
+            query1 = queryGenerator("totalBounces", timePeriod, startDate, endDate, gender, income, context, age);
+            query2 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
+        }
+        try (Statement statement = conn.createStatement();
+             Statement statement1 = conn.createStatement();
+             ResultSet rs1 = statement.executeQuery(query1);
+             ResultSet rs2 = statement1.executeQuery(query2)) {
 
+            while (rs1.next()) {
+                data1.put(rs1.getString("date1"), rs1.getDouble("data"));
+            }
+            while (rs2.next()) {
+                data2.put(rs2.getString("date1"), rs2.getDouble("data"));
+            }
+
+            for (String date : data1.keySet()) {
+                Double value1 = data1.get(date);
+                Double value2 = data2.get(date);
+                if (value2 != null && value2 != 0) {
+                    double rate = computeRate(value1, value2, dataName);
+                    series.getData().add(new XYChart.Data<>(date, rate));
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return series;
+    }
+
+    private double computeRate(double value1, double value2, String dataName) {
+        switch (dataName) {
+            case "costPerThousandImpres":
+                return value1 / (value2 * 1000);
+            case "bounceRate":
+            case "costPerClicks":
+            case "costPerAcq":
+            case "costPerImpres":
+                return value1 / value2;
+            default:
+                return 0; // Default case to handle unexpected dataName values
+        }
+    }
 
     private String queryGenerator(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age){
         String query = "";

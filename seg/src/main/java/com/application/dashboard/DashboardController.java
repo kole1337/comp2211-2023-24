@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static jdk.jfr.internal.consumer.EventLog.stop;
+//import static jdk.jfr.internal.consumer.EventLog.stop;
 
 /**
  * A grand controller for the dashboard
