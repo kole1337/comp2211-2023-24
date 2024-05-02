@@ -94,7 +94,7 @@ public  class DataManager {
             return statement.executeQuery(state);
 
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Could not carry out querry ");
+            logger.log(Level.SEVERE, "Could not carry out query ");
             throw e;
         }
     }
@@ -146,18 +146,19 @@ public  class DataManager {
         int totals = 0;
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
-            if(table.equals("impressionlog")){
-                rs = statement.executeQuery("select count(1) from " + table + " AS impression " + filterQuery + " AND impression.Date BETWEEN '" + startDate + "' AND '" + endDate +"'");
+            /*if(table.equals("impressionlog")){
+                rs = statement.executeQuery("select count(*) from " + table + " AS impression " + filterQuery + " AND impression.Date BETWEEN '" + startDate + "' AND '" + endDate +"'");
 
             }
             else if(table.equals("serverlog") || table.equals("Serverlog")){
 
-                rs = statement.executeQuery("select count(1) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'");
+                rs = statement.executeQuery("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'");
 
             }
             else {
-                rs = statement.executeQuery("select count(1) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".date BETWEEN '" + startDate + "' AND '" + endDate + "'");
-            }
+                rs = statement.executeQuery("select count(*) from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".date BETWEEN '" + startDate + "' AND '" + endDate + "'");
+            } */
+            rs = statement.executeQuery("SELECT count(*) FROM " + table + " JOIN impressionLog AS impression ON " + table + ".id = impression.id" );
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
