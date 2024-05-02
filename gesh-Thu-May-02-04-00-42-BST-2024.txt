@@ -1,0 +1,5 @@
+Starting session: gesh at Thu May 02 04:00:42 BST 2024
+Logging as gesh. Opening dashboard
+Launching Import scene.
+Open dashboard panel.
+Opening dashboard panel.

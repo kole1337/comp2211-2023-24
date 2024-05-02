@@ -25,7 +25,7 @@ public  class DataManager {
     private static Statement statement1;
     private static PreparedStatement pstmt;
     private static ResultSet rs;
-    private static List<String> rateData = Arrays.asList("CTR","CPA", "CPC", "CPM", "bounceRate");
+    private static List<String> rateData = Arrays.asList("costPerAcq","costPerImpres", "costPerClicks", "costPerThousandImpres", "bounceRate");
     public static IntegerProperty history_position = new SimpleIntegerProperty();
     public static String savename;
     public int bouncePages = 1;
@@ -162,8 +162,10 @@ public  class DataManager {
 
             }
             else {
+                System.out.println(startDate);
+                System.out.println(endDate);
 //                rs = statement.executeQuery("select count(distinct "+table+".id), COUNT(DISTINCT impression.id)  from " + table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".date BETWEEN '" + startDate + "' AND '" + endDate + "'");
-                String query = "SELECT COUNT(1) FROM " + table + " AS click WHERE id IN " +
+                String query = "SELECT COUNT(1) FROM " + table + " WHERE id IN " +
                         "(SELECT id FROM impressionlog as impression " + filterQuery + " AND date BETWEEN '" +
                         startDate + "' AND '" + endDate + "')";
                 rs = statement.executeQuery(query);
@@ -207,7 +209,6 @@ public  class DataManager {
         try {
             String query = "SELECT COUNT(id) FROM serverlog AS server " +
                     "WHERE id IN (SELECT id FROM impressionLog AS impression " +
-
                     filterQuery +
                     " AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "'" +
                     "AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + timeBounce +
@@ -236,7 +237,9 @@ public  class DataManager {
         String filterQuery = filterQueryHelper(gender,age,income,context);
         try {
             // Query to count the total number of sessions
-            String queryTotalSessions = "SELECT COUNT(1) FROM serverlog AS server JOIN impressionLog AS impression ON impression.id = server.id " + filterQuery + " AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'" ;
+            String queryTotalSessions = "SELECT COUNT(1) FROM serverlog AS server"+ " WHERE id IN " +
+            "(SELECT id FROM impressionlog as impression " + filterQuery + " AND date BETWEEN '" +
+                    startDate + "' AND '" + endDate + "')"; ;
 
             rs = statement.executeQuery(queryTotalSessions);
             if (rs.next()) {
@@ -257,7 +260,9 @@ public  class DataManager {
         int totals = 0;
         String filterQuery = filterQueryHelper(gender,age, income, context);
         try {
-            rs = statement.executeQuery("SELECT count(1) FROM clicklog AS clicks JOIN impressionLog AS impression ON impression.id = clicks.id " + filterQuery + " AND clicks.Date BETWEEN '" + startDate + "' AND '" + endDate +"'" + " AND clickCost = 0");
+            rs = statement.executeQuery("SELECT count(1) FROM clicklog AS clicks" + " WHERE id IN " +
+                    "(SELECT id FROM impressionlog as impression " + filterQuery + " AND date BETWEEN '" +
+                    startDate + "' AND '" + endDate + "') AND clicks.clickCost = 0" );
             if(rs.next()) {
                 totals = rs.getInt(1);
             }
@@ -272,10 +277,14 @@ public  class DataManager {
         String filterQuery = filterQueryHelper(gender, age, income, context);
         try {
             if(table.equals("serverlog") || table.equals("Serverlog")){
-                rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".entryDate BETWEEN '" + startDate + "' AND '" + endDate +"'" );
+                rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " WHERE id IN " +
+                        "(SELECT id FROM impressionlog as impression " + filterQuery + " AND date BETWEEN '" +
+                        startDate + "' AND '" + endDate + "')");
 
             }
-            else{rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " JOIN impressionLog AS impression ON impression.id = " + table + ".id " + filterQuery + " AND " + table + ".Date BETWEEN '" + startDate + "' AND '" + endDate +"'" );}
+            else{rs = statement.executeQuery("SELECT AVG("+ column+ ") FROM "+table + " WHERE id IN " +
+                    "(SELECT id FROM impressionlog as impression " + filterQuery + " AND date BETWEEN '" +
+                    startDate + "' AND '" + endDate + "')");}
 
             if(rs.next()) {
                 totals = rs.getInt(1);
@@ -417,7 +426,7 @@ public  class DataManager {
 
                 while (hasMore) {
                     for (int i = 0; i < pageSize && hasMore; i++) {
-                        String xValue = rs.getString("date");
+                        String xValue = rs.getString("date1");
                         Number yValue = rs.getInt("data");
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                         hasMore = rs.next();
@@ -443,7 +452,7 @@ public  class DataManager {
                 rs1 = statement.executeQuery(query1);
                 rs2 = statement1.executeQuery(query2);
                 while (rs1.next() && rs2.next()) {
-                    String xValue = rs1.getString("date");
+                    String xValue = rs1.getString("date1");
                     Number yValue = rs1.getInt("data") / rs2.getInt("data");
                     series.getData().add(new XYChart.Data<>(xValue, yValue));
                 }
@@ -459,7 +468,7 @@ public  class DataManager {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date");
+                        String xValue = rs1.getString("date1");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
 //                        System.out.println(xValue);
 //                        System.out.println(yValue);
@@ -477,7 +486,7 @@ public  class DataManager {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date");
+                        String xValue = rs1.getString("date1");
                         Number yValue = rs1.getInt("data") / (rs2.getInt("data")*1000);
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
@@ -492,8 +501,10 @@ public  class DataManager {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date");
+                        String xValue = rs1.getString("date1");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
+                        System.out.println(rs1.getInt("data"));
+                        System.out.println(rs2.getInt("data"));
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
                 } catch (SQLException ex) {
@@ -508,7 +519,7 @@ public  class DataManager {
                     rs1 = statement.executeQuery(query1);
                     rs2 = statement1.executeQuery(query2);
                     while (rs1.next() && rs2.next()) {
-                        String xValue = rs1.getString("date");
+                        String xValue = rs1.getString("date1");
                         Number yValue = rs1.getInt("data") / rs2.getInt("data");
                         series.getData().add(new XYChart.Data<>(xValue, yValue));
                     }
@@ -535,39 +546,38 @@ public  class DataManager {
         }
 
         if(dataName.equals("totalClicks")){
-//            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
-//                    "FROM clicklog as click " +  "JOIN impressionlog AS impression ON click.id = impression.id "+ filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
-
-            query = "SELECT COUNT(DISTINCT click.id) AS total_click_count, COUNT(DISTINCT impression.id) "+
-                    "FROM clicklog AS click JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '"+startDate+"' AND '"+endDate+"'";
-
+            //query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, COUNT(*) AS data \n" +
+                    //"FROM clicklog as click LEFT JOIN (SELECT distinct(id),gender,income,age,Context FROM impressionlog) AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date1;\n";
+            query = "SELECT DATE_FORMAT(click.Date, '%Y-%m-%d %H:00:00') AS date1, COUNT(*) AS data \n" +
+                    "FROM clicklog as click WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '"  + endDate + "') GROUP BY date1;";
         }
         if(dataName.equals("totalImpressions")){
-            query = "SELECT DATE_FORMAT(date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
+            query = "SELECT DATE_FORMAT(date, " + timePeriod + " ) AS date1, COUNT(*) AS data " +
                     "FROM impressionlog as impression " + filterQuery + " AND impression.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY DATE_FORMAT(impression.Date, '%Y-%m-%d %H:00:00')";
         }
         if(dataName.equals("totalUniques")){
-            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
-                    "FROM clicklog as click " +
-                    "JOIN impressionlog AS impression ON click.id = impression.id "  + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, COUNT(*) AS data " +
+                    "FROM clicklog as click WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '"  + endDate + "') GROUP BY date1;";
         }
         if(dataName.equals("totalBounces")){
-            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, COUNT(*) AS data " +
+            //query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, COUNT(*) AS data " +
+                    //"FROM clicklog as click JOIN serverlog AS server ON click.id = server.id WHERE click.id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND TIMESTAMPDIFF(SECOND,server.entryDate,server.exitDate) >= " + getBounceTimeMinute() + " OR server.pagesviewed >= " + getBouncePages() + ") GROUP BY date1";
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, COUNT(*) AS data " +
                     "FROM clicklog as click " +
-                    "JOIN impressionlog AS impression ON click.id = impression.id JOIN serverlog AS server ON click.id = server.id "
-                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + getBounceTimeMinute() + " OR server.pagesviewed >= " + getBouncePages() + ") GROUP BY date";
+                    "LEFT JOIN (SELECT distinct(id),entryDate,exitDate,pagesviewed FROM serverlog) AS server ON click.id = server.id LEFT JOIN (SELECT distinct(id),gender,age,income,context FROM impressionlog) AS impression ON click.id = impression.id "
+                    + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' AND (TIMESTAMPDIFF(SECOND, server.entryDate, server.exitDate) >= " + getBounceTimeMinute() + " OR server.pagesviewed >= " + getBouncePages() + ") GROUP BY date1";
         }
         if(dataName.equals("totalConversions")){
-            query = "SELECT DATE_FORMAT(server.entryDate, " + timePeriod + " ) AS date, COUNT(*) AS data " +
-                    "FROM serverlog AS server " +  "JOIN impressionlog AS impression ON server.id = impression.id " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY entryDate";
+            query = "SELECT DATE_FORMAT(server.entryDate, " + timePeriod + " ) AS date1, COUNT(*) AS data " +
+                    "FROM serverlog AS server WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND server.conversion = 'Yes' AND server.entryDate BETWEEN '" + startDate + "' AND '" + endDate + "') GROUP BY date1";
         }
         if(dataName.equals("totalCost")){
-            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, SUM(click.ClickCost) AS data " +
-                    "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, SUM(click.ClickCost) AS data " +
+                    "FROM clicklog as click WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '"  + endDate + "') GROUP BY date1;";
         }
         if(dataName.equals("genderGraph")){
-            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date, SUM(click.ClickCost) AS data " +
-                    "FROM clicklog AS click " +  "JOIN impressionlog AS impression ON click.id = impression.id " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '" + endDate + "' GROUP BY date";
+            query = "SELECT DATE_FORMAT(click.Date, " + timePeriod + " ) AS date1, SUM(click.ClickCost) AS data " +
+                    "FROM clicklog as click WHERE id IN (SELECT id FROM impressionlog as impression " + filterQuery + " AND click.date BETWEEN '" + startDate + "' AND '"  + endDate + "') GROUP BY date1;";
         }
         return query;
     }

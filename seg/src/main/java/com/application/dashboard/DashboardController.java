@@ -339,6 +339,7 @@ public class DashboardController implements Initializable {
 //        TimeFrameControl tfc = new TimeFrameControl();
 //        tfc.createTimeFrame();
         loadGraph(graphName, time);
+        System.out.println(graphName);
         dataChart.requestLayout();
 
     }
@@ -681,7 +682,7 @@ public class DashboardController implements Initializable {
 
             fromDate.setValue(LocalDate.of(year, month, day));
         }
-        if (fromHour.getValue() == null) {
+        if (fromHour.getValue() == null){
             int hour = dataman.getFirstDate("hour", "clicklog");
             fromHour.setValue(Integer.toString(hour));
         }
@@ -765,12 +766,18 @@ public class DashboardController implements Initializable {
      */
 
     private void setupTimeComboBoxes() {
-        fromHour.getItems().addAll(generateTimeOptions(0, 23)); // Hours 0-23
-        fromMinute.getItems().addAll(generateTimeOptions(0, 59)); // Minutes 0-59
-        fromSecond.getItems().addAll(generateTimeOptions(0, 59)); // Seconds 0-59
-        toHour.getSelectionModel().select("00"); // Default value
-        toMinute.getSelectionModel().select("00"); // Default value
-        toSecond.getSelectionModel().select("00"); // Default value
+        int hour = dataman.getFirstDate("hour", "clicklog");
+        fromHour.setValue(Integer.toString(hour));
+        int minute = dataman.getFirstDate("minute", "clicklog");
+        fromMinute.setValue(Integer.toString(minute));
+        int second = dataman.getFirstDate("second", "clicklog");
+        fromSecond.setValue(Integer.toString(second));
+        int hourto = dataman.getLastDate("hour", "clicklog");
+        toHour.setValue(Integer.toString(hourto));
+        int minuteto = dataman.getLastDate("minute", "clicklog");
+        toMinute.setValue(Integer.toString(minuteto));
+        int secondto = dataman.getLastDate("second", "clicklog");
+        toSecond.setValue(Integer.toString(secondto));
     }
 
     /**
