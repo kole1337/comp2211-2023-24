@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,6 +31,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
+
 import org.jfree.chart.ChartFrame;
 
 import java.awt.*;
@@ -44,6 +49,8 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jdk.jfr.internal.consumer.EventLog.stop;
 
 /**
  * A grand controller for the dashboard
@@ -1274,6 +1281,7 @@ public class DashboardController implements Initializable {
         }
     }
 
+
     //Disable tutorial overlay
     public void disableTutPNG() {
         tutorialOFF.setVisible(false);
@@ -1286,25 +1294,31 @@ public class DashboardController implements Initializable {
 
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         FileChooserWindow fileChooser = new FileChooserWindow();
+        try{
+        fileChooser.openFileBox("all");
+            a.setContentText("Inputting data...");
+            a.show();
+            //loadingBar();
+            loadSQL();
+            a.hide();
 
-        fph.fileTypeHandler(fileChooser.openFileBox("all"));
-        System.out.println(fph.getImpressionPath());
-        System.out.println(fph.getClickPath());
-        System.out.println(fph.getServerPath());
-        a.setContentText("Inputting data...");
-        a.show();
-        //loadingBar();
-        loadSQL();
-        a.hide();
+            a.setContentText("Ready.");
+            a.show();
+            //a.hide();
+            System.out.println("Ready ^_^!");
+        }
+        catch (RuntimeException ignored){}
+        catch (Exception e ){
+            logger.log(Level.SEVERE, "Error opening file explorer: " + e);
+            logAction.logActionToFile("Error opening file explorer: " + e);
+        }
 
-        a.setContentText("Ready.");
-        a.show();
-        //a.hide();
-        System.out.println("Ready ^_^!");
 //        dataman.closeConnection();
     }
 
-    public void setClicksLoaded(Boolean bool) {
+
+    public void setClicksLoaded(Boolean bool){
+
         clicksLoaded = bool;
     }
 
@@ -1319,6 +1333,7 @@ public class DashboardController implements Initializable {
 
     public void loadSQL() {
         try {
+
             dataman.dumpData();
 
             Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
@@ -1329,6 +1344,7 @@ public class DashboardController implements Initializable {
 
             try {
                 if (fph.getClickPath() != null) {
+                    DataManager.dumpData("clicklog");
                     File file1 = fph.getClickPath();
 //                File file1 = new File("C:\\Users\\gouri\\OneDrive - University of Southampton\\Documents\\year2\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\click_log.csv");
                     ArrayList<String> tempClicks = new ArrayList<>(splitFiles.splitFile(file1, 10));
@@ -1339,6 +1355,7 @@ public class DashboardController implements Initializable {
                     clicksLoadedLabel.setText("clicks_log.csv: loaded");
                 }
                 if (fph.getImpressionPath() != null) {
+                    DataManager.dumpData("impressionlog");
                     File file1 = fph.getImpressionPath();
 //                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\impression_log.csv");
 
@@ -1348,6 +1365,7 @@ public class DashboardController implements Initializable {
                     impressionLoadedLabel.setText("impression_log.csv: loaded");
                 }
                 if (fph.getServerPath() != null) {
+                    DataManager.dumpData("serverlog");
                     File file1 = fph.getServerPath();
 //                File file1 = new File("D:\\year2\\seg\\comp2211\\seg\\src\\main\\resources\\2_week_campaign_2\\server_log.csv");
 

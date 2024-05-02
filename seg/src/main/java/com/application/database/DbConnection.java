@@ -22,10 +22,13 @@ public class DbConnection {
 
         //DO NOT MODIFY THIS COMMENT IT OUT AND WRITE YOU OWN FILE LOCATION
         //read from file Nikola
+
         //readFromFile("user.txt");
+
         //Gouri
         readFromFile("C:\\Users\\Mel\\Documents\\comp2211\\seg\\src\\main\\resources\\user.txt");
         //Pano
+      //readFromFile("seg\\user.txt");
         //Yu-Han
         try {
             makeConn();
@@ -43,8 +46,7 @@ public class DbConnection {
     /**
      * establishes a connection to the SQL databaase, pushes the connection onto other database modifying classes
      *
-     * @param user username for database access
-     * @param pass password for database access
+
      * @throws Exception if the username/password are invalid will throw an SQL exception, if no connection can be established a runtime error will be thrown
      */
     public static void makeConn() throws Exception {
