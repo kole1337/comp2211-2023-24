@@ -4,22 +4,14 @@ import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.logger.LogAction;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import org.w3c.dom.Text;
 
-import java.net.URL;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class addUserController {
+public class AddUserController {
 
     @FXML
     private PasswordField passwordField;

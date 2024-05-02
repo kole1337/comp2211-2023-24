@@ -49,7 +49,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.application.setup.SetupController">
   <children>
     <MenuBar prefHeight="1.0" prefWidth="900.0" VBox.vgrow="NEVER">
       <menus>
@@ -102,7 +102,7 @@
                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <Button fx:id="createTablesButton" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#createTables" text="Create tables" />
+                  <Button fx:id="createTablesButton" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#createUsers" text="Create test users" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="551.0" prefWidth="273.0">

@@ -3,7 +3,7 @@ package com.application.login;
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.logger.LogAction;
-import com.application.setup.styles.checkStyle;
+import com.application.styles.checkStyle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
