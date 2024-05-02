@@ -62,10 +62,10 @@ public class FileChooserWindow {
         return fileChooser.showOpenDialog(null);
     }
 
-    public void openDirectory(String directory) {
+    public void openDirectory() {
         // Open file chooser dialog
         DirectoryChooser fileChooser = new DirectoryChooser();
-        fileChooser.setTitle("Select "+ directory + " file/es");
+        fileChooser.setTitle("Select a directoy" );
         fileChooser.setInitialDirectory(pathHandler.getFilesPath());
         File selectedFile = fileChooser.showDialog(null);
         try {

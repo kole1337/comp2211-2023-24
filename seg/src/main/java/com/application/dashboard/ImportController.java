@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,6 +18,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -98,15 +103,7 @@ public class ImportController {
         logger.log(Level.INFO, "Opening campaign directory");
         try {
             fileChooser.openFileBox("all");
-            if(fph.getClickPath() != null){
-                clicksPath.setText(fph.getClickPath().getName());
-            }
-            if(fph.getImpressionPath() != null){
-                impressionPath.setText(fph.getImpressionPath().getName());
-            }
-            if(fph.getServerPath() != null){
-                serverPath.setText(fph.getServerPath().getName());
-            }
+            update_textbox();
 
         }catch(RuntimeException ignored){
 
@@ -119,7 +116,26 @@ public class ImportController {
         }
     }
     public void opendir(){
+        fileChooser.openDirectory();
+        update_textbox();
+    }
 
+    private void update_textbox() {
+        BackgroundFill background_fill = new BackgroundFill(Color.LAWNGREEN,CornerRadii.EMPTY, Insets.EMPTY);
+        if(fph.getClickPath() != null){
+            clicksPath.setText(fph.getClickPath().getName());
+            clicksPath.setBackground(new Background(background_fill));
+        }
+        if(fph.getImpressionPath() != null){
+            impressionPath.setText(fph.getImpressionPath().getName());
+            impressionPath.setBackground(new Background(background_fill));
+
+        }
+        if(fph.getServerPath() != null){
+            serverPath.setText(fph.getServerPath().getName());
+            serverPath.setBackground(new Background(background_fill));
+
+        }
     }
 
     /**
@@ -130,20 +146,70 @@ public class ImportController {
         logger.log(Level.INFO,"pressed open-dashboard button");
 
         if(fph.all_loaded() ){
-            start_dash(event);
-        }else{
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/application/login/dashboard-view.fxml"));
+                root = fxmlLoader.load();
+                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                scene = new Scene(root);
+                stage.setScene(scene);
+
+                DashboardController dashboardController = fxmlLoader.getController();
+                dashboardController.fph = this.fph;
+                Alert loading = new Alert(Alert.AlertType.INFORMATION);
+                loading.setContentText("Inputting data...");
+                loading.show();
+                dashboardController.loadSQL();
+                loading.close();
+                stage.show();
+
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
+                logAction.logActionToFile("Opening dashboard panel.");
+            }
+            catch (Exception e) {                Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+                a.show();
+                logger = Logger.getLogger(getClass().getName());
+                logger.log(Level.SEVERE, "Failed to create new Window: ", e);
+                logAction.logActionToFile("Critical error: " + e);}
+        }
+        else{
             Alert a1 = new Alert(Alert.AlertType.WARNING,"Are you sure you want to proceed when there are files that are still unloaded?\n Some tables may not load correctly", ButtonType.YES,ButtonType.CANCEL);
             a1.setHeaderText("Not All Files Loaded!");
             Optional<ButtonType> result = a1.showAndWait();
             if(result.isPresent()) {
                 if (result.get() == ButtonType.YES) {
 
-                    start_dash(event);
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/application/login/dashboard-view.fxml"));
+                        root = fxmlLoader.load();
+                        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        scene = new Scene(root);
+                        stage.setScene(scene);
+
+                        DashboardController dashboardController = fxmlLoader.getController();
+                        dashboardController.fph = this.fph;
+                        Alert loading = new Alert(Alert.AlertType.INFORMATION);
+                        loading.setContentText("Inputting data...");
+                        loading.show();
+                        dashboardController.loadSQL();
+                        loading.close();
+                        stage.show();
+
+                        logger = Logger.getLogger(getClass().getName());
+                        logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
+                        logAction.logActionToFile("Opening dashboard panel.");
+                    }
+                    catch (Exception e) {                Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+                        a.show();
+                        logger = Logger.getLogger(getClass().getName());
+                        logger.log(Level.SEVERE, "Failed to create new Window: ", e);
+                        logAction.logActionToFile("Critical error: " + e);}
+                }
                 }
             }
         }
 
-    }
+
 
     private void start_dash(ActionEvent event) {
         try {
@@ -173,9 +239,7 @@ public class ImportController {
             logAction.logActionToFile("Critical error: " + e);}
     }
 
-    public void select_directory(){
-//        fph.directoy_handler(fileChooser.)
-    }
+
 
     /**
      * Function that opens the directory from
