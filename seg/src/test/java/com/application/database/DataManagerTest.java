@@ -202,21 +202,16 @@ public class DataManagerTest {
     public void testGraphCostPerAcqData(){
         XYChart.Series<String,Number> expectedData = new XYChart.Series<>() ;
         expectedData.getData().addAll(Arrays.asList(
-                new XYChart.Data<>("2015-01-01 12:00:00",10),
-                new XYChart.Data<>("2015-01-01 13:00:00",40),
-                new XYChart.Data<>("2015-01-01 14:00:00",10),
-                new XYChart.Data<>("2015-01-02 15:00:00",10),
-                new XYChart.Data<>("2015-01-02 16:00:00",10),
-                new XYChart.Data<>("2015-01-02 17:00:00",10),
-                new XYChart.Data<>("2015-01-02 18:00:00",0),
-                new XYChart.Data<>("2015-01-03 19:00:00",0),
-                new XYChart.Data<>("2015-01-03 20:00:00",0),
-                new XYChart.Data<>("2015-01-03 22:00:00",10),
-                new XYChart.Data<>("2015-01-04 12:00:00",10),
-                new XYChart.Data<>("2015-01-05 12:00:00",10),
-                new XYChart.Data<>("2015-01-08 12:00:00",10)
+                new XYChart.Data<>("2015-01-02 17:00:00",10.0),
+                new XYChart.Data<>("2015-01-02 18:00:00",0.0),
+                new XYChart.Data<>("2015-01-03 19:00:00",0.0),
+                new XYChart.Data<>("2015-01-03 20:00:00",0.0),
+                new XYChart.Data<>("2015-01-03 22:00:00",10.0),
+                new XYChart.Data<>("2015-01-04 12:00:00",10.0),
+                new XYChart.Data<>("2015-01-05 12:00:00",10.0),
+                new XYChart.Data<>("2015-01-08 12:00:00",10.0)
         ));
-        XYChart.Series<String,Number> actualData = dataManager.getData("totalCost","hour","2015-01-01 12:01:02", "2015-01-08 22:11:57","Any","Any","Any","Any");
+        XYChart.Series<String,Number> actualData = dataManager.getData("costPerAcq","hour","2015-01-01 12:01:02", "2015-01-08 22:11:57","Any","Any","Any","Any");
         seriesEquals(expectedData, actualData);
     }
 

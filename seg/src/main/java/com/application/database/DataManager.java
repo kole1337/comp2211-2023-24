@@ -498,12 +498,14 @@ public  class DataManager {
         }
     }
 
+
     public XYChart.Series<String, Number> getRateData(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        Map<String, Double> data1 = new HashMap<>();
-        Map<String, Double> data2 = new HashMap<>();
+        Map<String, Double> data1 = new LinkedHashMap<>();  // Using LinkedHashMap to maintain order
+        Map<String, Double> data2 = new LinkedHashMap<>();
+
         String query1 = " ";
-        String query2 = " ";
+        String query2 = " " ;
         if (dataName.equals("costPerImpres")) {
             query1 = queryGenerator("totalClicks", timePeriod, startDate, endDate, gender, income, context, age);
             query2 = queryGenerator("totalImpressions", timePeriod, startDate, endDate, gender, income, context, age);
@@ -536,6 +538,7 @@ public  class DataManager {
                 data2.put(rs2.getString("date1"), rs2.getDouble("data"));
             }
 
+            // Use keys from data1 to ensure order if data1 dates define the needed timeline
             for (String date : data1.keySet()) {
                 Double value1 = data1.get(date);
                 Double value2 = data2.get(date);
@@ -563,6 +566,7 @@ public  class DataManager {
                 return 0; // Default case to handle unexpected dataName values
         }
     }
+
 
     private String queryGenerator(String dataName, String timePeriod, String startDate, String endDate, String gender, String income, String context, String age){
         String query = "";
