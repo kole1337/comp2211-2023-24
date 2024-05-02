@@ -1,36 +1,23 @@
 package com.application.admin;
 
-import com.application.database.DataManager;
 import com.application.database.DbConnection;
 import com.application.database.UserManager;
 import com.application.logger.LogAction;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -199,7 +186,7 @@ public class AdminController {
         if(showUsers.getSelectionModel().getSelectedItem() != null) {
             try {
                 User user = showUsers.getSelectionModel().getSelectedItem();
-                editUserController obj = new editUserController();
+                EditUserController obj = new EditUserController();
                 obj.openEditPanel(user.getUsername(), user.getPassword(), user.getUser_id());
             }catch(Exception e){
                 logAction.logActionToFile("Error editing user: " + e);
@@ -256,7 +243,7 @@ public class AdminController {
     /**
      * Function to create a new user.
      * It opens the createNewUser panel which has its own
-     * controller {@link com.application.admin.addUserController}
+     * controller {@link AddUserController}
      * */
     public void createNewUser() {
         try {

@@ -15,7 +15,7 @@ import javafx.stage.StageStyle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class editUserController {
+public class EditUserController {
 
     @FXML
     public TextField passwordField;
@@ -47,7 +47,7 @@ public class editUserController {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("editUser.fxml"));
             Parent parent = loader.load();
-            editUserController controller = loader.getController(); // Get the controller instance
+            EditUserController controller = loader.getController(); // Get the controller instance
             controller.setFields(username, password, userId); // Call setFields method
 
             Scene scene = new Scene(parent);

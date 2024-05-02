@@ -3,7 +3,7 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.logger.LogAction;
-import com.application.setup.styles.checkStyle;
+import com.application.styles.checkStyle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,8 +25,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,7 +162,9 @@ public class ImportController {
                 logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
                 logAction.logActionToFile("Opening dashboard panel.");
             }
-            catch (Exception e) {                Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+            catch (Exception e) {
+                Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+                e.printStackTrace();
                 a.show();
                 logger = Logger.getLogger(getClass().getName());
                 logger.log(Level.SEVERE, "Failed to create new Window: ", e);

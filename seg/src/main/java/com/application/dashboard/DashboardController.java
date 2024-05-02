@@ -4,13 +4,12 @@ import com.application.database.*;
 import com.application.files.FileChooserWindow;
 import com.application.files.FilePathHandler;
 import com.application.logger.LogAction;
-import com.application.setup.styles.checkStyle;
+import com.application.styles.checkStyle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -32,9 +31,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
-
 import org.jfree.chart.ChartFrame;
 
 import java.awt.*;
@@ -50,7 +46,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static jdk.jfr.internal.consumer.EventLog.stop;
 
 /**
  * A grand controller for the dashboard
@@ -1386,6 +1381,7 @@ public class DashboardController implements Initializable {
         }
         System.out.println("Ready ^_^!");
     }
+
 
     public void openOnlineDocumentation(ActionEvent actionEvent) throws IOException {
         Desktop.getDesktop().browse(URI.create("https://nikolaparushev2003.wixsite.com/ecs-adda/documentation"));

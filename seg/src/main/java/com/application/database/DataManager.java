@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.application.files.ScriptRunner;
+import javafx.scene.control.Alert;
 
 public  class DataManager {
 
@@ -68,6 +69,66 @@ public  class DataManager {
         }
         catch (Exception e){
             throw new RuntimeException("could not close connection");
+        }
+    }
+
+    public static void createTable() throws SQLException {
+        String createTables =
+                "CREATE DATABASE `adda2` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;";
+        String createImpressionLogTable =
+                "CREATE TABLE `adda2`.`impressionlog` (" +
+                        "  `id_log` int NOT NULL AUTO_INCREMENT," +
+                        "  `date` datetime DEFAULT NULL," +
+                        "  `id` varchar(45) DEFAULT NULL," +
+                        "  `gender` varchar(45) DEFAULT NULL," +
+                        "  `age` varchar(45) DEFAULT NULL," +
+                        "  `income` varchar(45) DEFAULT NULL," +
+                        "  `context` varchar(45) DEFAULT NULL," +
+                        "  `impression_cost` double DEFAULT NULL," +
+                        "  PRIMARY KEY (`id_log`)" +
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+        String createServerLogTable =
+                "CREATE TABLE `adda2`.`serverlog` (" +
+                        "  `id_log` int NOT NULL AUTO_INCREMENT," +
+                        "  `entryDate` datetime DEFAULT NULL," +
+                        "  `id` varchar(45) DEFAULT NULL," +
+                        "  `exitDate` datetime DEFAULT NULL," +
+                        "  `pagesViewed` int DEFAULT NULL," +
+                        "  `conversion` varchar(45) DEFAULT NULL," +
+                        "  PRIMARY KEY (`id_log`)" +
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+        String createUsersTable =
+                "CREATE TABLE `adda2`.`users` (" +
+                        "  `username` varchar(15) NOT NULL," +
+                        "  `password` varchar(45) NOT NULL," +
+                        "  `role` varchar(255) NOT NULL," +
+                        "  `user_id` int NOT NULL AUTO_INCREMENT," +
+                        "  PRIMARY KEY (`user_id`)," +
+                        "  UNIQUE KEY `username_UNIQUE` (`username`)" +
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+        String createClickLogTable =
+                "CREATE TABLE `adda2`.`clicklog` (" +
+                        "  `date` datetime DEFAULT NULL," +
+                        "  `id` varchar(45) DEFAULT NULL," +
+                        "  `clickCost` decimal(10,7) DEFAULT NULL," +
+                        "  `id_log` int NOT NULL AUTO_INCREMENT," +
+                        "  PRIMARY KEY (`id_log`)" +
+                        ") ENGINE=InnoDB AUTO_INCREMENT=1991344 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/adda", "username", "password");
+            Statement statement = connection.createStatement();
+
+            statement.executeUpdate(createTables);
+            statement.executeUpdate(createImpressionLogTable);
+            statement.executeUpdate(createServerLogTable);
+            statement.executeUpdate(createUsersTable);
+            statement.executeUpdate(createClickLogTable);
+
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,4 +1,4 @@
-package com.application.setup.styles;
+package com.application.styles;
 
 import java.io.File;
 import java.io.FileNotFoundException;
