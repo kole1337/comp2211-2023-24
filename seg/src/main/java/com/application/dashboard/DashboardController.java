@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.jfree.chart.ChartFrame;
 
 import javax.imageio.ImageIO;
@@ -51,6 +53,8 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static jdk.jfr.internal.consumer.EventLog.stop;
 
 /**
  * A grand controller for the dashboard
@@ -1215,6 +1219,9 @@ public void loadHistogramClickCost() {
             logger.log(Level.SEVERE, "Failed to create new Window.", e);
         }
     }
+
+
+
     //Disable tutorial overlay
     public void disableTutPNG() {
         tutorialOFF.setVisible(false);
