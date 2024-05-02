@@ -862,23 +862,16 @@ public class DashboardController implements Initializable {
 
         return dataman.selectTotalData("impressionlog",  gender, age, income, context, getFromDateTime(), getToDateTime());
     }
-//    public int countTotalImpressionsWithinDates(){
-//        return dataman.selectTotalDataWithinRange("impressionlog", getStartDateTimeAsString(),getEndDateTimeAsString());
-//    }
+
 
     //Function to find the total clicks for the campaign
-
     public int countTotalClicks(String gender, String age, String income, String context){
 
         logger.log(Level.INFO, "Loading Total clicks");
 
         return dataman.selectTotalData("clicklog", gender, age, income, context, getFromDateTime(), getToDateTime());
     }
-//    public int countTotalClicksWithinDates(){
-//        logger = Logger.getLogger(DashboardController.class.getName());
-//        logger.log(Level.INFO, "Loading Total clicks within start and end time");
-//        return dataman.selectTotalDataWithinRange("clicklog", getStartDateTimeAsString(),getEndDateTimeAsString());
-//    }
+
     public int countTotalBounces(String gender, String age, String income, String context){
     logger = Logger.getLogger(DashboardController.class.getName());
     logger.log(Level.INFO, "Loading Total Bounces");
@@ -1291,13 +1284,11 @@ public void loadHistogramClickCost() {
     public void loadSQL(){
         try {
             dataman.dumpData();
+
             Multithread_ImpressionDb multiImpress = new Multithread_ImpressionDb();
             testClickThread tct = new testClickThread();
             testServerThread tst = new testServerThread();
             FileSplit splitFiles = new FileSplit();
-//        fph.setClickPath("asdffa");
-//        fph.setImpressionPath("asfdsdfa");
-//        fph.setServerPath("dasdadas");
 
 
             try {
@@ -1379,13 +1370,5 @@ public void loadHistogramClickCost() {
             logger.log(Level.INFO,"Dark theme displayed");
             obj.writeTheme("dark");
         }
-    }
-
-    public void increaseTextSize(){
-
-    }
-
-    public void decreaseTextSize(){
-
     }
 }
