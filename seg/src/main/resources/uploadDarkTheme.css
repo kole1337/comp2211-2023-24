@@ -1,3 +1,7 @@
 #background{
     -fx-background-color: lightgray;
 }
+.button{
+    -fx-border-color: white;
+    -fx-background-color: RGB(164, 164, 164);
+}
