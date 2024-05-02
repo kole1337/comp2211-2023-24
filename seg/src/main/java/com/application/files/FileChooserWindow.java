@@ -1,5 +1,7 @@
 package com.application.files;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.*;
@@ -14,7 +16,7 @@ import java.util.List;
 
 //import javafx.stage.FileChooser;
 public class FileChooserWindow {
-    private FilePathHandler pathHandler = new FilePathHandler();
+    private static FilePathHandler pathHandler;
     private static Integer numberOfFiles = 3;
     private static FileFilter filter = new FileFilter() {
         @Override
@@ -27,23 +29,25 @@ public class FileChooserWindow {
         }
     };
 
-    public List<File> openFileBox(String filename) {
+    public static void setfph(FilePathHandler fph){
+        pathHandler = fph;
+    }
+    public void openFileBox(String filename) throws RuntimeException {
         // Open file chooser dialog
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select "+ filename + " file");
+        fileChooser.setTitle("Select "+ filename + " file/files");
         fileChooser.setInitialDirectory(pathHandler.getFilesPath());
         ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
-
         fileChooser.getExtensionFilters().add(ex1);
         List<File> selectedFile = fileChooser.showOpenMultipleDialog(null);
 
-        if(selectedFile != null){
-            //System.out.println("Open file: " + selectedFile.getAbsolutePath());
-        }
-        FilePathHandler obj = new FilePathHandler();
-        obj.fileTypeHandler(selectedFile);
-        System.out.println(obj.getClickPath());
-        return selectedFile;
+
+        try {
+            pathHandler.fileTypeHandler(selectedFile);
+        }catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.WARNING ,"error with the file handling system" , ButtonType.OK);
+            alert.showAndWait();
+        throw new RuntimeException(e);}
     }
 
     public File openSingleFileBox(String filename) {
@@ -54,15 +58,22 @@ public class FileChooserWindow {
         ExtensionFilter ex1 = new ExtensionFilter("CSV Files", "*.csv");
 
         fileChooser.getExtensionFilters().add(ex1);
-        File selectedFile = fileChooser.showOpenDialog(null);
 
-        if(selectedFile != null){
-            //System.out.println("Open file: " + selectedFile.getAbsolutePath());
+        return fileChooser.showOpenDialog(null);
+    }
+
+    public void openDirectory(String directory) {
+        // Open file chooser dialog
+        DirectoryChooser fileChooser = new DirectoryChooser();
+        fileChooser.setTitle("Select "+ directory + " file/es");
+        fileChooser.setInitialDirectory(pathHandler.getFilesPath());
+        File selectedFile = fileChooser.showDialog(null);
+        try {
+            pathHandler.directoy_handler(selectedFile);
+        }catch (Exception e){
+
         }
-        FilePathHandler obj = new FilePathHandler();
-//        obj.fileTypeHandler(selectedFile);
-        System.out.println(obj.getClickPath());
-        return selectedFile;
+
     }
 
     public String selectFolderPath(){

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -57,7 +59,8 @@ public class ImportController {
     public void initialize(){
             checkStyle obj = new checkStyle();
             String theme = obj.checkStyle();
-
+            fph.innit();
+            FileChooserWindow.setfph(fph);
             if(theme.equals("dark")){
                 enableDarkTheme();
             }else{
@@ -94,16 +97,30 @@ public class ImportController {
     public void openCampaign(){
         logger.log(Level.INFO, "Opening campaign directory");
         try {
-            fileFolderPath = fileChooser.selectFolderPath();
-            folderPath.setText(fileFolderPath);
-        }catch(Exception e){
-            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening file explorer: " +e);
-            a.show();
+            fileChooser.openFileBox("all");
+            if(fph.getClickPath() != null){
+                clicksPath.setText(fph.getClickPath().getName());
+            }
+            if(fph.getImpressionPath() != null){
+                impressionPath.setText(fph.getImpressionPath().getName());
+            }
+            if(fph.getServerPath() != null){
+                serverPath.setText(fph.getServerPath().getName());
+            }
+
+        }catch(RuntimeException ignored){
+
+        }
+        catch(Exception e){
+//            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening file explorer: " +e);
+//            a.show();
             logger.log(Level.SEVERE, "Error opening file explorer: " + e);
             logAction.logActionToFile("Error opening file explorer: " + e);
         }
     }
+    public void opendir(){
 
+    }
 
     /**
      * Function of the "Go to Dashboard" button.
@@ -111,6 +128,24 @@ public class ImportController {
      * */
     public void openDashboard(ActionEvent event) {
         logger.log(Level.INFO,"pressed open-dashboard button");
+
+        if(fph.all_loaded() ){
+            start_dash(event);
+        }else{
+            Alert a1 = new Alert(Alert.AlertType.WARNING,"Are you sure you want to proceed when there are files that are still unloaded?\n Some tables may not load correctly", ButtonType.YES,ButtonType.CANCEL);
+            a1.setHeaderText("Not All Files Loaded!");
+            Optional<ButtonType> result = a1.showAndWait();
+            if(result.isPresent()) {
+                if (result.get() == ButtonType.YES) {
+
+                    start_dash(event);
+                }
+            }
+        }
+
+    }
+
+    private void start_dash(ActionEvent event) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/application/login/dashboard-view.fxml"));
             root = fxmlLoader.load();
@@ -120,20 +155,26 @@ public class ImportController {
 
             DashboardController dashboardController = fxmlLoader.getController();
             dashboardController.fph = this.fph;
-            
+            Alert loading = new Alert(Alert.AlertType.INFORMATION);
+            loading.setContentText("Inputting data...");
+            loading.show();
+            dashboardController.loadSQL();
+            loading.close();
             stage.show();
 
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.INFO, "Logging in as user. Opening the dashboard.");
             logAction.logActionToFile("Opening dashboard panel.");
-
-        } catch (Exception e) {
-            Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
+        }
+        catch (Exception e) {                Alert a = new Alert(Alert.AlertType.WARNING, "Error opening dashboard: " + e);
             a.show();
             logger = Logger.getLogger(getClass().getName());
             logger.log(Level.SEVERE, "Failed to create new Window: ", e);
-            logAction.logActionToFile("Critical error: " + e);
-        }
+            logAction.logActionToFile("Critical error: " + e);}
+    }
+
+    public void select_directory(){
+//        fph.directoy_handler(fileChooser.)
     }
 
     /**
@@ -149,13 +190,14 @@ public class ImportController {
             path = fileChooser.openSingleFileBox("Server Log").toString();
 
             fph.setServerPath(path);
-            serverPath.setText(path);
             logAction.logActionToFile("Selecting serverlog.");
+            serverPath.setText(path);
         }catch(Exception e){
-            Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting server log: " + e);
-            a.show();
+//            Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting server log: " + e);
+//            a.show();
             logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Error selecting server log:", e);
+            serverPath.clear();
+//            logger.log(Level.SEVERE, "Error selecting server log:", e);
             logAction.logActionToFile("Error selecting server log: " + e);
         }
     }
@@ -172,13 +214,14 @@ public class ImportController {
             logger.log(Level.INFO, "Selecting impressionlog.");
             path = fileChooser.openSingleFileBox("Impression Log").toString();
             fph.setImpressionPath(path);
-            impressionPath.setText(path);
             logAction.logActionToFile("Selecting impressionlog");
+            impressionPath.setText(path);
         }catch(Exception e){
             Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting Impression Log: " + e);
-            a.show();
+//            a.show();
             logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Error selecting Impression Log:", e);
+            impressionPath.clear();
+//            logger.log(Level.SEVERE, "Error selecting Impression Log:", e);
             logAction.logActionToFile("Error selecting Impression Log: " + e);
         }
     }
@@ -196,14 +239,16 @@ public class ImportController {
 
             path = fileChooser.openSingleFileBox("Click Log").toString();
             fph.setClickPath(path);
-            clicksPath.setText(path);
             logAction.logActionToFile("Selecting clickLog");
+            clicksPath.setText(path);
+
 
         }catch(Exception e){
             Alert a = new Alert(Alert.AlertType.WARNING, "Error selecting clicklog: " + e);
-            a.show();
+//            a.show();
             logger = Logger.getLogger(getClass().getName());
-            logger.log(Level.SEVERE, "Error selecting clicklog: ", e);
+            clicksPath.clear();
+//            logger.log(Level.SEVERE, "Error selecting clicklog: ", e);
             logAction.logActionToFile("Error selecting clicklog: " + e);
         }
 

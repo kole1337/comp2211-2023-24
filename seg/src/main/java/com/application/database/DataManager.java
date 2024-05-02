@@ -88,6 +88,15 @@ public  class DataManager {
         }
     }
 
+    public static void dumpData(String table) throws SQLException{
+        try{
+            pstmt = conn.prepareStatement("DELETE FROM " + table + ";");
+            pstmt.executeUpdate();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private static ResultSet runQuerry(String state, String table) throws SQLException {
         try {
